@@ -2,6 +2,7 @@
 app.py — Kalbe AEC Biologics Lyophilization Digital Twin Console
 ================================================================================
 Modern Enterprise Bio-Industrial Dashboard (BorderFlow Aesthetic + Kalbe Green)
+Typography: Apple iOS System Stack (SF Pro Display / SF Pro Text / SF Mono)
 Target Facility: PT Kalbio Global Medika (KGM) — Cikarang Biologics Cleanroom
 Author: Naufal Fathin (Process Simulation Engineering Intern Assessment)
 Identity: Naufal Fathin (naufaalfathin15@gmail.com)
@@ -39,23 +40,29 @@ def render_html(html_str: str):
     st.markdown("".join(lines), unsafe_allow_html=True)
 
 # -----------------------------------------------------------------------------
-# BESPOKE CSS: BORDERFLOW AESTHETIC + KALBE FARMA CORPORATE GREEN GRADIENT
+# BESPOKE CSS: APPLE iOS FONT HIERARCHY + KALBE FARMA GREEN GRADIENT
 # -----------------------------------------------------------------------------
 render_html("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
+    /* Global Apple iOS Typography */
     *, *::before, *::after {
         box-sizing: border-box !important;
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "SF Pro", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
     }
 
-    html, body, [class*="css"] {
-        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-    }
-
-    .stApp {
+    html, body, [class*="css"], .stApp {
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "SF Pro", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
         background-color: #F8FAFC;
         color: #0F172A;
+    }
+
+    /* iOS SF Mono for telemetry, numbers, timestamps */
+    .kpi-main-num, .benchmark-time, .progress-val-mono, code, pre, .mono-font {
+        font-family: "SF Mono", "SFProMono-Regular", ui-monospace, Menlo, Monaco, Consolas, "JetBrains Mono", monospace !important;
     }
 
     .block-container {
@@ -98,7 +105,7 @@ render_html("""
         border-radius: 4px;
         padding: 1px 5px;
         font-size: 0.68rem;
-        font-family: 'JetBrains Mono', monospace;
+        font-family: "SF Mono", monospace;
         color: #94A3B8;
     }
 
@@ -211,7 +218,7 @@ render_html("""
         box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
     }
 
-    /* Equal-Height KPI Metric Cards */
+    /* Equal-Height KPI Metric Cards (Apple Card Style) */
     .kpi-metric-card {
         background: #FFFFFF;
         border: 1px solid #E2E8F0;
@@ -257,25 +264,23 @@ render_html("""
     .kpi-value-row {
         display: flex;
         align-items: baseline;
-        justify-content: flex-start;
+        gap: 5px;
         margin: 4px 0;
     }
 
     .kpi-main-num {
-        font-size: 1.7rem;
+        font-size: 1.68rem;
         font-weight: 800;
         letter-spacing: -0.03em;
         color: #0F172A;
         line-height: 1;
-        font-family: 'JetBrains Mono', 'Plus Jakarta Sans', monospace;
     }
 
     .kpi-unit {
         font-size: 0.85rem;
         font-weight: 600;
         color: #64748B;
-        margin-left: 4px;
-        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif !important;
     }
 
     .badge-pill-green {
@@ -363,7 +368,7 @@ render_html("""
         margin: 0;
     }
 
-    /* Benchmark Card Items (2-Line Architecture for Robust Space) */
+    /* Benchmark Card Items (2-Line Apple Card Architecture) */
     .benchmark-card-item {
         background: #FAFAFA;
         border: 1px solid #F1F5F9;
@@ -415,7 +420,6 @@ render_html("""
     }
 
     .benchmark-time {
-        font-family: 'JetBrains Mono', monospace;
         font-weight: 700;
         font-size: 0.85rem;
         color: #0F172A;
@@ -474,7 +478,6 @@ render_html("""
     }
 
     .progress-val-mono {
-        font-family: 'JetBrains Mono', monospace;
         font-weight: 700;
         font-size: 0.80rem;
     }
@@ -863,7 +866,8 @@ if nav_tab == "Dashboard Overview":
                 <span class="badge-pill-green">↑ {pct_saved:.0f}%</span>
             </div>
             <div class="kpi-value-row">
-                <span class="kpi-main-num">{mc_run.t_dry_mean:.1f}<span class="kpi-unit">hrs</span></span>
+                <span class="kpi-main-num">{mc_run.t_dry_mean:.1f}</span>
+                <span class="kpi-unit">hrs</span>
             </div>
             <div class="card-subtext" title="vs. baseline recipe (-32°C, 17.2 h)">vs. baseline recipe (-32°C, 17.2 h)</div>
         </div>
@@ -883,7 +887,8 @@ if nav_tab == "Dashboard Overview":
                 <span class="{margin_pill}">{margin:+.2f}°C</span>
             </div>
             <div class="kpi-value-row">
-                <span class="kpi-main-num">{mc_run.T_max_mean:.1f}<span class="kpi-unit">°C</span></span>
+                <span class="kpi-main-num">{mc_run.T_max_mean:.1f}</span>
+                <span class="kpi-unit">°C</span>
             </div>
             <div class="card-subtext" title="Formulation collapse limit Tc = {T_c_C:.1f}°C">Formulation collapse limit Tc = {T_c_C:.1f}°C</div>
         </div>
@@ -902,7 +907,8 @@ if nav_tab == "Dashboard Overview":
                 <span class="badge-pill-green">+{batches_gain} Batches</span>
             </div>
             <div class="kpi-value-row">
-                <span class="kpi-main-num">+{capacity_gain_hr:.0f}<span class="kpi-unit">h/yr</span></span>
+                <span class="kpi-main-num">+{capacity_gain_hr:.0f}</span>
+                <span class="kpi-unit">h/yr</span>
             </div>
             <div class="card-subtext" title="Est. commercial value: IDR 10.0–25.0 B">Est. value: IDR 10.0–25.0 B</div>
         </div>
@@ -923,7 +929,8 @@ if nav_tab == "Dashboard Overview":
                 <span class="{risk_pill}">{risk_status}</span>
             </div>
             <div class="kpi-value-row">
-                <span class="kpi-main-num">{risk_pct:.2f}<span class="kpi-unit">%</span></span>
+                <span class="kpi-main-num">{risk_pct:.2f}</span>
+                <span class="kpi-unit">%</span>
             </div>
             <div class="card-subtext" title="{int(np.sum(mc_run.collapse_arr))} of {N_mc} simulated perimeter vials">{int(np.sum(mc_run.collapse_arr))} of {N_mc} simulated perimeter vials</div>
         </div>
@@ -931,7 +938,7 @@ if nav_tab == "Dashboard Overview":
 
     st.markdown("<div style='height: 14px;'></div>", unsafe_allow_html=True)
 
-    # Main Workspace Grid (64% Left / 36% Right for comfortable breathing room)
+    # Main Workspace Grid (64% Left / 36% Right)
     col_main, col_side = st.columns([0.64, 0.36])
 
     with col_main:
@@ -1020,7 +1027,7 @@ if nav_tab == "Dashboard Overview":
             margin=dict(l=10, r=10, t=10, b=10),
             paper_bgcolor='#FFFFFF',
             plot_bgcolor='#FFFFFF',
-            font=dict(family='Plus Jakarta Sans', color='#64748B', size=11),
+            font=dict(family='-apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif', color='#64748B', size=11),
             legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
         )
 
@@ -1061,8 +1068,8 @@ if nav_tab == "Dashboard Overview":
                 margin=dict(l=10, r=10, t=5, b=5),
                 paper_bgcolor='#FFFFFF',
                 plot_bgcolor='#FFFFFF',
-                font=dict(family='Plus Jakarta Sans', color='#334155'),
-                annotations=[dict(text=f'<b>{N_mc}</b><br><span style="font-size:10px;color:#94A3B8;">Vials</span>', x=0.5, y=0.5, font_size=15, showarrow=False)],
+                font=dict(family='-apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif', color='#334155'),
+                annotations=[dict(text=f'<b>{N_mc}</b><br><span style="font-size:10px;color:#94A3B8;">Vials</span>', x=0.5, y=0.5, font_size=15, font_family='-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif', showarrow=False)],
                 showlegend=True,
                 legend=dict(orientation="h", yanchor="bottom", y=-0.2, xanchor="center", x=0.5)
             )
@@ -1337,28 +1344,28 @@ elif nav_tab == "ICH Q8 Design Space":
                     <td style="padding:8px; font-weight:700;">Cake Structural Integrity</td>
                     <td style="padding:8px;">No collapse, melt-back, or puffing</td>
                     <td style="padding:8px;">Sublimation front temp Tp &lt; Tc (-29.0°C)</td>
-                    <td style="padding:8px; font-family:'JetBrains Mono';">T_shelf &le; -28°C</td>
+                    <td style="padding:8px; font-family:'SF Mono', monospace;">T_shelf &le; -28°C</td>
                     <td style="padding:8px;"><span class="badge-pill-green">Compliant</span></td>
                 </tr>
                 <tr style="border-bottom: 1px solid #F1F5F9;">
                     <td style="padding:8px; font-weight:700;">Residual Moisture Content</td>
                     <td style="padding:8px;">&lt; 1.5% w/w (Karl Fischer)</td>
                     <td style="padding:8px;">Complete ice sublimation across cake height</td>
-                    <td style="padding:8px; font-family:'JetBrains Mono';">t_dry &ge; 11.2 h</td>
+                    <td style="padding:8px; font-family:'SF Mono', monospace;">t_dry &ge; 11.2 h</td>
                     <td style="padding:8px;"><span class="badge-pill-green">Compliant</span></td>
                 </tr>
                 <tr style="border-bottom: 1px solid #F1F5F9;">
                     <td style="padding:8px; font-weight:700;">Reconstitution Time</td>
                     <td style="padding:8px;">&lt; 60 seconds in SWFI</td>
                     <td style="padding:8px;">Open, highly porous cake micro-architecture</td>
-                    <td style="padding:8px; font-family:'JetBrains Mono';">P_c &le; 12 Pa</td>
+                    <td style="padding:8px; font-family:'SF Mono', monospace;">P_c &le; 12 Pa</td>
                     <td style="padding:8px;"><span class="badge-pill-green">Compliant</span></td>
                 </tr>
                 <tr>
                     <td style="padding:8px; font-weight:700;">Biologic Activity / Potency</td>
                     <td style="padding:8px;">&ge; 95% monomer retention (SEC-HPLC)</td>
                     <td style="padding:8px;">Prevention of thermal denaturing & aggregation</td>
-                    <td style="padding:8px; font-family:'JetBrains Mono';">Tp &le; -28.8°C</td>
+                    <td style="padding:8px; font-family:'SF Mono', monospace;">Tp &le; -28.8°C</td>
                     <td style="padding:8px;"><span class="badge-pill-green">Compliant</span></td>
                 </tr>
             </tbody>
@@ -1382,7 +1389,7 @@ elif nav_tab == "Physical P&ID Formulation":
     </div>
     """)
 
-    # Vial Control Volume SVG Schematic
+    # High-End Apple-Grade Bio-Industrial SVG Schematic (Zero Overlapping, iOS Typography)
     render_html("""
     <div class="white-panel">
         <div class="panel-header-row">
@@ -1393,48 +1400,128 @@ elif nav_tab == "Physical P&ID Formulation":
             <span class="badge-pill-green">DIN 2R Schott Vial</span>
         </div>
         <div style="display:flex; justify-content:center; padding:10px 0;">
-            <svg width="100%" height="auto" viewBox="0 0 780 320" style="max-width:760px;" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <!-- Shelf Base -->
-                <rect x="180" y="260" width="420" height="40" rx="6" fill="#E2E8F0" stroke="#94A3B8" stroke-width="2"/>
-                <text x="390" y="285" font-family="Plus Jakarta Sans" font-size="12" font-weight="700" fill="#334155" text-anchor="middle">TEMPERATURE-CONTROLLED SHELF (T_shelf = -28.0°C)</text>
-                
-                <!-- Fluid circulation arrows -->
-                <path d="M220 280H260M250 275L260 280L250 285" stroke="#008837" stroke-width="2"/>
-                <path d="M520 280H560M550 275L560 280L550 285" stroke="#008837" stroke-width="2"/>
+            <svg width="100%" height="auto" viewBox="0 0 920 420" style="max-width:880px; display:block; margin:0 auto;" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <marker id="arrow-green" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                        <path d="M 0 1 L 10 5 L 0 9 z" fill="#008837"/>
+                    </marker>
+                    <marker id="arrow-blue" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                        <path d="M 0 1 L 10 5 L 0 9 z" fill="#0284C7"/>
+                    </marker>
+                    <marker id="arrow-red" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                        <path d="M 0 1 L 10 5 L 0 9 z" fill="#DC2626"/>
+                    </marker>
+                </defs>
 
-                <!-- Vial Glass Walls -->
-                <path d="M270 80V250C270 255 275 260 280 260H500C505 260 510 255 510 250V80" stroke="#64748B" stroke-width="3" fill="#F8FAFC"/>
-                <rect x="255" y="70" width="270" height="12" rx="4" fill="#94A3B8"/>
-                <text x="390" y="60" font-family="Plus Jakarta Sans" font-size="11" font-weight="600" fill="#64748B" text-anchor="middle">Rubber Stopper Vapor Vent</text>
+                <!-- 1. TOP SUBLIMATION MASS FLUX PILL & VAPOR FLOW -->
+                <rect x="270" y="14" width="380" height="32" rx="8" fill="#F0F9FF" stroke="#BAE6FD" stroke-width="1.2"/>
+                <text x="460" y="35" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" font-size="12" font-weight="700" fill="#0369A1" text-anchor="middle">
+                    Sublimation Mass Flux: ṁ_sub = Ap · (P_ice - Pc) / Rp(L)
+                </text>
+
+                <!-- Upward Vapor Escape Arrows -->
+                <path d="M410 82 V54" stroke="#0284C7" stroke-width="2" stroke-linecap="round" marker-end="url(#arrow-blue)"/>
+                <path d="M460 82 V54" stroke="#0284C7" stroke-width="2.5" stroke-linecap="round" marker-end="url(#arrow-blue)"/>
+                <path d="M510 82 V54" stroke="#0284C7" stroke-width="2" stroke-linecap="round" marker-end="url(#arrow-blue)"/>
+
+                <!-- Rubber Stopper Vapor Vent -->
+                <rect x="385" y="74" width="150" height="15" rx="4" fill="#94A3B8"/>
+                <rect x="445" y="64" width="30" height="12" rx="3" fill="#64748B"/>
+                <text x="460" y="103" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" font-size="10" font-weight="600" fill="#64748B" text-anchor="middle">Slotted Lyophilization Stopper (Vented)</text>
+
+                <!-- 2. VIAL BODY (SCHOTT DIN 2R) -->
+                <rect x="310" y="112" width="300" height="196" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="2"/>
+                <path d="M306 110 H614" stroke="#94A3B8" stroke-width="3" stroke-linecap="round"/>
 
                 <!-- Dried Cake Layer -->
-                <rect x="274" y="90" width="232" height="65" fill="#FEF3C7" opacity="0.6"/>
-                <text x="390" y="120" font-family="Plus Jakarta Sans" font-size="12" font-weight="700" fill="#B45309" text-anchor="middle">DRIED CAKE LAYER (Rp(L))</text>
-                <text x="390" y="138" font-family="JetBrains Mono" font-size="10" fill="#92400E" text-anchor="middle">Mass Resistance Rp = R0 + A1*L</text>
+                <rect x="313" y="115" width="294" height="85" fill="#FEF3C7" opacity="0.65"/>
+                <text x="460" y="146" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif" font-size="12" font-weight="800" fill="#92400E" text-anchor="middle">
+                    DRIED CAKE LAYER (POROUS MATRIX)
+                </text>
+                <text x="460" y="166" font-family="'SF Mono', Menlo, monospace" font-size="11" font-weight="600" fill="#B45309" text-anchor="middle">
+                    Vapor Resistance Rp(L) = R0 + A1 · L
+                </text>
 
-                <!-- Sublimation Moving Boundary Line -->
-                <line x1="274" y1="155" x2="506" y2="155" stroke="#DC2626" stroke-width="3" stroke-dasharray="4 4"/>
-                <circle cx="390" cy="155" r="4" fill="#DC2626"/>
-                <text x="525" y="159" font-family="JetBrains Mono" font-size="11" font-weight="700" fill="#DC2626">T_p(t) = -28.8°C &lt; T_c</text>
+                <!-- Sublimation Interface Line -->
+                <line x1="311" y1="200" x2="609" y2="200" stroke="#DC2626" stroke-width="2.5" stroke-dasharray="5 4"/>
+                <circle cx="460" cy="200" r="4.5" fill="#DC2626"/>
 
-                <!-- Frozen Layer -->
-                <rect x="274" y="157" width="232" height="95" fill="#E0F2FE" opacity="0.8"/>
-                <text x="390" y="205" font-family="Plus Jakarta Sans" font-size="12" font-weight="700" fill="#0369A1" text-anchor="middle">FROZEN PRODUCT CORE</text>
-                <text x="390" y="222" font-family="JetBrains Mono" font-size="10" fill="#0284C7" text-anchor="middle">Ice Density = 917 kg/m³ | ΔHsub = 2.84 MJ/kg</text>
+                <!-- Frozen Product Core -->
+                <rect x="313" y="202" width="294" height="103" fill="#E0F2FE" opacity="0.75"/>
+                <text x="460" y="246" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif" font-size="12" font-weight="800" fill="#0369A1" text-anchor="middle">
+                    FROZEN PRODUCT CORE (ICE MATRIX)
+                </text>
+                <text x="460" y="268" font-family="'SF Mono', Menlo, monospace" font-size="11" font-weight="600" fill="#0284C7" text-anchor="middle">
+                    ρ_ice = 917 kg/m³ · ΔH_sub = 2.84 MJ/kg
+                </text>
 
-                <!-- Heat Transfer Influx Arrow (Bottom) -->
-                <path d="M390 256V235" stroke="#008837" stroke-width="3"/>
-                <text x="400" y="248" font-family="JetBrains Mono" font-size="10" font-weight="700" fill="#008837">Q_in = Kv * Av * (Ts - Tb)</text>
+                <!-- 3. LEFT ANNOTATIONS: DRY CAKE HEIGHT & MOVING FRONT (SPACIOUS & SEPARATED) -->
+                <!-- Dimension bracket for L(t) -->
+                <line x1="280" y1="115" x2="280" y2="198" stroke="#D97706" stroke-width="1.5"/>
+                <polyline points="274,122 280,115 286,122" stroke="#D97706" stroke-width="1.5" fill="none"/>
+                <polyline points="274,191 280,198 286,191" stroke="#D97706" stroke-width="1.5" fill="none"/>
+                <rect x="110" y="138" width="154" height="34" rx="6" fill="#FFFBEB" stroke="#FDE68A" stroke-width="1"/>
+                <text x="187" y="153" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" font-size="10.5" font-weight="700" fill="#B45309" text-anchor="middle">Dry Cake Height L(t)</text>
+                <text x="187" y="166" font-family="'SF Mono', Menlo, monospace" font-size="9.5" fill="#92400E" text-anchor="middle">dL/dt = ṁ / (ρ·Ap)</text>
 
-                <!-- Vapor Mass Flux Arrows (Top) -->
-                <path d="M360 100V75M390 100V75M420 100V75" stroke="#2563EB" stroke-width="2" stroke-linecap="round"/>
-                <text x="390" y="42" font-family="JetBrains Mono" font-size="10" font-weight="700" fill="#2563EB" text-anchor="middle">ṁ_sub = Ap * (P_ice - P_c) / Rp</text>
+                <!-- Left Leader to Moving Front Interface -->
+                <line x1="250" y1="200" x2="305" y2="200" stroke="#DC2626" stroke-width="1.5" stroke-dasharray="3 3"/>
+                <rect x="85" y="186" width="160" height="28" rx="6" fill="#FEF2F2" stroke="#FECDD3" stroke-width="1"/>
+                <text x="165" y="204" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" font-size="10.5" font-weight="700" fill="#DC2626" text-anchor="middle">Moving Front Interface</text>
 
-                <!-- Chamber Wall Radiation -->
-                <rect x="650" y="90" width="20" height="165" rx="4" fill="#CBD5E1"/>
-                <text x="660" y="180" font-family="Plus Jakarta Sans" font-size="10" font-weight="700" fill="#475569" text-anchor="middle" transform="rotate(-90 660 180)">CHAMBER WALL (20°C)</text>
-                <path d="M640 165H520" stroke="#EF4444" stroke-width="2" stroke-dasharray="3 3"/>
-                <text x="580" y="157" font-family="JetBrains Mono" font-size="9" fill="#DC2626" text-anchor="middle">Q_rad (+25% Kv)</text>
+                <!-- 4. RIGHT ANNOTATIONS: TEMPERATURE LIMIT vs WALL RADIATION (65PX VERTICAL CLEARANCE) -->
+                <!-- Interface Temperature Pill (at y=186 to 214) -->
+                <line x1="610" y1="200" x2="635" y2="200" stroke="#DC2626" stroke-width="1.5"/>
+                <rect x="635" y="186" width="185" height="28" rx="6" fill="#FEF2F2" stroke="#FCA5A5" stroke-width="1.2"/>
+                <text x="727" y="204" font-family="'SF Mono', Menlo, monospace" font-size="11" font-weight="800" fill="#DC2626" text-anchor="middle">
+                    Tp(t) = -28.8°C &lt; Tc
+                </text>
+
+                <!-- Chamber Wall (far right) -->
+                <rect x="855" y="95" width="24" height="215" rx="6" fill="#F1F5F9" stroke="#94A3B8" stroke-width="1.5"/>
+                <text x="871" y="202" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" font-size="10" font-weight="700" fill="#475569" text-anchor="middle" transform="rotate(-90 871 202)">
+                    CHAMBER WALL (20°C)
+                </text>
+
+                <!-- Wall Radiation Arrow (at y=135, 65px above interface!) -->
+                <path d="M845 135 H765" stroke="#E11D48" stroke-width="2" stroke-dasharray="4 3" marker-end="url(#arrow-red)"/>
+                <rect x="635" y="121" width="185" height="28" rx="6" fill="#FFF1F2" stroke="#FECDD3" stroke-width="1.2"/>
+                <text x="727" y="139" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" font-size="10.5" font-weight="700" fill="#BE123C" text-anchor="middle">
+                    Q_rad (+25% Wall IR Flux)
+                </text>
+
+                <!-- 5. SHELF CONDUCTIVE HEAT INFLUX & BASE -->
+                <!-- Conductive heat upward arrows into base -->
+                <path d="M420 326 V312" stroke="#008837" stroke-width="2.5" marker-end="url(#arrow-green)"/>
+                <path d="M460 326 V312" stroke="#008837" stroke-width="2.5" marker-end="url(#arrow-green)"/>
+                <path d="M500 326 V312" stroke="#008837" stroke-width="2.5" marker-end="url(#arrow-green)"/>
+
+                <!-- Left Pill for Shelf Heat Conduction -->
+                <rect x="90" y="270" width="195" height="30" rx="6" fill="#F0FDF4" stroke="#BBF7D0" stroke-width="1"/>
+                <text x="187" y="289" font-family="'SF Mono', Menlo, monospace" font-size="10.5" font-weight="700" fill="#15803D" text-anchor="middle">
+                    Qin = Av · Kv · (Ts - Tb)
+                </text>
+                <path d="M285 285 H365 V315" stroke="#008837" stroke-width="1.5" stroke-dasharray="3 3" fill="none"/>
+
+                <!-- 6. TEMPERATURE-CONTROLLED SHELF BASE (SEPARATED ROWS FOR TEXT & ARROWS) -->
+                <!-- Outer Shelf Body -->
+                <rect x="140" y="328" width="640" height="68" rx="10" fill="#F8FAFC" stroke="#94A3B8" stroke-width="2"/>
+                
+                <!-- Shelf Top Label (y=348) -->
+                <text x="460" y="348" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif" font-size="12" font-weight="800" fill="#0F172A" text-anchor="middle">
+                    TEMPERATURE-CONTROLLED SHELF (T_shelf = -28.0°C)
+                </text>
+
+                <!-- Shelf Thermal Fluid Channel (y=362 to 382, 23px below text!) -->
+                <rect x="220" y="360" width="480" height="24" rx="6" fill="#E8F5E9" stroke="#86EFAC" stroke-width="1"/>
+                <!-- Inflow Arrow -->
+                <path d="M175 372 H215" stroke="#008837" stroke-width="2" marker-end="url(#arrow-green)"/>
+                <!-- Channel Text -->
+                <text x="460" y="376" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" font-size="10" font-weight="700" fill="#008837" text-anchor="middle">
+                    Circulating Thermal Silicone Fluid (HTF Matrix)
+                </text>
+                <!-- Outflow Arrow -->
+                <path d="M705 372 H745" stroke="#008837" stroke-width="2" marker-end="url(#arrow-green)"/>
             </svg>
         </div>
     </div>
@@ -1449,7 +1536,7 @@ elif nav_tab == "Physical P&ID Formulation":
             <div class="card-top-row">
                 <span class="card-title-label" style="margin-left:0; font-weight:700; color:#0F172A;">1. Interface Energy Balance</span>
             </div>
-            <div style="font-size:0.85rem; color:#008837; font-family:'JetBrains Mono'; margin:6px 0;">
+            <div style="font-size:0.85rem; color:#008837; font-family:'SF Mono', Menlo, monospace; margin:6px 0;">
                 Q_in = ΔH_sub · ṁ_sub
             </div>
             <div class="card-subtext" style="white-space:normal; line-height:1.4;">
@@ -1464,7 +1551,7 @@ elif nav_tab == "Physical P&ID Formulation":
             <div class="card-top-row">
                 <span class="card-title-label" style="margin-left:0; font-weight:700; color:#0F172A;">2. Sublimation Mass Flux</span>
             </div>
-            <div style="font-size:0.85rem; color:#008837; font-family:'JetBrains Mono'; margin:6px 0;">
+            <div style="font-size:0.85rem; color:#008837; font-family:'SF Mono', Menlo, monospace; margin:6px 0;">
                 ṁ_sub = A_p · (P_ice - P_c) / R_p(L)
             </div>
             <div class="card-subtext" style="white-space:normal; line-height:1.4;">
@@ -1479,7 +1566,7 @@ elif nav_tab == "Physical P&ID Formulation":
             <div class="card-top-row">
                 <span class="card-title-label" style="margin-left:0; font-weight:700; color:#0F172A;">3. Moving Boundary Rate</span>
             </div>
-            <div style="font-size:0.85rem; color:#008837; font-family:'JetBrains Mono'; margin:6px 0;">
+            <div style="font-size:0.85rem; color:#008837; font-family:'SF Mono', Menlo, monospace; margin:6px 0;">
                 dL/dt = ṁ_sub / [ρ_ice · (1 - ε) · A_p]
             </div>
             <div class="card-subtext" style="white-space:normal; line-height:1.4;">
@@ -1509,37 +1596,37 @@ elif nav_tab == "Physical P&ID Formulation":
             </thead>
             <tbody>
                 <tr style="border-bottom: 1px solid #F1F5F9;">
-                    <td style="padding:8px; font-family:'JetBrains Mono'; font-weight:700;">ΔH_sub</td>
+                    <td style="padding:8px; font-family:'SF Mono', monospace; font-weight:700;">ΔH_sub</td>
                     <td style="padding:8px;">Latent Heat of Sublimation</td>
-                    <td style="padding:8px; font-family:'JetBrains Mono';">2.839 × 10⁶</td>
+                    <td style="padding:8px; font-family:'SF Mono', monospace;">2.839 × 10⁶</td>
                     <td style="padding:8px;">J / kg</td>
                     <td style="padding:8px;">CRC Handbook of Chemistry & Physics</td>
                 </tr>
                 <tr style="border-bottom: 1px solid #F1F5F9;">
-                    <td style="padding:8px; font-family:'JetBrains Mono'; font-weight:700;">ρ_ice</td>
+                    <td style="padding:8px; font-family:'SF Mono', monospace; font-weight:700;">ρ_ice</td>
                     <td style="padding:8px;">Density of Pure Ice</td>
-                    <td style="padding:8px; font-family:'JetBrains Mono';">917.0</td>
+                    <td style="padding:8px; font-family:'SF Mono', monospace;">917.0</td>
                     <td style="padding:8px;">kg / m³</td>
                     <td style="padding:8px;">Pikal, M.J. (2004)</td>
                 </tr>
                 <tr style="border-bottom: 1px solid #F1F5F9;">
-                    <td style="padding:8px; font-family:'JetBrains Mono'; font-weight:700;">L_total</td>
+                    <td style="padding:8px; font-family:'SF Mono', monospace; font-weight:700;">L_total</td>
                     <td style="padding:8px;">Frozen Product Height (3 mL Fill)</td>
-                    <td style="padding:8px; font-family:'JetBrains Mono';">8.19 × 10⁻³</td>
+                    <td style="padding:8px; font-family:'SF Mono', monospace;">8.19 × 10⁻³</td>
                     <td style="padding:8px;">m (8.19 mm)</td>
                     <td style="padding:8px;">DIN 2R Schott Specification</td>
                 </tr>
                 <tr style="border-bottom: 1px solid #F1F5F9;">
-                    <td style="padding:8px; font-family:'JetBrains Mono'; font-weight:700;">K_v (mean)</td>
+                    <td style="padding:8px; font-family:'SF Mono', monospace; font-weight:700;">K_v (mean)</td>
                     <td style="padding:8px;">Vial Overall Heat Transfer Coeff.</td>
-                    <td style="padding:8px; font-family:'JetBrains Mono';">25.0 ± 3.5</td>
+                    <td style="padding:8px; font-family:'SF Mono', monospace;">25.0 ± 3.5</td>
                     <td style="padding:8px;">W / (m²·K)</td>
                     <td style="padding:8px;">Rambhatla & Pikal (2003)</td>
                 </tr>
                 <tr>
-                    <td style="padding:8px; font-family:'JetBrains Mono'; font-weight:700;">T_c</td>
+                    <td style="padding:8px; font-family:'SF Mono', monospace; font-weight:700;">T_c</td>
                     <td style="padding:8px;">Formulation Collapse Threshold</td>
-                    <td style="padding:8px; font-family:'JetBrains Mono';">-29.0</td>
+                    <td style="padding:8px; font-family:'SF Mono', monospace;">-29.0</td>
                     <td style="padding:8px;">°C (244.15 K)</td>
                     <td style="padding:8px;">Sucrose / Mannitol Matrix (Fissore et al.)</td>
                 </tr>
@@ -1675,6 +1762,6 @@ elif nav_tab == "Batch Run Datasets":
 render_html("""
 <div style="display:flex; justify-content:space-between; align-items:center; padding:16px 0; border-top:1px solid #E2E8F0; margin-top:24px; font-size:0.78rem; color:#94A3B8;">
     <div>© 2026 PT Kalbe Farma Tbk • Corporate Digital Transformation (CDT) • Advanced Engineering Center (AEC)</div>
-    <div style="font-family:'JetBrains Mono'; font-weight:600; color:#64748B;">CANDIDATE: NAUFAL FATHIN (naufaalfathin15@gmail.com)</div>
+    <div style="font-family:'SF Mono', Menlo, monospace; font-weight:600; color:#64748B;">CANDIDATE: NAUFAL FATHIN (naufaalfathin15@gmail.com)</div>
 </div>
 """)
