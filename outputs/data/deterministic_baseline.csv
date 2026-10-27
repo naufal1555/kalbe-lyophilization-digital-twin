@@ -1,0 +1,4 @@
+Scenario,T_shelf_C,P_chamber_Pa,Drying_Time_hr,Max_Product_Temp_C,Collapsed,Collapse_Time_hr
+Conservative,-31.99999999999997,8.0,17.22,-32.51,False,
+Moderate,-27.99999999999997,10.0,11.25,-28.8,True,7.08
+Aggressive,-21.99999999999997,13.0,6.35,-23.47,True,0.02
