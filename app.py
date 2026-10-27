@@ -65,12 +65,23 @@ render_html("""
         font-family: "SF Mono", "SFProMono-Regular", ui-monospace, Menlo, Monaco, Consolas, "JetBrains Mono", monospace !important;
     }
 
+    /* Clean Streamlit Header & Content Offset for Streamlit Cloud */
+    header[data-testid="stHeader"] {
+        background: transparent !important;
+        height: 3.2rem !important;
+        z-index: 99 !important;
+    }
+
     .block-container {
-        padding-top: 1.2rem !important;
-        padding-bottom: 2rem !important;
+        padding-top: 4.8rem !important;
+        padding-bottom: 2.5rem !important;
         padding-left: 1.5rem !important;
         padding-right: 1.5rem !important;
         max-width: 1440px !important;
+    }
+
+    section[data-testid="stSidebar"] div.block-container {
+        padding-top: 2.2rem !important;
     }
 
     /* Top Navigation Search & Profile Bar */
