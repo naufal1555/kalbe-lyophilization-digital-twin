@@ -1772,6 +1772,6 @@ elif nav_tab == "Batch Run Datasets":
 render_html("""
 <div style="display:flex; justify-content:space-between; align-items:center; padding:16px 0; border-top:1px solid #E2E8F0; margin-top:24px; font-size:0.78rem; color:#94A3B8;">
     <div>© 2026 PT Kalbe Farma Tbk • Corporate Digital Transformation (CDT) • Advanced Engineering Center (AEC)</div>
-    <div style="font-family:'SF Mono', Menlo, monospace; font-weight:600; color:#64748B;">CANDIDATE: NAUFAL FATHIN (naufaalfathin15@gmail.com)</div>
+    <div>PT Kalbio Global Medika • Sterile Suite 04 (Lyo Unit 02)</div>
 </div>
 """)
