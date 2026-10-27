@@ -226,11 +226,12 @@ render_html("""
         padding: 14px 16px;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03), 0 1px 2px rgba(0, 0, 0, 0.02);
         transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
-        height: 155px;
+        height: 160px;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
         box-sizing: border-box;
+        overflow: hidden;
     }
 
     .kpi-metric-card:hover {
@@ -242,6 +243,7 @@ render_html("""
         display: flex;
         justify-content: space-between;
         align-items: center;
+        width: 100%;
     }
 
     .card-icon-bubble {
@@ -255,17 +257,22 @@ render_html("""
     }
 
     .card-title-label {
-        font-size: 0.82rem;
-        font-weight: 700;
-        color: #475569;
+        font-size: 0.80rem;
+        font-weight: 600;
+        color: #64748B;
+        line-height: 1.25;
+        margin-top: 4px;
+        margin-bottom: 2px;
         white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .kpi-value-row {
         display: flex;
         align-items: baseline;
         gap: 5px;
-        margin: 4px 0;
+        margin: 2px 0;
     }
 
     .kpi-main-num {
@@ -857,19 +864,17 @@ if nav_tab == "Dashboard Overview":
         render_html(f"""
         <div class="kpi-metric-card">
             <div class="card-top-row">
-                <div style="display:flex; align-items:center; gap:8px;">
-                    <div class="card-icon-bubble" style="background:#E8F5E9; color:#008837;">
-                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                    </div>
-                    <span class="card-title-label">Primary Drying</span>
+                <div class="card-icon-bubble" style="background:#E8F5E9; color:#008837;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                 </div>
                 <span class="badge-pill-green">↑ {pct_saved:.0f}%</span>
             </div>
+            <div class="card-title-label">Primary Drying Time</div>
             <div class="kpi-value-row">
                 <span class="kpi-main-num">{mc_run.t_dry_mean:.1f}</span>
                 <span class="kpi-unit">hrs</span>
             </div>
-            <div class="card-subtext" title="vs. baseline recipe (-32°C, 17.2 h)">vs. baseline recipe (-32°C, 17.2 h)</div>
+            <div class="card-subtext" title="vs. baseline recipe (-32°C, 17.2 h)">vs. baseline (-32°C, 17.2 h)</div>
         </div>
         """)
 
@@ -878,19 +883,17 @@ if nav_tab == "Dashboard Overview":
         render_html(f"""
         <div class="kpi-metric-card">
             <div class="card-top-row">
-                <div style="display:flex; align-items:center; gap:8px;">
-                    <div class="card-icon-bubble" style="background:#EFF6FF; color:#1D4ED8;">
-                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>
-                    </div>
-                    <span class="card-title-label">Peak Product Temp</span>
+                <div class="card-icon-bubble" style="background:#EFF6FF; color:#1D4ED8;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>
                 </div>
                 <span class="{margin_pill}">{margin:+.2f}°C</span>
             </div>
+            <div class="card-title-label">Peak Product Temp (Tp)</div>
             <div class="kpi-value-row">
                 <span class="kpi-main-num">{mc_run.T_max_mean:.1f}</span>
                 <span class="kpi-unit">°C</span>
             </div>
-            <div class="card-subtext" title="Formulation collapse limit Tc = {T_c_C:.1f}°C">Formulation collapse limit Tc = {T_c_C:.1f}°C</div>
+            <div class="card-subtext" title="Formulation collapse limit Tc = {T_c_C:.1f}°C">Collapse limit Tc = {T_c_C:.1f}°C</div>
         </div>
         """)
 
@@ -898,19 +901,17 @@ if nav_tab == "Dashboard Overview":
         render_html(f"""
         <div class="kpi-metric-card">
             <div class="card-top-row">
-                <div style="display:flex; align-items:center; gap:8px;">
-                    <div class="card-icon-bubble" style="background:#F0FDF4; color:#008837;">
-                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12A10 10 0 1 0 12 22"/><path d="M12 2a10 10 0 0 1 10 10"/><path d="m16 8-4 4-2-2"/><path d="M12 6v2"/></svg>
-                    </div>
-                    <span class="card-title-label">Uptime Recovered</span>
+                <div class="card-icon-bubble" style="background:#F0FDF4; color:#008837;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12A10 10 0 1 0 12 22"/><path d="M12 2a10 10 0 0 1 10 10"/><path d="m16 8-4 4-2-2"/><path d="M12 6v2"/></svg>
                 </div>
                 <span class="badge-pill-green">+{batches_gain} Batches</span>
             </div>
+            <div class="card-title-label">Uptime Recovered</div>
             <div class="kpi-value-row">
                 <span class="kpi-main-num">+{capacity_gain_hr:.0f}</span>
                 <span class="kpi-unit">h/yr</span>
             </div>
-            <div class="card-subtext" title="Est. commercial value: IDR 10.0–25.0 B">Est. value: IDR 10.0–25.0 B</div>
+            <div class="card-subtext" title="Est. commercial value: IDR 10.0–25.0 B">Est. value: IDR 10–25 B</div>
         </div>
         """)
 
@@ -920,19 +921,17 @@ if nav_tab == "Dashboard Overview":
         render_html(f"""
         <div class="kpi-metric-card">
             <div class="card-top-row">
-                <div style="display:flex; align-items:center; gap:8px;">
-                    <div class="card-icon-bubble" style="background:#FEF2F2; color:#DC2626;">
-                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                    </div>
-                    <span class="card-title-label">Collapse Risk</span>
+                <div class="card-icon-bubble" style="background:#FEF2F2; color:#DC2626;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                 </div>
                 <span class="{risk_pill}">{risk_status}</span>
             </div>
+            <div class="card-title-label">Batch Collapse Risk</div>
             <div class="kpi-value-row">
                 <span class="kpi-main-num">{risk_pct:.2f}</span>
                 <span class="kpi-unit">%</span>
             </div>
-            <div class="card-subtext" title="{int(np.sum(mc_run.collapse_arr))} of {N_mc} simulated perimeter vials">{int(np.sum(mc_run.collapse_arr))} of {N_mc} simulated perimeter vials</div>
+            <div class="card-subtext" title="{int(np.sum(mc_run.collapse_arr))} of {N_mc} simulated perimeter vials">{int(np.sum(mc_run.collapse_arr))} of {N_mc} perimeter vials</div>
         </div>
         """)
 
