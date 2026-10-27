@@ -84,20 +84,20 @@ st.sidebar.markdown("### ⚙️ Operating Parameters")
 # Preset selector
 preset = st.sidebar.selectbox(
     "Recipe Presets:",
-    ["Custom", "Conservative (Safe, -30°C)", "Moderate (Balanced, -25°C)", "Aggressive (Fast, -20°C)"]
+    ["Custom", "Conservative (Safe, -32°C, 8 Pa)", "Moderate (QbD Sweet Spot, -28°C, 10 Pa)", "Aggressive (High Risk, -22°C, 12 Pa)"]
 )
 
-if preset == "Conservative (Safe, -30°C)":
-    default_ts = -30.0
+if preset == "Conservative (Safe, -32°C, 8 Pa)":
+    default_ts = -32.0
     default_pc = 8.0
-elif preset == "Moderate (Balanced, -25°C)":
-    default_ts = -25.0
+elif preset == "Moderate (QbD Sweet Spot, -28°C, 10 Pa)":
+    default_ts = -28.0
     default_pc = 10.0
-elif preset == "Aggressive (Fast, -20°C)":
-    default_ts = -20.0
-    default_pc = 13.0
+elif preset == "Aggressive (High Risk, -22°C, 12 Pa)":
+    default_ts = -22.0
+    default_pc = 12.0
 else:
-    default_ts = -25.0
+    default_ts = -28.0
     default_pc = 10.0
 
 T_shelf_C = st.sidebar.slider(
@@ -133,14 +133,14 @@ N_mc = st.sidebar.slider(
 include_edge_vials = st.sidebar.checkbox(
     "Include Edge-Vial Radiation Effect",
     value=True,
-    help="Models perimeter vials receiving +15-25% radiative heat from chamber walls."
+    help="Models perimeter vials receiving +15-25% radiative heat from chamber walls. Uncheck to simulate physical radiation shield / guard rings."
 )
 
 T_c_C = st.sidebar.number_input(
     "Critical Collapse Temp (T_c) [°C]:",
-    value=-32.0,
+    value=-29.0,
     step=0.5,
-    help="Formulation glass transition/collapse temperature. Sucrose matrix collapses above this."
+    help="Formulation critical collapse temperature. 5% Sucrose-mannitol matrix benchmark is -29.0°C."
 )
 
 # -----------------------------------------------------------------------------
@@ -165,7 +165,8 @@ with st.spinner("Executing Pikal 1D Mechanistic Solver & Monte Carlo Engine...")
         P_chamber=P_chamber_Pa,
         N=N_mc,
         seed=42,
-        store_runs=True
+        store_runs=True,
+        include_edge_vials=include_edge_vials
     )
 
 # -----------------------------------------------------------------------------
@@ -233,13 +234,15 @@ with tab1:
 
     col_t1, col_t2 = st.columns(2)
     with col_t1:
-        st.info(f"**Deterministic Completion Time:** {det_run.drying_time_hr:.2f} hours")
+        st.info(f"**Deterministic Primary Drying Time:** {det_run.drying_time_hr:.2f} hours")
     with col_t2:
-        st.info(f"**Time Saved vs Conservative Baseline (-30°C):** {max(0, 48.0 - mc_run.t_dry_mean):.1f} hours per commercial batch")
+        saved_h = max(0.0, 17.5 - mc_run.t_dry_mean)
+        saved_pct = (saved_h / 17.5) * 100
+        st.info(f"**Time Saved vs Conservative Baseline (-32°C, 17.5 h):** {saved_h:.1f} hours saved (~{saved_pct:.0f}% cycle reduction)")
 
 with tab2:
     st.markdown("#### Vial Population Maximum Temperature Histogram")
-    st.markdown("Frequency distribution of peak sublimation temperatures ($T_{p,\text{max}}$) across 1,000 vials. Red bars represent vials that crossed $T_c$.")
+    st.markdown("Frequency distribution of peak sublimation temperatures ($T_{p,\\text{max}}$) across 1,000 vials. Red bars represent vials that crossed $T_c$.")
 
     fig_hist = plot_collapse_histogram(mc_run, save=False)
     st.pyplot(fig_hist)
@@ -272,9 +275,9 @@ with tab4:
         {"Parameter": "Ice Density (ρ_ice)", "Value": "917 kg/m³", "Reference": "Standard physical constant"},
         {"Parameter": "Cake Porosity (ε)", "Value": "0.92", "Reference": "Pikal et al. (2004)"},
         {"Parameter": "Mean Vial Heat Transfer Coeff (Kv)", "Value": "25.0 ± 3.5 W/(m²·K)", "Reference": "Rambhatla & Pikal (2003)"},
-        {"Parameter": "Initial Cake Resistance (R0)", "Value": "1.44 × 10⁵ Pa·s·m²/kg", "Reference": "Pikal; Fissore et al. (2011)"},
-        {"Parameter": "Resistance Slope Factor (A1)", "Value": "1.68 × 10⁸ Pa·s·m/kg", "Reference": "Pisano, Barresi, & Fissore"},
-        {"Parameter": "Critical Collapse Temp (Tc)", "Value": "-32.0 ± 1.0 °C", "Reference": "Freeze-Dry Microscopy benchmark"},
+        {"Parameter": "Initial Cake Resistance (R0)", "Value": "3.60 × 10⁵ Pa·s·m²/kg", "Reference": "Pikal; Fissore et al. (2011)"},
+        {"Parameter": "Resistance Slope Factor (A1)", "Value": "4.20 × 10⁸ Pa·s·m/kg", "Reference": "Pisano, Barresi, & Fissore"},
+        {"Parameter": "Critical Collapse Temp (Tc)", "Value": "-29.0 ± 0.8 °C", "Reference": "Freeze-Dry Microscopy benchmark"},
     ]
     st.table(pd.DataFrame(param_data))
 

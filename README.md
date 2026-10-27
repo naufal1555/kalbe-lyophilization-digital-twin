@@ -6,7 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 > **Kalbe Advanced Engineering Center (AEC) — Process Simulation Engineering (PSE) Case Study**  
-> **Author:** Engineering Intern Candidate  
+> **Author:** Naufal Fathin ([naufaalfathin15@gmail.com](mailto:naufaalfathin15@gmail.com))  
 > **Target Facility:** PT Kalbio Global Medika (KGM) — Cikarang Biopharmaceutical Plant
 
 ---
@@ -86,7 +86,7 @@ In commercial production, vials do not experience identical thermal environments
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/your-username/kalbe-lyophilization-digital-twin.git
+git clone https://github.com/naufal1555/kalbe-lyophilization-digital-twin.git
 cd kalbe-lyophilization-digital-twin
 ```
 

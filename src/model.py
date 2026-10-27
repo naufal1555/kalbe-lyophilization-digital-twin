@@ -118,10 +118,17 @@ def solve_product_temperature(
     T_low = cfg.TP_BRACKET[0]
     T_high = min(T_shelf - 0.01, cfg.TP_BRACKET[1])
 
+    f_low = residual(T_low)
+    f_high = residual(T_high)
+
+    if f_low * f_high > 0:
+        # If bracket endpoints share sign, return the boundary with smallest residual
+        return T_shelf if abs(f_high) < abs(f_low) else T_low
+
     try:
         Tp = brentq(residual, T_low, T_high, xtol=1e-6, maxiter=200)
-    except ValueError:
-        # If root-finding fails, return the shelf temp (no sublimation)
+    except (ValueError, RuntimeError):
+        # Fallback to shelf temperature
         Tp = T_shelf
 
     return Tp

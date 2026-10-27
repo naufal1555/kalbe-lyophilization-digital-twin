@@ -64,6 +64,7 @@ def run_monte_carlo(
     N: int = cfg.N_MC_DEFAULT,
     seed: int = cfg.SEED,
     store_runs: bool = False,
+    include_edge_vials: bool = True,
 ) -> MonteCarloResult:
     """
     Execute Monte Carlo simulation for a given setpoint.
@@ -80,6 +81,9 @@ def run_monte_carlo(
         Random seed for reproducibility
     store_runs : bool
         Whether to store all individual DryingResult objects
+    include_edge_vials : bool
+        Whether to include edge-vial radiation variability (+15-25% Kv).
+        If False, simulates radiation shielding/guard rings (Kv ~ N(22, 1.2^2)).
 
     Returns
     -------
@@ -88,7 +92,12 @@ def run_monte_carlo(
     rng = np.random.default_rng(seed)
 
     # Sample stochastic parameters
-    Kv_samples = rng.normal(cfg.KV_MEAN, cfg.KV_STD, size=N)
+    if include_edge_vials:
+        Kv_samples = rng.normal(cfg.KV_MEAN, cfg.KV_STD, size=N)
+    else:
+        # Radiation-shielded or center-vials only (effective guard ring mitigation)
+        Kv_samples = rng.normal(cfg.KV_CENTER, 1.2, size=N)
+
     Kv_samples = np.clip(Kv_samples, 10.0, 50.0)  # Physical bounds
 
     Rp_scale_samples = rng.normal(cfg.RP_SCALE_MEAN, cfg.RP_SCALE_STD, size=N)
@@ -102,7 +111,7 @@ def run_monte_carlo(
     collapse_arr = np.zeros(N, dtype=bool)
     all_runs: List[DryingResult] = []
 
-    # Run simulations
+    # Run simulations once (O(N) efficiency)
     for i in range(N):
         result = simulate_primary_drying(
             T_shelf=T_shelf,
@@ -114,67 +123,31 @@ def run_monte_carlo(
         T_max_arr[i] = result.T_product_max
         drying_time_arr[i] = result.drying_time_hr
         collapse_arr[i] = result.collapsed
-        if store_runs:
-            all_runs.append(result)
+        all_runs.append(result)
 
-    # Build temperature envelope
-    # Find common time grid (use shortest run to avoid NaN)
-    min_time = np.min(drying_time_arr) * 3600  # back to seconds
-    max_time = np.max(drying_time_arr) * 3600
+    # Build temperature envelope on common time grid
+    max_time = np.max(drying_time_arr) * 3600  # seconds
     n_common = 500
     time_common_s = np.linspace(0, max_time, n_common)
     time_common_hr = time_common_s / 3600.0
 
     # Interpolate all runs onto common grid
-    if store_runs and len(all_runs) > 0:
-        Tp_matrix = np.full((N, n_common), np.nan)
-        for i, run in enumerate(all_runs):
-            if len(run.time) > 1:
-                Tp_interp = np.interp(
-                    time_common_s, run.time, run.T_product_C,
-                    right=run.T_product_C[-1]
-                )
-                Tp_matrix[i, :] = Tp_interp
-
-        Tp_median = np.nanpercentile(Tp_matrix, 50, axis=0)
-        Tp_p5 = np.nanpercentile(Tp_matrix, 5, axis=0)
-        Tp_p95 = np.nanpercentile(Tp_matrix, 95, axis=0)
-        Tp_p25 = np.nanpercentile(Tp_matrix, 25, axis=0)
-        Tp_p75 = np.nanpercentile(Tp_matrix, 75, axis=0)
-        Tp_min = np.nanmin(Tp_matrix, axis=0)
-        Tp_max_env = np.nanmax(Tp_matrix, axis=0)
-    else:
-        # Run again with stored results for envelope
-        all_runs_env: List[DryingResult] = []
-        for i in range(N):
-            result = simulate_primary_drying(
-                T_shelf=T_shelf,
-                P_chamber=P_chamber,
-                Kv=Kv_samples[i],
-                Rp_scale=Rp_scale_samples[i],
-                Tc=Tc_samples[i],
+    Tp_matrix = np.full((N, n_common), np.nan)
+    for i, run in enumerate(all_runs):
+        if len(run.time) > 1:
+            Tp_interp = np.interp(
+                time_common_s, run.time, run.T_product_C,
+                right=run.T_product_C[-1]
             )
-            all_runs_env.append(result)
+            Tp_matrix[i, :] = Tp_interp
 
-        Tp_matrix = np.full((N, n_common), np.nan)
-        for i, run in enumerate(all_runs_env):
-            if len(run.time) > 1:
-                Tp_interp = np.interp(
-                    time_common_s, run.time, run.T_product_C,
-                    right=run.T_product_C[-1]
-                )
-                Tp_matrix[i, :] = Tp_interp
-
-        if not store_runs:
-            all_runs = all_runs_env
-
-        Tp_median = np.nanpercentile(Tp_matrix, 50, axis=0)
-        Tp_p5 = np.nanpercentile(Tp_matrix, 5, axis=0)
-        Tp_p95 = np.nanpercentile(Tp_matrix, 95, axis=0)
-        Tp_p25 = np.nanpercentile(Tp_matrix, 25, axis=0)
-        Tp_p75 = np.nanpercentile(Tp_matrix, 75, axis=0)
-        Tp_min = np.nanmin(Tp_matrix, axis=0)
-        Tp_max_env = np.nanmax(Tp_matrix, axis=0)
+    Tp_median = np.nanpercentile(Tp_matrix, 50, axis=0)
+    Tp_p5 = np.nanpercentile(Tp_matrix, 5, axis=0)
+    Tp_p95 = np.nanpercentile(Tp_matrix, 95, axis=0)
+    Tp_p25 = np.nanpercentile(Tp_matrix, 25, axis=0)
+    Tp_p75 = np.nanpercentile(Tp_matrix, 75, axis=0)
+    Tp_min = np.nanmin(Tp_matrix, axis=0)
+    Tp_max_env = np.nanmax(Tp_matrix, axis=0)
 
     # Compute aggregate statistics
     risk_frac = float(np.mean(collapse_arr))
