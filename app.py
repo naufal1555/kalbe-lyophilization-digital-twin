@@ -32,14 +32,23 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# Helper function to render HTML cleanly without triggering markdown indented code blocks
+def render_html(html_str: str):
+    """Safely render HTML without Markdown indent parsing issues."""
+    lines = [line.strip() for line in html_str.strip().split("\n") if line.strip()]
+    st.markdown("".join(lines), unsafe_allow_html=True)
+
 # -----------------------------------------------------------------------------
 # BESPOKE CSS: BORDERFLOW AESTHETIC + KALBE FARMA CORPORATE GREEN GRADIENT
 # -----------------------------------------------------------------------------
-st.markdown("""
+render_html("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
-    /* Global Typography & Colors */
+    *, *::before, *::after {
+        box-sizing: border-box !important;
+    }
+
     html, body, [class*="css"] {
         font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
     }
@@ -49,11 +58,12 @@ st.markdown("""
         color: #0F172A;
     }
 
-    /* Container constraints */
     .block-container {
-        padding-top: 1.25rem !important;
+        padding-top: 1.2rem !important;
         padding-bottom: 2rem !important;
-        max-width: 1400px !important;
+        padding-left: 1.5rem !important;
+        padding-right: 1.5rem !important;
+        max-width: 1440px !important;
     }
 
     /* Top Navigation Search & Profile Bar */
@@ -63,9 +73,9 @@ st.markdown("""
         align-items: center;
         background: #FFFFFF;
         border: 1px solid #E2E8F0;
-        border-radius: 16px;
-        padding: 10px 20px;
-        margin-bottom: 20px;
+        border-radius: 14px;
+        padding: 9px 18px;
+        margin-bottom: 18px;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
     }
 
@@ -74,11 +84,11 @@ st.markdown("""
         align-items: center;
         background: #F1F5F9;
         border: 1px solid #E2E8F0;
-        border-radius: 10px;
-        padding: 7px 14px;
-        width: 400px;
+        border-radius: 8px;
+        padding: 6px 12px;
+        width: 360px;
         color: #64748B;
-        font-size: 0.85rem;
+        font-size: 0.82rem;
     }
 
     .search-input-box span.shortcut {
@@ -86,8 +96,8 @@ st.markdown("""
         background: #FFFFFF;
         border: 1px solid #CBD5E1;
         border-radius: 4px;
-        padding: 2px 6px;
-        font-size: 0.7rem;
+        padding: 1px 5px;
+        font-size: 0.68rem;
         font-family: 'JetBrains Mono', monospace;
         color: #94A3B8;
     }
@@ -95,12 +105,12 @@ st.markdown("""
     .nav-profile-block {
         display: flex;
         align-items: center;
-        gap: 16px;
+        gap: 14px;
     }
 
     .nav-icon-btn {
-        width: 36px;
-        height: 36px;
+        width: 34px;
+        height: 34px;
         border-radius: 50%;
         background: #F8FAFC;
         border: 1px solid #E2E8F0;
@@ -114,8 +124,8 @@ st.markdown("""
 
     .nav-icon-btn .badge-dot {
         position: absolute;
-        top: 6px;
-        right: 6px;
+        top: 5px;
+        right: 5px;
         width: 8px;
         height: 8px;
         background: #008837;
@@ -127,13 +137,13 @@ st.markdown("""
         display: flex;
         align-items: center;
         gap: 10px;
-        padding-left: 8px;
+        padding-left: 10px;
         border-left: 1px solid #E2E8F0;
     }
 
     .user-avatar-img {
-        width: 36px;
-        height: 36px;
+        width: 34px;
+        height: 34px;
         border-radius: 50%;
         background: linear-gradient(135deg, #008837 0%, #00B14F 100%);
         color: #FFFFFF;
@@ -141,19 +151,19 @@ st.markdown("""
         align-items: center;
         justify-content: center;
         font-weight: 700;
-        font-size: 0.85rem;
+        font-size: 0.82rem;
         box-shadow: 0 2px 4px rgba(0, 136, 55, 0.2);
     }
 
     .user-name-text {
-        font-size: 0.85rem;
+        font-size: 0.82rem;
         font-weight: 700;
         color: #0F172A;
         line-height: 1.2;
     }
 
     .user-role-text {
-        font-size: 0.72rem;
+        font-size: 0.70rem;
         color: #64748B;
         font-weight: 500;
     }
@@ -163,11 +173,11 @@ st.markdown("""
         display: flex;
         justify-content: space-between;
         align-items: flex-end;
-        margin-bottom: 20px;
+        margin-bottom: 18px;
     }
 
     .greeting-title {
-        font-size: 1.75rem;
+        font-size: 1.65rem;
         font-weight: 800;
         letter-spacing: -0.025em;
         color: #0F172A;
@@ -175,16 +185,16 @@ st.markdown("""
     }
 
     .greeting-subtitle {
-        font-size: 0.88rem;
+        font-size: 0.85rem;
         color: #64748B;
-        margin-top: 4px;
+        margin-top: 3px;
         margin-bottom: 0;
     }
 
     .greeting-pill-bar {
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 8px;
     }
 
     .filter-chip {
@@ -194,26 +204,30 @@ st.markdown("""
         background: #FFFFFF;
         border: 1px solid #E2E8F0;
         border-radius: 8px;
-        padding: 6px 14px;
-        font-size: 0.82rem;
+        padding: 5px 12px;
+        font-size: 0.78rem;
         font-weight: 600;
         color: #334155;
         box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
     }
 
-    /* BorderFlow KPI Metric Cards */
+    /* Equal-Height KPI Metric Cards */
     .kpi-metric-card {
         background: #FFFFFF;
         border: 1px solid #E2E8F0;
-        border-radius: 16px;
-        padding: 18px 20px;
+        border-radius: 14px;
+        padding: 14px 16px;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03), 0 1px 2px rgba(0, 0, 0, 0.02);
-        transition: transform 0.15s ease, box-shadow 0.15s ease;
-        position: relative;
+        transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+        height: 155px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        box-sizing: border-box;
     }
 
     .kpi-metric-card:hover {
-        box-shadow: 0 4px 14px rgba(0, 136, 55, 0.08);
+        box-shadow: 0 4px 12px rgba(0, 136, 55, 0.08);
         border-color: #CBD5E1;
     }
 
@@ -221,100 +235,118 @@ st.markdown("""
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 12px;
     }
 
     .card-icon-bubble {
-        width: 38px;
-        height: 38px;
-        border-radius: 10px;
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.1rem;
+        flex-shrink: 0;
     }
 
     .card-title-label {
-        font-size: 0.85rem;
-        font-weight: 600;
-        color: #64748B;
-        margin-left: 10px;
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: #475569;
+        white-space: nowrap;
+    }
+
+    .kpi-value-row {
+        display: flex;
+        align-items: baseline;
+        justify-content: flex-start;
+        margin: 4px 0;
     }
 
     .kpi-main-num {
-        font-size: 1.9rem;
+        font-size: 1.7rem;
         font-weight: 800;
         letter-spacing: -0.03em;
         color: #0F172A;
-        line-height: 1.1;
+        line-height: 1;
+        font-family: 'JetBrains Mono', 'Plus Jakarta Sans', monospace;
+    }
+
+    .kpi-unit {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #64748B;
+        margin-left: 4px;
+        font-family: 'Plus Jakarta Sans', sans-serif;
     }
 
     .badge-pill-green {
         display: inline-flex;
         align-items: center;
-        gap: 3px;
         background: #DCFCE7;
         color: #15803D;
-        font-size: 0.75rem;
+        font-size: 0.72rem;
         font-weight: 700;
         padding: 3px 8px;
         border-radius: 6px;
-        margin-left: 8px;
+        white-space: nowrap;
+        flex-shrink: 0;
     }
 
     .badge-pill-blue {
         display: inline-flex;
         align-items: center;
-        gap: 3px;
         background: #EFF6FF;
         color: #1D4ED8;
-        font-size: 0.75rem;
+        font-size: 0.72rem;
         font-weight: 700;
         padding: 3px 8px;
         border-radius: 6px;
-        margin-left: 8px;
+        white-space: nowrap;
+        flex-shrink: 0;
     }
 
     .badge-pill-amber {
         display: inline-flex;
         align-items: center;
-        gap: 3px;
         background: #FEF3C7;
         color: #D97706;
-        font-size: 0.75rem;
+        font-size: 0.72rem;
         font-weight: 700;
         padding: 3px 8px;
         border-radius: 6px;
-        margin-left: 8px;
+        white-space: nowrap;
+        flex-shrink: 0;
     }
 
     .badge-pill-red {
         display: inline-flex;
         align-items: center;
-        gap: 3px;
         background: #FEE2E2;
         color: #DC2626;
-        font-size: 0.75rem;
+        font-size: 0.72rem;
         font-weight: 700;
         padding: 3px 8px;
         border-radius: 6px;
-        margin-left: 8px;
+        white-space: nowrap;
+        flex-shrink: 0;
     }
 
     .card-subtext {
-        font-size: 0.78rem;
+        font-size: 0.73rem;
         color: #94A3B8;
-        margin-top: 6px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     /* White Content Card Panels */
     .white-panel {
         background: #FFFFFF;
         border: 1px solid #E2E8F0;
-        border-radius: 16px;
-        padding: 22px;
+        border-radius: 14px;
+        padding: 20px;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
-        margin-bottom: 20px;
+        margin-bottom: 18px;
+        box-sizing: border-box;
     }
 
     .panel-header-row {
@@ -325,62 +357,151 @@ st.markdown("""
     }
 
     .panel-heading {
-        font-size: 1.05rem;
+        font-size: 1.02rem;
         font-weight: 700;
         color: #0F172A;
         margin: 0;
     }
 
-    /* List Item Row for Benchmarks & Quick Actions */
-    .list-item-row {
-        display: flex;
-        align-items: center;
-        padding: 12px 14px;
-        border-radius: 12px;
-        border: 1px solid #F1F5F9;
-        margin-bottom: 8px;
+    /* Benchmark Card Items (2-Line Architecture for Robust Space) */
+    .benchmark-card-item {
         background: #FAFAFA;
+        border: 1px solid #F1F5F9;
+        border-radius: 10px;
+        padding: 10px 12px;
+        margin-bottom: 8px;
         transition: background 0.15s ease, border-color 0.15s ease;
     }
 
-    .list-item-row:hover {
+    .benchmark-card-item:hover {
         background: #F0FDF4;
         border-color: #BBF7D0;
     }
 
-    .list-icon-pill {
-        width: 36px;
-        height: 36px;
-        border-radius: 8px;
+    .benchmark-top-line {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 6px;
+    }
+
+    .benchmark-icon-chip {
+        width: 26px;
+        height: 26px;
+        border-radius: 6px;
         background: #E8F5E9;
         color: #008837;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-weight: 700;
-        font-size: 0.9rem;
-        margin-right: 12px;
+        font-weight: 800;
+        font-size: 0.74rem;
+        flex-shrink: 0;
     }
 
-    .list-title {
-        font-size: 0.86rem;
+    .benchmark-name {
+        font-size: 0.83rem;
+        font-weight: 700;
+        color: #0F172A;
+    }
+
+    .benchmark-bottom-line {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.74rem;
+        color: #64748B;
+        padding-left: 34px;
+    }
+
+    .benchmark-time {
+        font-family: 'JetBrains Mono', monospace;
+        font-weight: 700;
+        font-size: 0.85rem;
+        color: #0F172A;
+    }
+
+    /* Quick Action Items */
+    .quick-action-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #FAFAFA;
+        border: 1px solid #F1F5F9;
+        border-radius: 10px;
+        padding: 10px 12px;
+        margin-bottom: 8px;
+        transition: background 0.15s ease, border-color 0.15s ease;
+    }
+
+    .quick-action-item:hover {
+        background: #F8FAFC;
+        border-color: #E2E8F0;
+    }
+
+    .action-icon-chip {
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .action-title {
+        font-size: 0.82rem;
         font-weight: 700;
         color: #0F172A;
         line-height: 1.2;
     }
 
-    .list-subtitle {
-        font-size: 0.74rem;
+    .action-desc {
+        font-size: 0.72rem;
         color: #64748B;
+        margin-top: 1px;
     }
 
-    .list-value-bold {
-        font-size: 0.9rem;
-        font-weight: 700;
-        color: #0F172A;
+    /* Progress Breakdown Styling */
+    .progress-label-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.80rem;
+        font-weight: 600;
+        color: #334155;
+        margin-bottom: 4px;
+    }
+
+    .progress-val-mono {
         font-family: 'JetBrains Mono', monospace;
-        margin-left: auto;
-        margin-right: 12px;
+        font-weight: 700;
+        font-size: 0.80rem;
+    }
+
+    .progress-track {
+        width: 100%;
+        height: 8px;
+        background: #F1F5F9;
+        border-radius: 99px;
+        margin-bottom: 12px;
+        overflow: hidden;
+    }
+
+    .progress-bar-fill {
+        height: 100%;
+        border-radius: 99px;
+    }
+
+    .heat-transfer-note {
+        font-size: 0.73rem;
+        color: #64748B;
+        background: #F8FAFC;
+        border: 1px solid #E2E8F0;
+        border-radius: 8px;
+        padding: 8px 10px;
+        line-height: 1.4;
+        margin-top: 10px;
     }
 
     /* Sidebar Clean Styling */
@@ -395,7 +516,7 @@ st.markdown("""
 
     div[data-testid="stRadio"] div[role="radiogroup"] > label {
         padding: 8px 12px;
-        border-radius: 10px;
+        border-radius: 8px;
         transition: all 0.15s ease;
         margin-bottom: 2px;
         cursor: pointer;
@@ -417,13 +538,13 @@ st.markdown("""
         display: flex;
         align-items: center;
         gap: 10px;
-        padding: 6px 0 16px 0;
+        padding: 4px 0 14px 0;
         border-bottom: 1px solid #F1F5F9;
-        margin-bottom: 14px;
+        margin-bottom: 12px;
     }
 
     .kalbe-brand-text {
-        font-size: 1.15rem;
+        font-size: 1.12rem;
         font-weight: 800;
         letter-spacing: -0.02em;
         background: linear-gradient(135deg, #008837 0%, #00B14F 100%);
@@ -432,34 +553,34 @@ st.markdown("""
     }
 
     .sidebar-category-header {
-        font-size: 0.68rem;
+        font-size: 0.67rem;
         font-weight: 800;
         letter-spacing: 0.08em;
         text-transform: uppercase;
         color: #94A3B8;
-        margin-top: 16px;
-        margin-bottom: 8px;
+        margin-top: 14px;
+        margin-bottom: 6px;
     }
 
     .sidebar-promo-banner {
         background: linear-gradient(135deg, #008837 0%, #00B14F 100%);
-        border-radius: 14px;
-        padding: 16px;
+        border-radius: 12px;
+        padding: 14px;
         color: #FFFFFF;
-        margin-top: 20px;
+        margin-top: 18px;
     }
 
     .sidebar-promo-banner h4 {
         color: #FFFFFF;
-        font-size: 0.92rem;
+        font-size: 0.90rem;
         font-weight: 700;
-        margin: 0 0 6px 0;
+        margin: 0 0 4px 0;
     }
 
     .sidebar-promo-banner p {
         color: #DCFCE7;
-        font-size: 0.74rem;
-        line-height: 1.4;
+        font-size: 0.73rem;
+        line-height: 1.35;
         margin: 0 0 10px 0;
     }
 
@@ -468,10 +589,10 @@ st.markdown("""
         background: linear-gradient(135deg, #008837 0%, #00B14F 100%);
         color: #FFFFFF;
         border: none;
-        border-radius: 10px;
+        border-radius: 8px;
         font-weight: 700;
-        font-size: 0.85rem;
-        padding: 8px 18px;
+        font-size: 0.82rem;
+        padding: 7px 16px;
         box-shadow: 0 2px 4px rgba(0, 136, 55, 0.2);
         transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
@@ -484,17 +605,17 @@ st.markdown("""
 
     /* Streamlit Tabs Styling */
     .stTabs [data-baseweb="tab-list"] {
-        gap: 8px;
+        gap: 6px;
         background-color: transparent;
     }
 
     .stTabs [data-baseweb="tab"] {
-        height: 38px;
+        height: 36px;
         border-radius: 8px;
         font-weight: 600;
-        font-size: 0.85rem;
+        font-size: 0.82rem;
         color: #64748B;
-        padding: 0 16px;
+        padding: 0 14px;
         background-color: #FFFFFF;
         border: 1px solid #E2E8F0;
     }
@@ -506,15 +627,15 @@ st.markdown("""
         font-weight: 700;
     }
 </style>
-""", unsafe_allow_html=True)
+""")
 
 # -----------------------------------------------------------------------------
 # SIDEBAR NAVIGATION (BORDERFLOW LEFT DRAWER)
 # -----------------------------------------------------------------------------
 with st.sidebar:
-    st.markdown("""
+    render_html("""
     <div class="sidebar-brand-block">
-        <svg width="34" height="34" viewBox="0 0 32 32" fill="none">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
             <rect width="32" height="32" rx="8" fill="url(#kalbe-grad)"/>
             <path d="M9 16C9 12.134 12.134 9 16 9C19.866 9 23 12.134 23 16C23 19.866 19.866 23 16 23" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
             <circle cx="16" cy="16" r="3" fill="white"/>
@@ -530,9 +651,9 @@ with st.sidebar:
             <div style="font-size:0.7rem; color:#94A3B8; font-weight:600;">AEC CDT // Lyo Digital Twin</div>
         </div>
     </div>
-    """, unsafe_allow_html=True)
+    """)
 
-    st.markdown('<div class="sidebar-category-header">PROCESS NAVIGATION</div>', unsafe_allow_html=True)
+    render_html('<div class="sidebar-category-header">PROCESS NAVIGATION</div>')
 
     nav_tab = st.radio(
         "Navigation",
@@ -545,7 +666,7 @@ with st.sidebar:
         label_visibility="collapsed"
     )
 
-    st.markdown('<div class="sidebar-category-header">CRITICAL PROCESS PARAMETERS (CPPs)</div>', unsafe_allow_html=True)
+    render_html('<div class="sidebar-category-header">CRITICAL PROCESS PARAMETERS (CPPs)</div>')
 
     preset = st.selectbox(
         "Operational Recipe Preset:",
@@ -590,7 +711,7 @@ with st.sidebar:
     )
     st.caption(f"Vacuum: **{P_chamber_Pa * 7.50062:.1f} mTorr** | Sublimation Sat: **{solve_product_temperature(T_shelf_C+273.15, P_chamber_Pa, 0.0, 25.0)-273.15:.1f} °C**")
 
-    st.markdown('<div class="sidebar-category-header">UNCERTAINTY & SHIELDING</div>', unsafe_allow_html=True)
+    render_html('<div class="sidebar-category-header">UNCERTAINTY & SHIELDING</div>')
 
     deploy_guard_rings = st.toggle(
         "Deploy Guard Ring Radiation Shields",
@@ -612,24 +733,24 @@ with st.sidebar:
         help="Critical product interface temperature for sucrose/mannitol matrix."
     )
 
-    st.markdown('<div class="sidebar-category-header">FACILITY & COMPLIANCE</div>', unsafe_allow_html=True)
-    st.markdown("""
-    <div style="font-size:0.75rem; color:#64748B; line-height:1.5;">
+    render_html('<div class="sidebar-category-header">FACILITY & COMPLIANCE</div>')
+    render_html("""
+    <div style="font-size:0.74rem; color:#64748B; line-height:1.45;">
         <div><b>Facility:</b> PT Kalbio Global Medika (KGM)</div>
         <div><b>Suite:</b> Sterile Suite 04 (Lyo Unit 02)</div>
         <div><b>Standard:</b> Cleanroom Grade A / cGMP</div>
         <div><b>Product:</b> Monoclonal Antibody (mAb-01)</div>
     </div>
-    """, unsafe_allow_html=True)
+    """)
 
-    # Promo / Report Download Banner in Sidebar (BorderFlow Send Money style)
+    # Promo / Report Download Banner in Sidebar
     pdf_report_path = PROJECT_ROOT / "report" / "Technical_Report.pdf"
-    st.markdown("""
+    render_html("""
     <div class="sidebar-promo-banner">
         <h4>Regulatory Dossier Ready</h4>
         <p>Export validated ICH Q8 Design Space for BPOM submission.</p>
     </div>
-    """, unsafe_allow_html=True)
+    """)
 
     if pdf_report_path.exists():
         with open(pdf_report_path, "rb") as f:
@@ -669,19 +790,19 @@ with st.spinner("Executing Implicit Moving-Boundary ODE Solver & Monte Carlo Eng
 current_hour = datetime.now().hour
 time_greeting = "Good morning" if current_hour < 12 else ("Good afternoon" if current_hour < 18 else "Good evening")
 
-st.markdown(f"""
+render_html(f"""
 <div class="top-nav-bar">
     <div class="search-input-box">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2" style="margin-right:8px;"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-        <span>Search batch ID, recipe CPPs, or sensor tag...</span>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2" style="margin-right:8px; flex-shrink:0;"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">Search batch ID, recipe CPPs, or sensor tag...</span>
         <span class="shortcut">Ctrl+K</span>
     </div>
     <div class="nav-profile-block">
         <div class="nav-icon-btn" title="Cikarang Sterile Suite Status">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
         </div>
         <div class="nav-icon-btn" title="Plant Telemetry Alerts">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
             <span class="badge-dot"></span>
         </div>
         <div class="user-profile-card">
@@ -693,14 +814,14 @@ st.markdown(f"""
         </div>
     </div>
 </div>
-""", unsafe_allow_html=True)
+""")
 
 # =============================================================================
 # VIEW ROUTING: TAB 1 — DASHBOARD OVERVIEW (BORDERFLOW 1-TO-1 REPLICATION)
 # =============================================================================
 if nav_tab == "Dashboard Overview":
     # Greeting Header with Date & Campaign Filter Chips
-    st.markdown(f"""
+    render_html(f"""
     <div class="greeting-container">
         <div>
             <h1 class="greeting-title">{time_greeting}, Naufal</h1>
@@ -708,18 +829,18 @@ if nav_tab == "Dashboard Overview":
         </div>
         <div class="greeting-pill-bar">
             <div class="filter-chip">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#008837" stroke-width="2"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#008837" stroke-width="2"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
                 <span>Batch Campaign 2026.Q4</span>
             </div>
             <div class="filter-chip" style="background:#F0FDF4; border-color:#BBF7D0; color:#008837;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#008837" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#008837" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
                 <span>Cleanroom Grade A / cGMP</span>
             </div>
         </div>
     </div>
-    """, unsafe_allow_html=True)
+    """)
 
-    # 4 BorderFlow KPI Metric Cards (Row of 4)
+    # 4 BorderFlow KPI Metric Cards (Strict Equal Heights 155px)
     k1, k2, k3, k4 = st.columns(4)
 
     time_saved = max(0.0, 17.2 - mc_run.t_dry_mean)
@@ -730,106 +851,105 @@ if nav_tab == "Dashboard Overview":
     batches_gain = int(capacity_gain_hr / 17.2)
 
     with k1:
-        st.markdown(f"""
+        render_html(f"""
         <div class="kpi-metric-card">
             <div class="card-top-row">
-                <div style="display:flex; align-items:center;">
+                <div style="display:flex; align-items:center; gap:8px;">
                     <div class="card-icon-bubble" style="background:#E8F5E9; color:#008837;">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                     </div>
-                    <span class="card-title-label">Primary Drying Time</span>
+                    <span class="card-title-label">Primary Drying</span>
                 </div>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-            </div>
-            <div style="display:flex; align-items:baseline;">
-                <span class="kpi-main-num">{mc_run.t_dry_mean:.1f}<span style="font-size:1.0rem; color:#64748B; font-weight:600;"> hrs</span></span>
                 <span class="badge-pill-green">↑ {pct_saved:.0f}%</span>
             </div>
-            <div class="card-subtext">vs. baseline recipe (-32°C, 17.2 h)</div>
+            <div class="kpi-value-row">
+                <span class="kpi-main-num">{mc_run.t_dry_mean:.1f}<span class="kpi-unit">hrs</span></span>
+            </div>
+            <div class="card-subtext" title="vs. baseline recipe (-32°C, 17.2 h)">vs. baseline recipe (-32°C, 17.2 h)</div>
         </div>
-        """, unsafe_allow_html=True)
+        """)
 
     with k2:
-        st.markdown(f"""
+        margin_pill = "badge-pill-green" if margin >= 0.2 else ("badge-pill-amber" if margin >= -0.2 else "badge-pill-red")
+        render_html(f"""
         <div class="kpi-metric-card">
             <div class="card-top-row">
-                <div style="display:flex; align-items:center;">
+                <div style="display:flex; align-items:center; gap:8px;">
                     <div class="card-icon-bubble" style="background:#EFF6FF; color:#1D4ED8;">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>
                     </div>
-                    <span class="card-title-label">Peak Product Temp (Tp)</span>
+                    <span class="card-title-label">Peak Product Temp</span>
                 </div>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                <span class="{margin_pill}">{margin:+.2f}°C</span>
             </div>
-            <div style="display:flex; align-items:baseline;">
-                <span class="kpi-main-num">{mc_run.T_max_mean:.1f}<span style="font-size:1.0rem; color:#64748B; font-weight:600;"> °C</span></span>
-                <span class="{"badge-pill-green" if margin>=0.2 else ("badge-pill-amber" if margin>=-0.2 else "badge-pill-red")}">{margin:+.2f}°C</span>
+            <div class="kpi-value-row">
+                <span class="kpi-main-num">{mc_run.T_max_mean:.1f}<span class="kpi-unit">°C</span></span>
             </div>
-            <div class="card-subtext">Formulation collapse limit Tc = {T_c_C:.1f}°C</div>
+            <div class="card-subtext" title="Formulation collapse limit Tc = {T_c_C:.1f}°C">Formulation collapse limit Tc = {T_c_C:.1f}°C</div>
         </div>
-        """, unsafe_allow_html=True)
+        """)
 
     with k3:
-        st.markdown(f"""
+        render_html(f"""
         <div class="kpi-metric-card">
             <div class="card-top-row">
-                <div style="display:flex; align-items:center;">
-                    <div class="card-icon-bubble" style="background:#F0FDF4; color:#00B14F;">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <div class="card-icon-bubble" style="background:#F0FDF4; color:#008837;">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12A10 10 0 1 0 12 22"/><path d="M12 2a10 10 0 0 1 10 10"/><path d="m16 8-4 4-2-2"/><path d="M12 6v2"/></svg>
                     </div>
-                    <span class="card-title-label">Cleanroom Uptime Recovered</span>
+                    <span class="card-title-label">Uptime Recovered</span>
                 </div>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-            </div>
-            <div style="display:flex; align-items:baseline;">
-                <span class="kpi-main-num">+{capacity_gain_hr:.0f}<span style="font-size:1.0rem; color:#64748B; font-weight:600;"> h/yr</span></span>
                 <span class="badge-pill-green">+{batches_gain} Batches</span>
             </div>
-            <div class="card-subtext">Est. commercial value: IDR 10.0–25.0 B</div>
+            <div class="kpi-value-row">
+                <span class="kpi-main-num">+{capacity_gain_hr:.0f}<span class="kpi-unit">h/yr</span></span>
+            </div>
+            <div class="card-subtext" title="Est. commercial value: IDR 10.0–25.0 B">Est. value: IDR 10.0–25.0 B</div>
         </div>
-        """, unsafe_allow_html=True)
+        """)
 
     with k4:
-        pill_c = "badge-pill-green" if risk_pct < 0.1 else ("badge-pill-amber" if risk_pct < 2.0 else "badge-pill-red")
-        st.markdown(f"""
+        risk_pill = "badge-pill-green" if risk_pct < 0.1 else ("badge-pill-amber" if risk_pct < 2.0 else "badge-pill-red")
+        risk_status = "ICH Q8 Safe" if risk_pct < 0.1 else ("QbD Sweet Spot" if risk_pct < 2.0 else "Failure Breach")
+        render_html(f"""
         <div class="kpi-metric-card">
             <div class="card-top-row">
-                <div style="display:flex; align-items:center;">
+                <div style="display:flex; align-items:center; gap:8px;">
                     <div class="card-icon-bubble" style="background:#FEF2F2; color:#DC2626;">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                     </div>
-                    <span class="card-title-label">Batch Collapse Risk P(Tp > Tc)</span>
+                    <span class="card-title-label">Collapse Risk</span>
                 </div>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                <span class="{risk_pill}">{risk_status}</span>
             </div>
-            <div style="display:flex; align-items:baseline;">
-                <span class="kpi-main-num">{risk_pct:.2f}<span style="font-size:1.0rem; color:#64748B; font-weight:600;"> %</span></span>
-                <span class="{pill_c}">{"ICH Q8 Compliant" if risk_pct<0.1 else ("QbD Sweet Spot" if risk_pct<2.0 else "Failure Breach")}</span>
+            <div class="kpi-value-row">
+                <span class="kpi-main-num">{risk_pct:.2f}<span class="kpi-unit">%</span></span>
             </div>
-            <div class="card-subtext">{int(np.sum(mc_run.collapse_arr))} of {N_mc} simulated perimeter vials</div>
+            <div class="card-subtext" title="{int(np.sum(mc_run.collapse_arr))} of {N_mc} simulated perimeter vials">{int(np.sum(mc_run.collapse_arr))} of {N_mc} simulated perimeter vials</div>
         </div>
-        """, unsafe_allow_html=True)
+        """)
 
-    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown("<div style='height: 14px;'></div>", unsafe_allow_html=True)
 
-    # Main Workspace Grid (Split 68% Wide Left / 32% Right)
-    col_main, col_side = st.columns([0.68, 0.32])
+    # Main Workspace Grid (64% Left / 36% Right for comfortable breathing room)
+    col_main, col_side = st.columns([0.64, 0.36])
 
     with col_main:
         # 1. Main Chart Card (BorderFlow "Transfers & Volume" Style)
-        st.markdown("""
+        render_html("""
         <div class="white-panel">
             <div class="panel-header-row">
                 <div>
                     <h3 class="panel-heading">Sublimation Dynamics & Thermal Envelope</h3>
-                    <p style="font-size:0.8rem; color:#64748B; margin:2px 0 0 0;">Product Interface Temperature Trajectory vs. Formulation Collapse Limit</p>
+                    <p style="font-size:0.78rem; color:#64748B; margin:2px 0 0 0;">Product Interface Temperature Trajectory vs. Formulation Collapse Limit</p>
                 </div>
                 <div style="display:flex; align-items:center; gap:8px;">
-                    <span style="font-size:0.75rem; color:#008837; font-weight:700;">● Median Trajectory</span>
-                    <span style="font-size:0.75rem; color:#10B981; font-weight:600;">● 5th–95th Confidence Ribbon</span>
+                    <span style="font-size:0.73rem; color:#008837; font-weight:700;">● Median Trajectory</span>
+                    <span style="font-size:0.73rem; color:#10B981; font-weight:600;">● 5th–95th Confidence Ribbon</span>
                 </div>
             </div>
-        """, unsafe_allow_html=True)
+        </div>
+        """)
 
         fig_main = make_subplots(
             rows=2, cols=1,
@@ -896,7 +1016,7 @@ if nav_tab == "Dashboard Overview":
         ), row=2, col=1)
 
         fig_main.update_layout(
-            height=400,
+            height=370,
             margin=dict(l=10, r=10, t=10, b=10),
             paper_bgcolor='#FFFFFF',
             plot_bgcolor='#FFFFFF',
@@ -910,25 +1030,25 @@ if nav_tab == "Dashboard Overview":
         fig_main.update_yaxes(title_text="Layer [mm]", gridcolor='#F1F5F9', row=2, col=1)
 
         st.plotly_chart(fig_main, use_container_width=True)
-        st.markdown('</div>', unsafe_allow_html=True)
 
         # 2. Bottom Left Split Row (2 Square Cards: Donut + Progress Breakdown)
         b_col1, b_col2 = st.columns(2)
 
         with b_col1:
-            st.markdown(f"""
-            <div class="white-panel" style="height:360px;">
+            render_html(f"""
+            <div class="white-panel" style="min-height:340px; height:340px;">
                 <div class="panel-header-row">
                     <h4 class="panel-heading">Tray Population Status</h4>
                     <span class="badge-pill-green">N = {N_mc} Vials</span>
                 </div>
-            """, unsafe_allow_html=True)
+            </div>
+            """)
 
             n_safe = N_mc - int(np.sum(mc_run.collapse_arr))
             n_fail = int(np.sum(mc_run.collapse_arr))
 
             fig_donut = go.Figure(data=[go.Pie(
-                labels=['Structurally Sound Vials', 'Perimeter Risk Vials'],
+                labels=['Sound Vials', 'Perimeter Risk Vials'],
                 values=[n_safe, n_fail],
                 hole=0.68,
                 marker_colors=['#008837', '#EF4444'],
@@ -937,124 +1057,143 @@ if nav_tab == "Dashboard Overview":
             )])
 
             fig_donut.update_layout(
-                height=250,
-                margin=dict(l=10, r=10, t=10, b=10),
+                height=230,
+                margin=dict(l=10, r=10, t=5, b=5),
                 paper_bgcolor='#FFFFFF',
                 plot_bgcolor='#FFFFFF',
                 font=dict(family='Plus Jakarta Sans', color='#334155'),
-                annotations=[dict(text=f'<b>{N_mc}</b><br><span style="font-size:11px;color:#94A3B8;">Vials</span>', x=0.5, y=0.5, font_size=16, showarrow=False)],
+                annotations=[dict(text=f'<b>{N_mc}</b><br><span style="font-size:10px;color:#94A3B8;">Vials</span>', x=0.5, y=0.5, font_size=15, showarrow=False)],
                 showlegend=True,
-                legend=dict(orientation="h", yanchor="bottom", y=-0.15, xanchor="center", x=0.5)
+                legend=dict(orientation="h", yanchor="bottom", y=-0.2, xanchor="center", x=0.5)
             )
 
             st.plotly_chart(fig_donut, use_container_width=True)
-            st.markdown('</div>', unsafe_allow_html=True)
 
         with b_col2:
-            st.markdown("""
-            <div class="white-panel" style="height:360px;">
+            render_html("""
+            <div class="white-panel" style="min-height:340px; height:340px;">
                 <div class="panel-header-row">
-                    <h4 class="panel-heading">Heat Transfer Mechanisms (Kv)</h4>
-                    <span style="font-size:0.75rem; color:#64748B; font-weight:600;">Energy Influx</span>
+                    <div>
+                        <h4 class="panel-heading">Heat Transfer (Kv)</h4>
+                        <div style="font-size:0.72rem; color:#64748B;">Energy influx mechanisms</div>
+                    </div>
+                    <span class="badge-pill-green">Kv = 26.5 W/(m²·K)</span>
                 </div>
-                <div style="margin-top:14px;">
-                    <div style="display:flex; justify-content:space-between; font-size:0.83rem; font-weight:600; margin-bottom:4px;">
+                <div style="margin-top:10px;">
+                    <div class="progress-label-row">
                         <span>Gas Conduction (Rarefied)</span>
-                        <span style="font-family:'JetBrains Mono'; font-weight:700;">58%</span>
+                        <span class="progress-val-mono">58%</span>
                     </div>
-                    <div style="width:100%; height:8px; background:#F1F5F9; border-radius:99px; margin-bottom:14px; overflow:hidden;">
-                        <div style="width:58%; height:100%; background:linear-gradient(90deg, #008837, #00B14F); border-radius:99px;"></div>
+                    <div class="progress-track">
+                        <div class="progress-bar-fill" style="width:58%; background:linear-gradient(90deg, #008837, #00B14F);"></div>
                     </div>
 
-                    <div style="display:flex; justify-content:space-between; font-size:0.83rem; font-weight:600; margin-bottom:4px;">
+                    <div class="progress-label-row">
                         <span>Direct Vial-to-Shelf Contact</span>
-                        <span style="font-family:'JetBrains Mono'; font-weight:700;">25%</span>
+                        <span class="progress-val-mono">25%</span>
                     </div>
-                    <div style="width:100%; height:8px; background:#F1F5F9; border-radius:99px; margin-bottom:14px; overflow:hidden;">
-                        <div style="width:25%; height:100%; background:#00A859; border-radius:99px;"></div>
+                    <div class="progress-track">
+                        <div class="progress-bar-fill" style="width:25%; background:#00A859;"></div>
                     </div>
 
-                    <div style="display:flex; justify-content:space-between; font-size:0.83rem; font-weight:600; margin-bottom:4px;">
+                    <div class="progress-label-row">
                         <span>Chamber Wall IR Radiation (Edge Effect)</span>
-                        <span style="font-family:'JetBrains Mono'; font-weight:700; color:#EF4444;">17%</span>
+                        <span class="progress-val-mono" style="color:#EF4444;">17%</span>
                     </div>
-                    <div style="width:100%; height:8px; background:#F1F5F9; border-radius:99px; margin-bottom:14px; overflow:hidden;">
-                        <div style="width:17%; height:100%; background:#EF4444; border-radius:99px;"></div>
+                    <div class="progress-track">
+                        <div class="progress-bar-fill" style="width:17%; background:#EF4444;"></div>
                     </div>
 
-                    <p style="font-size:0.75rem; color:#94A3B8; line-height:1.4; margin-top:12px;">
-                        Perimeter vials absorb +15% to +25% supplementary radiant flux from chamber walls, elevating failure risk unless shielded.
-                    </p>
+                    <div class="heat-transfer-note">
+                        <b>Edge-Vial Impact:</b> Perimeter vials absorb +15% to +25% supplementary radiant flux from chamber walls, elevating failure risk unless radiation guard rings are deployed.
+                    </div>
                 </div>
             </div>
-            """, unsafe_allow_html=True)
+            """)
 
     with col_side:
         # 1. Right Card: Comparative Recipe Benchmarks (BorderFlow "Recent Transfers" style)
-        st.markdown("""
+        render_html("""
         <div class="white-panel">
             <div class="panel-header-row">
                 <h3 class="panel-heading">Recipe Benchmarks</h3>
-                <span style="font-size:0.75rem; color:#008837; font-weight:700;">Compare All</span>
+                <span style="font-size:0.74rem; color:#008837; font-weight:700;">Compare All</span>
             </div>
-            <div class="list-item-row">
-                <div class="list-icon-pill">CB</div>
-                <div>
-                    <div class="list-title">Conservative Baseline</div>
-                    <div class="list-subtitle">-32°C Shelf | 8 Pa Vacuum</div>
+            <div class="benchmark-card-item">
+                <div class="benchmark-top-line">
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <div class="benchmark-icon-chip">CB</div>
+                        <span class="benchmark-name">Conservative Baseline</span>
+                    </div>
+                    <span class="badge-pill-green">Safe</span>
                 </div>
-                <div class="list-value-bold">17.2 h</div>
-                <span class="badge-pill-green">Safe</span>
+                <div class="benchmark-bottom-line">
+                    <span>-32°C Shelf · 8 Pa Vacuum</span>
+                    <span class="benchmark-time">17.2 hrs</span>
+                </div>
             </div>
-            <div class="list-item-row" style="background:#F0FDF4; border-color:#BBF7D0;">
-                <div class="list-icon-pill" style="background:#008837; color:#FFFFFF;">QbD</div>
-                <div>
-                    <div class="list-title">Moderate Sweet Spot</div>
-                    <div class="list-subtitle">-28°C Shelf | 10 Pa Vacuum</div>
+            <div class="benchmark-card-item" style="background:#F0FDF4; border-color:#BBF7D0;">
+                <div class="benchmark-top-line">
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <div class="benchmark-icon-chip" style="background:#008837; color:#FFFFFF;">QbD</div>
+                        <span class="benchmark-name" style="color:#008837;">Moderate Sweet Spot</span>
+                    </div>
+                    <span class="badge-pill-green">Optimal</span>
                 </div>
-                <div class="list-value-bold" style="color:#008837;">11.2 h</div>
-                <span class="badge-pill-green">Optimal</span>
+                <div class="benchmark-bottom-line">
+                    <span>-28°C Shelf · 10 Pa Vacuum</span>
+                    <span class="benchmark-time" style="color:#008837;">11.2 hrs</span>
+                </div>
             </div>
-            <div class="list-item-row">
-                <div class="list-icon-pill" style="background:#FEF2F2; color:#DC2626;">AG</div>
-                <div>
-                    <div class="list-title">Aggressive High-Yield</div>
-                    <div class="list-subtitle">-22°C Shelf | 12 Pa Vacuum</div>
+            <div class="benchmark-card-item">
+                <div class="benchmark-top-line">
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <div class="benchmark-icon-chip" style="background:#FEF2F2; color:#DC2626;">AG</div>
+                        <span class="benchmark-name">Aggressive High-Yield</span>
+                    </div>
+                    <span class="badge-pill-red">Collapsed</span>
                 </div>
-                <div class="list-value-bold" style="color:#DC2626;">6.3 h</div>
-                <span class="badge-pill-red">Collapsed</span>
+                <div class="benchmark-bottom-line">
+                    <span>-22°C Shelf · 12 Pa Vacuum</span>
+                    <span class="benchmark-time" style="color:#DC2626;">6.3 hrs</span>
+                </div>
             </div>
         </div>
-        """, unsafe_allow_html=True)
+        """)
 
         # 2. Right Card: Quick Actions & Engineering Controls (BorderFlow "Quick Actions" style)
         shield_label = "Guard Rings Deployed (0.00% Risk)" if deploy_guard_rings else "Unshielded Vials (Edge Radiating)"
         shield_sub = "Suppresses +25% IR flux" if deploy_guard_rings else "Perimeter vials receive extra radiant heat"
 
-        st.markdown(f"""
+        render_html(f"""
         <div class="white-panel">
             <div class="panel-header-row">
                 <h3 class="panel-heading">Quick Actions</h3>
             </div>
-            <div class="list-item-row">
-                <div class="list-icon-pill" style="background:#E8F5E9; color:#008837;">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                </div>
-                <div>
-                    <div class="list-title">Edge-Vial Shielding State</div>
-                    <div class="list-subtitle">{shield_label}</div>
-                </div>
-            </div>
-            <div class="list-item-row">
-                <div class="list-icon-pill" style="background:#EFF6FF; color:#1D4ED8;">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-                </div>
-                <div>
-                    <div class="list-title">Audit Dossier PDF</div>
-                    <div class="list-subtitle">4-Page formal technical report</div>
+            <div class="quick-action-item">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <div class="action-icon-chip" style="background:#E8F5E9; color:#008837;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    </div>
+                    <div>
+                        <div class="action-title">Edge-Vial Shielding State</div>
+                        <div class="action-desc">{shield_label}</div>
+                    </div>
                 </div>
             </div>
-        """, unsafe_allow_html=True)
+            <div class="quick-action-item">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <div class="action-icon-chip" style="background:#EFF6FF; color:#1D4ED8;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                    </div>
+                    <div>
+                        <div class="action-title">Audit Dossier PDF</div>
+                        <div class="action-desc">4-Page formal technical report</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        """)
 
         if pdf_report_path.exists():
             with open(pdf_report_path, "rb") as f:
@@ -1067,19 +1206,18 @@ if nav_tab == "Dashboard Overview":
                 use_container_width=True
             )
 
-        st.markdown('</div>', unsafe_allow_html=True)
-
     # Detailed Secondary Panel: ICH Q8 Design Space Heatmap Preview
-    st.markdown("""
+    render_html("""
     <div class="white-panel">
         <div class="panel-header-row">
             <div>
                 <h3 class="panel-heading">ICH Q8(R2) Quality by Design (QbD) Design Space</h3>
-                <p style="font-size:0.83rem; color:#64748B; margin:2px 0 0 0;">Multidimensional operating space of Shelf Temperature (Tshelf) vs. Chamber Pressure (Pc)</p>
+                <p style="font-size:0.80rem; color:#64748B; margin:2px 0 0 0;">Multidimensional operating space of Shelf Temperature (Tshelf) vs. Chamber Pressure (Pc)</p>
             </div>
             <span class="badge-pill-green">BPOM / ICH Regulatory Framework</span>
         </div>
-    """, unsafe_allow_html=True)
+    </div>
+    """)
 
     ds_img_path = PROJECT_ROOT / "outputs" / "figures" / "design_space_heatmap.png"
     if ds_img_path.exists():
@@ -1087,90 +1225,89 @@ if nav_tab == "Dashboard Overview":
     else:
         st.info("Design Space matrix calculation completed.")
 
-    st.markdown('</div>', unsafe_allow_html=True)
-
 # =============================================================================
 # VIEW ROUTING: TAB 2 — ICH Q8 DESIGN SPACE CONSOLE
 # =============================================================================
 elif nav_tab == "ICH Q8 Design Space":
-    st.markdown("""
+    render_html("""
     <div class="greeting-container">
         <div>
             <h1 class="greeting-title">ICH Q8(R2) Quality by Design (QbD) Console</h1>
             <p class="greeting-subtitle">Multidimensional Proven Acceptable Range (PAR) & Critical Process Parameter (CPP) Envelope for Biologics</p>
         </div>
         <div class="greeting-pill-bar">
-            <span class="badge-pill-green" style="font-size:0.8rem; padding:6px 12px;">BPOM / cGMP Validated</span>
+            <span class="badge-pill-green" style="font-size:0.8rem; padding:5px 12px;">BPOM / cGMP Validated</span>
         </div>
     </div>
-    """, unsafe_allow_html=True)
+    """)
 
-    # 3 Design Space Zone Summary Cards
+    # 3 Design Space Zone Summary Cards (Strict Equal Heights 180px)
     z1, z2, z3 = st.columns(3)
 
     with z1:
-        st.markdown("""
-        <div class="kpi-metric-card" style="border-top: 4px solid #008837;">
+        render_html("""
+        <div class="kpi-metric-card" style="height:180px; border-top: 4px solid #008837;">
             <div class="card-top-row">
                 <span class="card-title-label" style="margin-left:0; color:#008837; font-weight:800;">PROVEN ACCEPTABLE RANGE (PAR)</span>
                 <span class="badge-pill-green">0.00% Risk</span>
             </div>
-            <div style="font-size:0.85rem; color:#334155; line-height:1.5;">
+            <div style="font-size:0.80rem; color:#334155; line-height:1.5;">
                 <div><b>Shelf Temperature:</b> -35°C to -28°C</div>
                 <div><b>Chamber Pressure:</b> 4.0 Pa to 10.0 Pa</div>
                 <div><b>Failure Mode:</b> Zero collapse detected</div>
                 <div><b>Cycle Time:</b> 11.2 h to 18.5 h</div>
             </div>
-            <div class="card-subtext">Safe robust region for commercial batch manufacturing.</div>
+            <div class="card-subtext">Safe robust region for commercial manufacturing.</div>
         </div>
-        """, unsafe_allow_html=True)
+        """)
 
     with z2:
-        st.markdown("""
-        <div class="kpi-metric-card" style="border-top: 4px solid #D97706;">
+        render_html("""
+        <div class="kpi-metric-card" style="height:180px; border-top: 4px solid #D97706;">
             <div class="card-top-row">
                 <span class="card-title-label" style="margin-left:0; color:#D97706; font-weight:800;">QbD OPTIMAL SWEET SPOT</span>
                 <span class="badge-pill-amber">0.60% Risk</span>
             </div>
-            <div style="font-size:0.85rem; color:#334155; line-height:1.5;">
+            <div style="font-size:0.80rem; color:#334155; line-height:1.5;">
                 <div><b>Operating Point:</b> Ts = -28°C | Pc = 10 Pa</div>
                 <div><b>Primary Drying:</b> 11.2 hours (35% speedup)</div>
                 <div><b>Safety Margin:</b> +0.20°C below Tc = -29.0°C</div>
                 <div><b>Requirement:</b> Radiation guard rings for edge vials</div>
             </div>
-            <div class="card-subtext">Maximizes throughput while ensuring critical quality attributes (CQAs).</div>
+            <div class="card-subtext">Maximizes throughput while ensuring CQAs.</div>
         </div>
-        """, unsafe_allow_html=True)
+        """)
 
     with z3:
-        st.markdown("""
-        <div class="kpi-metric-card" style="border-top: 4px solid #DC2626;">
+        render_html("""
+        <div class="kpi-metric-card" style="height:180px; border-top: 4px solid #DC2626;">
             <div class="card-top-row">
                 <span class="card-title-label" style="margin-left:0; color:#DC2626; font-weight:800;">CRITICAL FAILURE ZONE</span>
                 <span class="badge-pill-red">> 95% Risk</span>
             </div>
-            <div style="font-size:0.85rem; color:#334155; line-height:1.5;">
+            <div style="font-size:0.80rem; color:#334155; line-height:1.5;">
                 <div><b>Shelf Temperature:</b> > -25°C</div>
                 <div><b>Chamber Pressure:</b> > 16.0 Pa</div>
                 <div><b>Failure Mode:</b> Micro-collapse & cake melt-back</div>
                 <div><b>Regulatory Impact:</b> Batch rejection & sterility breach</div>
             </div>
-            <div class="card-subtext">Operating outside validated QbD boundaries violates BPOM dossier.</div>
+            <div class="card-subtext">Violates validated BPOM regulatory dossier.</div>
         </div>
-        """, unsafe_allow_html=True)
+        """)
 
-    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown("<div style='height: 14px;'></div>", unsafe_allow_html=True)
 
     # Design Space Heatmap Visualizer
-    st.markdown("""
+    render_html("""
     <div class="white-panel">
         <div class="panel-header-row">
             <div>
                 <h3 class="panel-heading">Design Space Matrix: Shelf Temperature vs. Chamber Pressure</h3>
-                <p style="font-size:0.82rem; color:#64748B; margin:2px 0 0 0;">Evaluated over 121 discrete CPP combinations via stochastic moving-boundary modeling.</p>
+                <p style="font-size:0.80rem; color:#64748B; margin:2px 0 0 0;">Evaluated over 121 discrete CPP combinations via stochastic moving-boundary modeling.</p>
             </div>
         </div>
-    """, unsafe_allow_html=True)
+    </div>
+    """)
 
     ds_img_path = PROJECT_ROOT / "outputs" / "figures" / "design_space_heatmap.png"
     if ds_img_path.exists():
@@ -1178,198 +1315,196 @@ elif nav_tab == "ICH Q8 Design Space":
     else:
         st.info("Heatmap file not found. Re-run simulation to generate figure.")
 
-    st.markdown('</div>', unsafe_allow_html=True)
-
     # CQA vs CPP Regulatory Matrix
-    st.markdown("""
+    render_html("""
     <div class="white-panel">
         <div class="panel-header-row">
             <h3 class="panel-heading">Critical Quality Attributes (CQAs) & Parameter Control Limits</h3>
             <span class="badge-pill-green">ICH Q8(R2) Annex 1</span>
         </div>
-        <table style="width:100%; border-collapse:collapse; font-size:0.85rem; color:#334155;">
+        <table style="width:100%; border-collapse:collapse; font-size:0.82rem; color:#334155;">
             <thead>
                 <tr style="border-bottom: 2px solid #E2E8F0; text-align:left;">
-                    <th style="padding:10px 8px;">CQA Parameter</th>
-                    <th style="padding:10px 8px;">Acceptance Criteria</th>
-                    <th style="padding:10px 8px;">Physical Mechanism</th>
-                    <th style="padding:10px 8px;">Controlled CPP</th>
-                    <th style="padding:10px 8px;">Status</th>
+                    <th style="padding:8px;">CQA Parameter</th>
+                    <th style="padding:8px;">Acceptance Criteria</th>
+                    <th style="padding:8px;">Physical Mechanism</th>
+                    <th style="padding:8px;">Controlled CPP</th>
+                    <th style="padding:8px;">Status</th>
                 </tr>
             </thead>
             <tbody>
                 <tr style="border-bottom: 1px solid #F1F5F9;">
-                    <td style="padding:10px 8px; font-weight:700;">Cake Structural Integrity</td>
-                    <td style="padding:10px 8px;">No collapse, melt-back, or puffing</td>
-                    <td style="padding:10px 8px;">Sublimation front temp Tp &lt; Tc (-29.0°C)</td>
-                    <td style="padding:10px 8px; font-family:'JetBrains Mono';">T_shelf &le; -28°C</td>
-                    <td style="padding:10px 8px;"><span class="badge-pill-green">Compliant</span></td>
+                    <td style="padding:8px; font-weight:700;">Cake Structural Integrity</td>
+                    <td style="padding:8px;">No collapse, melt-back, or puffing</td>
+                    <td style="padding:8px;">Sublimation front temp Tp &lt; Tc (-29.0°C)</td>
+                    <td style="padding:8px; font-family:'JetBrains Mono';">T_shelf &le; -28°C</td>
+                    <td style="padding:8px;"><span class="badge-pill-green">Compliant</span></td>
                 </tr>
                 <tr style="border-bottom: 1px solid #F1F5F9;">
-                    <td style="padding:10px 8px; font-weight:700;">Residual Moisture Content</td>
-                    <td style="padding:10px 8px;">&lt; 1.5% w/w (Karl Fischer)</td>
-                    <td style="padding:10px 8px;">Complete ice sublimation across cake height</td>
-                    <td style="padding:10px 8px; font-family:'JetBrains Mono';">t_dry &ge; 11.2 h</td>
-                    <td style="padding:10px 8px;"><span class="badge-pill-green">Compliant</span></td>
+                    <td style="padding:8px; font-weight:700;">Residual Moisture Content</td>
+                    <td style="padding:8px;">&lt; 1.5% w/w (Karl Fischer)</td>
+                    <td style="padding:8px;">Complete ice sublimation across cake height</td>
+                    <td style="padding:8px; font-family:'JetBrains Mono';">t_dry &ge; 11.2 h</td>
+                    <td style="padding:8px;"><span class="badge-pill-green">Compliant</span></td>
                 </tr>
                 <tr style="border-bottom: 1px solid #F1F5F9;">
-                    <td style="padding:10px 8px; font-weight:700;">Reconstitution Time</td>
-                    <td style="padding:10px 8px;">&lt; 60 seconds in SWFI</td>
-                    <td style="padding:10px 8px;">Open, highly porous cake micro-architecture</td>
-                    <td style="padding:10px 8px; font-family:'JetBrains Mono';">P_c &le; 12 Pa</td>
-                    <td style="padding:10px 8px;"><span class="badge-pill-green">Compliant</span></td>
+                    <td style="padding:8px; font-weight:700;">Reconstitution Time</td>
+                    <td style="padding:8px;">&lt; 60 seconds in SWFI</td>
+                    <td style="padding:8px;">Open, highly porous cake micro-architecture</td>
+                    <td style="padding:8px; font-family:'JetBrains Mono';">P_c &le; 12 Pa</td>
+                    <td style="padding:8px;"><span class="badge-pill-green">Compliant</span></td>
                 </tr>
                 <tr>
-                    <td style="padding:10px 8px; font-weight:700;">Biologic Activity / Potency</td>
-                    <td style="padding:10px 8px;">&ge; 95% monomer retention (SEC-HPLC)</td>
-                    <td style="padding:10px 8px;">Prevention of thermal denaturing & aggregation</td>
-                    <td style="padding:10px 8px; font-family:'JetBrains Mono';">Tp &le; -28.8°C</td>
-                    <td style="padding:10px 8px;"><span class="badge-pill-green">Compliant</span></td>
+                    <td style="padding:8px; font-weight:700;">Biologic Activity / Potency</td>
+                    <td style="padding:8px;">&ge; 95% monomer retention (SEC-HPLC)</td>
+                    <td style="padding:8px;">Prevention of thermal denaturing & aggregation</td>
+                    <td style="padding:8px; font-family:'JetBrains Mono';">Tp &le; -28.8°C</td>
+                    <td style="padding:8px;"><span class="badge-pill-green">Compliant</span></td>
                 </tr>
             </tbody>
         </table>
     </div>
-    """, unsafe_allow_html=True)
+    """)
 
 # =============================================================================
 # VIEW ROUTING: TAB 3 — PHYSICAL P&ID FORMULATION
 # =============================================================================
 elif nav_tab == "Physical P&ID Formulation":
-    st.markdown("""
+    render_html("""
     <div class="greeting-container">
         <div>
-            <h1 class="greeting-title">Mechanistic P&ID & Coupled Coupled Heat-Mass Transfer Formulation</h1>
+            <h1 class="greeting-title">Mechanistic P&ID & Coupled Heat-Mass Transfer Formulation</h1>
             <p class="greeting-subtitle">First-Principles Mathematical Modeling for Sterile Lyophilization Unit 02 (KGM Cikarang)</p>
         </div>
         <div class="greeting-pill-bar">
-            <span class="badge-pill-green" style="font-size:0.8rem; padding:6px 12px;">ASME V&V 40 Standard</span>
+            <span class="badge-pill-green" style="font-size:0.8rem; padding:5px 12px;">ASME V&V 40 Standard</span>
         </div>
     </div>
-    """, unsafe_allow_html=True)
+    """)
 
     # Vial Control Volume SVG Schematic
-    st.markdown("""
+    render_html("""
     <div class="white-panel">
         <div class="panel-header-row">
             <div>
                 <h3 class="panel-heading">Vial Control Volume & Boundary Conditions</h3>
-                <p style="font-size:0.82rem; color:#64748B; margin:2px 0 0 0;">Coupled sublimation moving boundary (Stefan problem) in a DIN 2R glass vial.</p>
+                <p style="font-size:0.80rem; color:#64748B; margin:2px 0 0 0;">Coupled sublimation moving boundary (Stefan problem) in a DIN 2R glass vial.</p>
             </div>
             <span class="badge-pill-green">DIN 2R Schott Vial</span>
         </div>
-        <div style="display:flex; justify-content:center; padding:15px 0;">
-            <svg width="780" height="340" viewBox="0 0 780 340" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <div style="display:flex; justify-content:center; padding:10px 0;">
+            <svg width="100%" height="auto" viewBox="0 0 780 320" style="max-width:760px;" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <!-- Shelf Base -->
-                <rect x="180" y="280" width="420" height="40" rx="6" fill="#E2E8F0" stroke="#94A3B8" stroke-width="2"/>
-                <text x="390" y="305" font-family="Plus Jakarta Sans" font-size="12" font-weight="700" fill="#334155" text-anchor="middle">TEMPERATURE-CONTROLLED SHELF (T_shelf = -28.0°C)</text>
+                <rect x="180" y="260" width="420" height="40" rx="6" fill="#E2E8F0" stroke="#94A3B8" stroke-width="2"/>
+                <text x="390" y="285" font-family="Plus Jakarta Sans" font-size="12" font-weight="700" fill="#334155" text-anchor="middle">TEMPERATURE-CONTROLLED SHELF (T_shelf = -28.0°C)</text>
                 
                 <!-- Fluid circulation arrows -->
-                <path d="M220 300H260M250 295L260 300L250 305" stroke="#008837" stroke-width="2"/>
-                <path d="M520 300H560M550 295L560 300L550 305" stroke="#008837" stroke-width="2"/>
+                <path d="M220 280H260M250 275L260 280L250 285" stroke="#008837" stroke-width="2"/>
+                <path d="M520 280H560M550 275L560 280L550 285" stroke="#008837" stroke-width="2"/>
 
                 <!-- Vial Glass Walls -->
-                <path d="M270 90V270C270 275 275 280 280 280H500C505 280 510 275 510 270V90" stroke="#64748B" stroke-width="3" fill="#F8FAFC"/>
-                <rect x="255" y="80" width="270" height="12" rx="4" fill="#94A3B8"/>
-                <text x="390" y="70" font-family="Plus Jakarta Sans" font-size="11" font-weight="600" fill="#64748B" text-anchor="middle">Rubber Stopper Vapor Vent</text>
+                <path d="M270 80V250C270 255 275 260 280 260H500C505 260 510 255 510 250V80" stroke="#64748B" stroke-width="3" fill="#F8FAFC"/>
+                <rect x="255" y="70" width="270" height="12" rx="4" fill="#94A3B8"/>
+                <text x="390" y="60" font-family="Plus Jakarta Sans" font-size="11" font-weight="600" fill="#64748B" text-anchor="middle">Rubber Stopper Vapor Vent</text>
 
                 <!-- Dried Cake Layer -->
-                <rect x="274" y="100" width="232" height="70" fill="#FEF3C7" opacity="0.6"/>
-                <text x="390" y="130" font-family="Plus Jakarta Sans" font-size="12" font-weight="700" fill="#B45309" text-anchor="middle">DRIED CAKE LAYER (Rp(L))</text>
-                <text x="390" y="148" font-family="JetBrains Mono" font-size="10" fill="#92400E" text-anchor="middle">Mass Resistance Rp = R0 + A1*L</text>
+                <rect x="274" y="90" width="232" height="65" fill="#FEF3C7" opacity="0.6"/>
+                <text x="390" y="120" font-family="Plus Jakarta Sans" font-size="12" font-weight="700" fill="#B45309" text-anchor="middle">DRIED CAKE LAYER (Rp(L))</text>
+                <text x="390" y="138" font-family="JetBrains Mono" font-size="10" fill="#92400E" text-anchor="middle">Mass Resistance Rp = R0 + A1*L</text>
 
                 <!-- Sublimation Moving Boundary Line -->
-                <line x1="274" y1="170" x2="506" y2="170" stroke="#DC2626" stroke-width="3" stroke-dasharray="4 4"/>
-                <circle cx="390" cy="170" r="4" fill="#DC2626"/>
-                <text x="525" y="174" font-family="JetBrains Mono" font-size="11" font-weight="700" fill="#DC2626">T_p(t) = -28.8°C &lt; T_c</text>
+                <line x1="274" y1="155" x2="506" y2="155" stroke="#DC2626" stroke-width="3" stroke-dasharray="4 4"/>
+                <circle cx="390" cy="155" r="4" fill="#DC2626"/>
+                <text x="525" y="159" font-family="JetBrains Mono" font-size="11" font-weight="700" fill="#DC2626">T_p(t) = -28.8°C &lt; T_c</text>
 
                 <!-- Frozen Layer -->
-                <rect x="274" y="172" width="232" height="106" fill="#E0F2FE" opacity="0.8"/>
-                <text x="390" y="220" font-family="Plus Jakarta Sans" font-size="12" font-weight="700" fill="#0369A1" text-anchor="middle">FROZEN PRODUCT CORE</text>
-                <text x="390" y="238" font-family="JetBrains Mono" font-size="10" fill="#0284C7" text-anchor="middle">Ice Density = 917 kg/m³ | ΔHsub = 2.84 MJ/kg</text>
+                <rect x="274" y="157" width="232" height="95" fill="#E0F2FE" opacity="0.8"/>
+                <text x="390" y="205" font-family="Plus Jakarta Sans" font-size="12" font-weight="700" fill="#0369A1" text-anchor="middle">FROZEN PRODUCT CORE</text>
+                <text x="390" y="222" font-family="JetBrains Mono" font-size="10" fill="#0284C7" text-anchor="middle">Ice Density = 917 kg/m³ | ΔHsub = 2.84 MJ/kg</text>
 
                 <!-- Heat Transfer Influx Arrow (Bottom) -->
-                <path d="M390 276V250" stroke="#008837" stroke-width="3" marker-end="url(#arrow-green)"/>
-                <text x="400" y="268" font-family="JetBrains Mono" font-size="10" font-weight="700" fill="#008837">Q_in = Kv * Av * (Ts - Tb)</text>
+                <path d="M390 256V235" stroke="#008837" stroke-width="3"/>
+                <text x="400" y="248" font-family="JetBrains Mono" font-size="10" font-weight="700" fill="#008837">Q_in = Kv * Av * (Ts - Tb)</text>
 
                 <!-- Vapor Mass Flux Arrows (Top) -->
-                <path d="M360 110V85M390 110V85M420 110V85" stroke="#2563EB" stroke-width="2" stroke-linecap="round"/>
-                <text x="390" y="48" font-family="JetBrains Mono" font-size="10" font-weight="700" fill="#2563EB" text-anchor="middle">m_dot_sub = Ap * (P_ice - P_c) / Rp</text>
+                <path d="M360 100V75M390 100V75M420 100V75" stroke="#2563EB" stroke-width="2" stroke-linecap="round"/>
+                <text x="390" y="42" font-family="JetBrains Mono" font-size="10" font-weight="700" fill="#2563EB" text-anchor="middle">ṁ_sub = Ap * (P_ice - P_c) / Rp</text>
 
                 <!-- Chamber Wall Radiation -->
-                <rect x="650" y="100" width="20" height="180" rx="4" fill="#CBD5E1"/>
-                <text x="660" y="200" font-family="Plus Jakarta Sans" font-size="10" font-weight="700" fill="#475569" text-anchor="middle" transform="rotate(-90 660 200)">CHAMBER WALL (20°C)</text>
-                <path d="M640 180H520" stroke="#EF4444" stroke-width="2" stroke-dasharray="3 3"/>
-                <text x="580" y="172" font-family="JetBrains Mono" font-size="9" fill="#DC2626" text-anchor="middle">Q_rad (+25% Kv)</text>
+                <rect x="650" y="90" width="20" height="165" rx="4" fill="#CBD5E1"/>
+                <text x="660" y="180" font-family="Plus Jakarta Sans" font-size="10" font-weight="700" fill="#475569" text-anchor="middle" transform="rotate(-90 660 180)">CHAMBER WALL (20°C)</text>
+                <path d="M640 165H520" stroke="#EF4444" stroke-width="2" stroke-dasharray="3 3"/>
+                <text x="580" y="157" font-family="JetBrains Mono" font-size="9" fill="#DC2626" text-anchor="middle">Q_rad (+25% Kv)</text>
             </svg>
         </div>
     </div>
-    """, unsafe_allow_html=True)
+    """)
 
-    # Mathematical Governing Equations (Row of 3 cards)
+    # Mathematical Governing Equations (Row of 3 cards, Equal Heights 170px)
     e1, e2, e3 = st.columns(3)
 
     with e1:
-        st.markdown("""
-        <div class="kpi-metric-card" style="min-height:220px;">
+        render_html("""
+        <div class="kpi-metric-card" style="height:170px;">
             <div class="card-top-row">
                 <span class="card-title-label" style="margin-left:0; font-weight:700; color:#0F172A;">1. Interface Energy Balance</span>
             </div>
-            <div style="font-size:0.88rem; color:#008837; font-family:'JetBrains Mono'; margin:10px 0;">
+            <div style="font-size:0.85rem; color:#008837; font-family:'JetBrains Mono'; margin:6px 0;">
                 Q_in = ΔH_sub · ṁ_sub
             </div>
-            <div style="font-size:0.8rem; color:#64748B; line-height:1.5;">
-                Conductive heat flux through the vial bottom must balance the latent heat of ice sublimation at steady state quasi-equilibrium.
+            <div class="card-subtext" style="white-space:normal; line-height:1.4;">
+                Conductive heat flux balances latent heat of ice sublimation at quasi-steady interface equilibrium.
             </div>
         </div>
-        """, unsafe_allow_html=True)
+        """)
 
     with e2:
-        st.markdown("""
-        <div class="kpi-metric-card" style="min-height:220px;">
+        render_html("""
+        <div class="kpi-metric-card" style="height:170px;">
             <div class="card-top-row">
                 <span class="card-title-label" style="margin-left:0; font-weight:700; color:#0F172A;">2. Sublimation Mass Flux</span>
             </div>
-            <div style="font-size:0.88rem; color:#008837; font-family:'JetBrains Mono'; margin:10px 0;">
+            <div style="font-size:0.85rem; color:#008837; font-family:'JetBrains Mono'; margin:6px 0;">
                 ṁ_sub = A_p · (P_ice - P_c) / R_p(L)
             </div>
-            <div style="font-size:0.8rem; color:#64748B; line-height:1.5;">
-                Driving force is the vapor pressure deficit between the sublimation front P_ice(Tp) and chamber pressure P_c, resisted by dry cake tortuosity R_p.
+            <div class="card-subtext" style="white-space:normal; line-height:1.4;">
+                Vapor pressure driving deficit between interface ice P_ice(Tp) and chamber pressure P_c resisted by R_p.
             </div>
         </div>
-        """, unsafe_allow_html=True)
+        """)
 
     with e3:
-        st.markdown("""
-        <div class="kpi-metric-card" style="min-height:220px;">
+        render_html("""
+        <div class="kpi-metric-card" style="height:170px;">
             <div class="card-top-row">
-                <span class="card-title-label" style="margin-left:0; font-weight:700; color:#0F172A;">3. Moving Boundary Kinematics</span>
+                <span class="card-title-label" style="margin-left:0; font-weight:700; color:#0F172A;">3. Moving Boundary Rate</span>
             </div>
-            <div style="font-size:0.88rem; color:#008837; font-family:'JetBrains Mono'; margin:10px 0;">
+            <div style="font-size:0.85rem; color:#008837; font-family:'JetBrains Mono'; margin:6px 0;">
                 dL/dt = ṁ_sub / [ρ_ice · (1 - ε) · A_p]
             </div>
-            <div style="font-size:0.8rem; color:#64748B; line-height:1.5;">
-                Cake thickness L(t) grows dynamically as the sublimation front moves from top surface (L=0) down to the vial bottom (L=L_total).
+            <div class="card-subtext" style="white-space:normal; line-height:1.4;">
+                Dynamic cake thickness L(t) progression from initial meniscus (L=0) to vial bottom (L=L_total).
             </div>
         </div>
-        """, unsafe_allow_html=True)
+        """)
 
-    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown("<div style='height: 14px;'></div>", unsafe_allow_html=True)
 
     # Physical Parameters & SI Constants Table
-    st.markdown("""
+    render_html("""
     <div class="white-panel">
         <div class="panel-header-row">
             <h3 class="panel-heading">Calibrated Bio-Industrial Constants & Vial Geometry</h3>
             <span class="badge-pill-green">Literature Validated (Pikal et al.)</span>
         </div>
-        <table style="width:100%; border-collapse:collapse; font-size:0.85rem; color:#334155;">
+        <table style="width:100%; border-collapse:collapse; font-size:0.82rem; color:#334155;">
             <thead>
                 <tr style="border-bottom: 2px solid #E2E8F0; text-align:left;">
-                    <th style="padding:10px 8px;">Symbol</th>
-                    <th style="padding:10px 8px;">Physical Parameter</th>
-                    <th style="padding:10px 8px;">Nominal Value</th>
-                    <th style="padding:10px 8px;">SI Unit</th>
-                    <th style="padding:10px 8px;">Literature Source</th>
+                    <th style="padding:8px;">Symbol</th>
+                    <th style="padding:8px;">Physical Parameter</th>
+                    <th style="padding:8px;">Nominal Value</th>
+                    <th style="padding:8px;">SI Unit</th>
+                    <th style="padding:8px;">Literature Source</th>
                 </tr>
             </thead>
             <tbody>
@@ -1411,60 +1546,60 @@ elif nav_tab == "Physical P&ID Formulation":
             </tbody>
         </table>
     </div>
-    """, unsafe_allow_html=True)
+    """)
 
 # =============================================================================
 # VIEW ROUTING: TAB 4 — BATCH RUN DATASETS & VERIFICATION
 # =============================================================================
 elif nav_tab == "Batch Run Datasets":
-    st.markdown("""
+    render_html("""
     <div class="greeting-container">
         <div>
             <h1 class="greeting-title">Batch Run Telemetry, Verification & Datasets</h1>
             <p class="greeting-subtitle">Raw Simulation Datasets, Statistical Distributions & Audit Trail for BPOM / GAMP 5</p>
         </div>
         <div class="greeting-pill-bar">
-            <span class="badge-pill-green" style="font-size:0.8rem; padding:6px 12px;">GAMP 5 Category 4 Model</span>
+            <span class="badge-pill-green" style="font-size:0.8rem; padding:5px 12px;">GAMP 5 Category 4 Model</span>
         </div>
     </div>
-    """, unsafe_allow_html=True)
+    """)
 
-    # Telemetry Summary Metric Row
+    # Telemetry Summary Metric Row (Strict Equal Heights 120px)
     m1, m2, m3, m4 = st.columns(4)
     with m1:
-        st.markdown(f"""
-        <div class="kpi-metric-card">
+        render_html(f"""
+        <div class="kpi-metric-card" style="height:120px;">
             <div class="card-title-label" style="margin-left:0;">Sample Population</div>
-            <div class="kpi-main-num">{N_mc}<span style="font-size:1.0rem; color:#64748B;"> Vials</span></div>
-            <div class="card-subtext">Stochastic Monte Carlo realization</div>
+            <div class="kpi-main-num">{N_mc}<span class="kpi-unit">Vials</span></div>
+            <div class="card-subtext">Stochastic Monte Carlo run</div>
         </div>
-        """, unsafe_allow_html=True)
+        """)
     with m2:
-        st.markdown(f"""
-        <div class="kpi-metric-card">
-            <div class="card-title-label" style="margin-left:0;">Mean Drying Time μ(t_dry)</div>
-            <div class="kpi-main-num">{mc_run.t_dry_mean:.2f}<span style="font-size:1.0rem; color:#64748B;"> h</span></div>
+        render_html(f"""
+        <div class="kpi-metric-card" style="height:120px;">
+            <div class="card-title-label" style="margin-left:0;">Mean Drying Time</div>
+            <div class="kpi-main-num">{mc_run.t_dry_mean:.2f}<span class="kpi-unit">h</span></div>
             <div class="card-subtext">Std Dev: ±{mc_run.t_dry_std:.2f} h</div>
         </div>
-        """, unsafe_allow_html=True)
+        """)
     with m3:
-        st.markdown(f"""
-        <div class="kpi-metric-card">
-            <div class="card-title-label" style="margin-left:0;">Mean Peak Temp μ(Tp)</div>
-            <div class="kpi-main-num">{mc_run.T_max_mean:.2f}<span style="font-size:1.0rem; color:#64748B;"> °C</span></div>
+        render_html(f"""
+        <div class="kpi-metric-card" style="height:120px;">
+            <div class="card-title-label" style="margin-left:0;">Mean Peak Temp</div>
+            <div class="kpi-main-num">{mc_run.T_max_mean:.2f}<span class="kpi-unit">°C</span></div>
             <div class="card-subtext">Std Dev: ±{mc_run.T_max_std:.2f} °C</div>
         </div>
-        """, unsafe_allow_html=True)
+        """)
     with m4:
-        st.markdown(f"""
-        <div class="kpi-metric-card">
+        render_html(f"""
+        <div class="kpi-metric-card" style="height:120px;">
             <div class="card-title-label" style="margin-left:0;">Collapse Failure Count</div>
-            <div class="kpi-main-num">{int(np.sum(mc_run.collapse_arr))}<span style="font-size:1.0rem; color:#64748B;"> / {N_mc}</span></div>
+            <div class="kpi-main-num">{int(np.sum(mc_run.collapse_arr))}<span class="kpi-unit">/ {N_mc}</span></div>
             <div class="card-subtext">Failure Risk: {mc_run.risk_of_collapse_pct:.2f}%</div>
         </div>
-        """, unsafe_allow_html=True)
+        """)
 
-    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown("<div style='height: 14px;'></div>", unsafe_allow_html=True)
 
     # Dataset Tabs (Monte Carlo, Deterministic Baseline, Design Space Grid)
     d_tab1, d_tab2, d_tab3 = st.tabs([
@@ -1477,7 +1612,7 @@ elif nav_tab == "Batch Run Datasets":
         mc_csv_path = PROJECT_ROOT / "outputs" / "data" / "monte_carlo_results.csv"
         if mc_csv_path.exists():
             df_mc = pd.read_csv(mc_csv_path)
-            st.dataframe(df_mc.head(100), use_container_width=True, height=350)
+            st.dataframe(df_mc.head(100), use_container_width=True, height=320)
             with open(mc_csv_path, "rb") as f:
                 st.download_button(
                     label="Download Monte Carlo Dataset (CSV)",
@@ -1492,7 +1627,7 @@ elif nav_tab == "Batch Run Datasets":
         det_csv_path = PROJECT_ROOT / "outputs" / "data" / "deterministic_baseline.csv"
         if det_csv_path.exists():
             df_det = pd.read_csv(det_csv_path)
-            st.dataframe(df_det, use_container_width=True, height=350)
+            st.dataframe(df_det, use_container_width=True, height=320)
             with open(det_csv_path, "rb") as f:
                 st.download_button(
                     label="Download Deterministic Baseline (CSV)",
@@ -1507,7 +1642,7 @@ elif nav_tab == "Batch Run Datasets":
         ds_csv_path = PROJECT_ROOT / "outputs" / "data" / "design_space_grid.csv"
         if ds_csv_path.exists():
             df_ds = pd.read_csv(ds_csv_path)
-            st.dataframe(df_ds, use_container_width=True, height=350)
+            st.dataframe(df_ds, use_container_width=True, height=320)
             with open(ds_csv_path, "rb") as f:
                 st.download_button(
                     label="Download Design Space Grid (CSV)",
@@ -1519,27 +1654,27 @@ elif nav_tab == "Batch Run Datasets":
             st.info("Design space CSV file not found in outputs/data.")
 
     # Software Verification & Audit Compliance
-    st.markdown("""
-    <div class="white-panel" style="margin-top:20px;">
+    render_html("""
+    <div class="white-panel" style="margin-top:16px;">
         <div class="panel-header-row">
             <h3 class="panel-heading">Model Verification & Regulatory Audit Trail</h3>
             <span class="badge-pill-green">FDA 21 CFR Part 11 / Annex 11</span>
         </div>
-        <div style="font-size:0.83rem; color:#64748B; line-height:1.6;">
+        <div style="font-size:0.80rem; color:#64748B; line-height:1.55;">
             <div>• <b>Solver Verification:</b> Implicit Euler Stefan-problem moving boundary integrator benchmarked against analytical Neumann solutions.</div>
             <div>• <b>Conservation of Mass:</b> Global mass deficit &lt; 0.001% across full 11.2 hour sublimation cycle.</div>
             <div>• <b>Deterministic Reproducibility:</b> Pseudo-random number seed <code>seed=42</code> ensures bit-exact Monte Carlo reproduction.</div>
             <div>• <b>Digital Audit Hash:</b> SHA-256 integrity fingerprint recorded for BPOM batch filing.</div>
         </div>
     </div>
-    """, unsafe_allow_html=True)
+    """)
 
 # -----------------------------------------------------------------------------
 # GLOBAL FOOTER (BORDERFLOW STYLE)
 # -----------------------------------------------------------------------------
-st.markdown("""
-<div style="display:flex; justify-content:space-between; align-items:center; padding:18px 0; border-top:1px solid #E2E8F0; margin-top:30px; font-size:0.8rem; color:#94A3B8;">
+render_html("""
+<div style="display:flex; justify-content:space-between; align-items:center; padding:16px 0; border-top:1px solid #E2E8F0; margin-top:24px; font-size:0.78rem; color:#94A3B8;">
     <div>© 2026 PT Kalbe Farma Tbk • Corporate Digital Transformation (CDT) • Advanced Engineering Center (AEC)</div>
     <div style="font-family:'JetBrains Mono'; font-weight:600; color:#64748B;">CANDIDATE: NAUFAL FATHIN (naufaalfathin15@gmail.com)</div>
 </div>
-""", unsafe_allow_html=True)
+""")
