@@ -44,25 +44,26 @@ def render_html(html_str: str):
 # -----------------------------------------------------------------------------
 render_html("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+    @import url('https://fonts.cdnfonts.com/css/sf-pro-display');
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap');
 
     /* Global Apple iOS Typography */
     *, *::before, *::after {
         box-sizing: border-box !important;
-        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "SF Pro", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "SF Pro", "Inter", -apple-system-headline, sans-serif;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
     }
 
     html, body, [class*="css"], .stApp {
-        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "SF Pro", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "SF Pro", "Inter", -apple-system-headline, sans-serif !important;
         background-color: #F8FAFC;
         color: #0F172A;
     }
 
-    /* iOS SF Mono for telemetry, numbers, timestamps */
-    .kpi-main-num, .benchmark-time, .progress-val-mono, code, pre, .mono-font {
-        font-family: "SF Mono", "SFProMono-Regular", ui-monospace, Menlo, Monaco, Consolas, "JetBrains Mono", monospace !important;
+    /* Monospace strictly for raw code, logs, and data hashes */
+    code, pre, .mono-font {
+        font-family: "SF Mono", "SFProMono-Regular", ui-monospace, Menlo, Monaco, Consolas, monospace !important;
     }
 
     /* Clean Streamlit Header & Content Offset for Streamlit Cloud */
@@ -113,10 +114,10 @@ render_html("""
         margin-left: auto;
         background: #FFFFFF;
         border: 1px solid #CBD5E1;
-        border-radius: 4px;
+        border-radius: 0px !important;
         padding: 1px 5px;
         font-size: 0.68rem;
-        font-family: "SF Mono", monospace;
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
         color: #94A3B8;
     }
 
@@ -129,7 +130,7 @@ render_html("""
     .nav-icon-btn {
         width: 34px;
         height: 34px;
-        border-radius: 50%;
+        border-radius: 0px !important;
         background: #F8FAFC;
         border: 1px solid #E2E8F0;
         display: flex;
@@ -148,7 +149,7 @@ render_html("""
         height: 8px;
         background: #008837;
         border: 2px solid #FFFFFF;
-        border-radius: 50%;
+        border-radius: 0px !important;
     }
 
     .user-profile-card {
@@ -162,7 +163,7 @@ render_html("""
     .user-avatar-img {
         width: 34px;
         height: 34px;
-        border-radius: 50%;
+        border-radius: 0px !important;
         background: linear-gradient(135deg, #008837 0%, #00B14F 100%);
         color: #FFFFFF;
         display: flex;
@@ -260,7 +261,7 @@ render_html("""
     .card-icon-bubble {
         width: 32px;
         height: 32px;
-        border-radius: 8px;
+        border-radius: 0px !important;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -282,23 +283,27 @@ render_html("""
     .kpi-value-row {
         display: flex;
         align-items: baseline;
-        gap: 5px;
+        gap: 6px;
         margin: 2px 0;
     }
 
     .kpi-main-num {
-        font-size: 1.68rem;
-        font-weight: 800;
-        letter-spacing: -0.03em;
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "SF Pro", "Inter", -apple-system-headline, sans-serif !important;
+        font-size: 1.85rem;
+        font-weight: 700;
+        letter-spacing: -0.025em;
         color: #0F172A;
         line-height: 1;
+        font-variant-numeric: tabular-nums lining-nums;
     }
 
     .kpi-unit {
-        font-size: 0.85rem;
-        font-weight: 600;
+        font-size: 0.88rem;
+        font-weight: 500;
         color: #64748B;
-        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif !important;
+        margin-left: 6px;
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", sans-serif !important;
+        letter-spacing: -0.01em;
     }
 
     .badge-pill-green {
@@ -411,7 +416,7 @@ render_html("""
     .benchmark-icon-chip {
         width: 26px;
         height: 26px;
-        border-radius: 6px;
+        border-radius: 0px !important;
         background: #E8F5E9;
         color: #008837;
         display: flex;
@@ -438,9 +443,11 @@ render_html("""
     }
 
     .benchmark-time {
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "SF Pro", "Inter", sans-serif !important;
         font-weight: 700;
-        font-size: 0.85rem;
+        font-size: 0.88rem;
         color: #0F172A;
+        letter-spacing: -0.02em;
     }
 
     /* Quick Action Items */
@@ -464,7 +471,7 @@ render_html("""
     .action-icon-chip {
         width: 30px;
         height: 30px;
-        border-radius: 8px;
+        border-radius: 0px !important;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -657,7 +664,7 @@ with st.sidebar:
     render_html("""
     <div class="sidebar-brand-block">
         <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-            <rect width="32" height="32" rx="8" fill="url(#kalbe-grad)"/>
+            <rect width="32" height="32" rx="0" fill="url(#kalbe-grad)"/>
             <path d="M9 16C9 12.134 12.134 9 16 9C19.866 9 23 12.134 23 16C23 19.866 19.866 23 16 23" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
             <circle cx="16" cy="16" r="3" fill="white"/>
             <defs>
@@ -850,7 +857,7 @@ if nav_tab == "Dashboard Overview":
         </div>
         <div class="greeting-pill-bar">
             <div class="filter-chip">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#008837" stroke-width="2"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#008837" stroke-width="2"><rect width="18" height="18" x="3" y="4" rx="0" ry="0"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
                 <span>Batch Campaign 2026.Q4</span>
             </div>
             <div class="filter-chip" style="background:#F0FDF4; border-color:#BBF7D0; color:#008837;">
@@ -1661,38 +1668,76 @@ elif nav_tab == "Batch Run Datasets":
     </div>
     """)
 
-    # Telemetry Summary Metric Row (Strict Equal Heights 120px)
+    # Telemetry Summary Metric Row (Strict Equal Heights 155px matching BorderFlow)
     m1, m2, m3, m4 = st.columns(4)
     with m1:
         render_html(f"""
-        <div class="kpi-metric-card" style="height:120px;">
-            <div class="card-title-label" style="margin-left:0;">Sample Population</div>
-            <div class="kpi-main-num">{N_mc}<span class="kpi-unit">Vials</span></div>
+        <div class="kpi-metric-card">
+            <div class="card-top-row">
+                <div class="card-icon-bubble" style="background:#E8F5E9; color:#008837;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                </div>
+                <span class="badge-pill-green">Latin Hypercube</span>
+            </div>
+            <div class="card-title-label">Sample Population</div>
+            <div class="kpi-value-row">
+                <span class="kpi-main-num">{N_mc}</span>
+                <span class="kpi-unit">vials</span>
+            </div>
             <div class="card-subtext">Stochastic Monte Carlo run</div>
         </div>
         """)
     with m2:
         render_html(f"""
-        <div class="kpi-metric-card" style="height:120px;">
-            <div class="card-title-label" style="margin-left:0;">Mean Drying Time</div>
-            <div class="kpi-main-num">{mc_run.t_dry_mean:.2f}<span class="kpi-unit">h</span></div>
-            <div class="card-subtext">Std Dev: ±{mc_run.t_dry_std:.2f} h</div>
+        <div class="kpi-metric-card">
+            <div class="card-top-row">
+                <div class="card-icon-bubble" style="background:#EFF6FF; color:#1D4ED8;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                </div>
+                <span class="badge-pill-blue">±{mc_run.t_dry_std:.2f} hrs</span>
+            </div>
+            <div class="card-title-label">Mean Drying Time</div>
+            <div class="kpi-value-row">
+                <span class="kpi-main-num">{mc_run.t_dry_mean:.2f}</span>
+                <span class="kpi-unit">hrs</span>
+            </div>
+            <div class="card-subtext">5th–95th percentile window</div>
         </div>
         """)
     with m3:
+        mc_temp_pill = "badge-pill-green" if mc_run.T_max_mean <= T_c_C else "badge-pill-red"
         render_html(f"""
-        <div class="kpi-metric-card" style="height:120px;">
-            <div class="card-title-label" style="margin-left:0;">Mean Peak Temp</div>
-            <div class="kpi-main-num">{mc_run.T_max_mean:.2f}<span class="kpi-unit">°C</span></div>
-            <div class="card-subtext">Std Dev: ±{mc_run.T_max_std:.2f} °C</div>
+        <div class="kpi-metric-card">
+            <div class="card-top-row">
+                <div class="card-icon-bubble" style="background:#FEF3C7; color:#D97706;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>
+                </div>
+                <span class="{mc_temp_pill}">±{mc_run.T_max_std:.2f} °C</span>
+            </div>
+            <div class="card-title-label">Mean Peak Temp</div>
+            <div class="kpi-value-row">
+                <span class="kpi-main-num">{mc_run.T_max_mean:.2f}</span>
+                <span class="kpi-unit">°C</span>
+            </div>
+            <div class="card-subtext">Collapse limit Tc = {T_c_C:.1f}°C</div>
         </div>
         """)
     with m4:
+        mc_risk_pill = "badge-pill-green" if mc_run.risk_of_collapse_pct < 0.1 else ("badge-pill-amber" if mc_run.risk_of_collapse_pct < 2.0 else "badge-pill-red")
         render_html(f"""
-        <div class="kpi-metric-card" style="height:120px;">
-            <div class="card-title-label" style="margin-left:0;">Collapse Failure Count</div>
-            <div class="kpi-main-num">{int(np.sum(mc_run.collapse_arr))}<span class="kpi-unit">/ {N_mc}</span></div>
-            <div class="card-subtext">Failure Risk: {mc_run.risk_of_collapse_pct:.2f}%</div>
+        <div class="kpi-metric-card">
+            <div class="card-top-row">
+                <div class="card-icon-bubble" style="background:#FEF2F2; color:#DC2626;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                </div>
+                <span class="{mc_risk_pill}">{mc_run.risk_of_collapse_pct:.2f}% Risk</span>
+            </div>
+            <div class="card-title-label">Collapse Failure Count</div>
+            <div class="kpi-value-row">
+                <span class="kpi-main-num">{int(np.sum(mc_run.collapse_arr))}</span>
+                <span class="kpi-unit">/ {N_mc} vials</span>
+            </div>
+            <div class="card-subtext">ICH Q8 Defect Frequency</div>
         </div>
         """)
 
