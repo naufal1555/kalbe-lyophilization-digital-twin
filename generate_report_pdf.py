@@ -473,14 +473,15 @@ def build_pdf():
         body_style
     ))
 
-    story.append(Paragraph("References", h1_style))
+    story.append(Paragraph("References & Empirical Literature Sources", h1_style))
     refs = [
-        "1. Pikal, M. J., Shah, S., Roy, M. L., & Putman, R. (1990). The secondary drying stage of freeze drying: drying kinetics as a function of temperature and chamber pressure. <i>Int. J. Pharm.</i>, 60(3), 203&ndash;207.",
-        "2. Pikal, M. J. (2004). Mechanisms of protein stabilization during freeze-drying and storage. <i>Drugs and the Pharmaceutical Sciences</i>, 137, 63&ndash;107.",
-        "3. Fissore, D., Pisano, R., & Barresi, A. A. (2011). Advanced approach to build the design space for the primary drying of a pharmaceutical freeze-drying process. <i>J. Pharm. Sci.</i>, 100(11), 4922&ndash;4933.",
-        "4. Rambhatla, S., & Pikal, M. J. (2003). Heat and mass transfer scale-up issues during freeze-drying, I: atypical radiation and the edge vial effect. <i>AAPS PharmSciTech</i>, 4(2), 22&ndash;31.",
-        "5. International Council for Harmonisation (ICH). (2009). <i>ICH Harmonised Tripartite Guideline: Pharmaceutical Development Q8(R2)</i>.",
-        "6. PT Kalbio Global Medika. (2024). <i>Corporate Biomanufacturing Capabilities & Sterile Lyophilization Infrastructure</i>. Cikarang, Indonesia.",
+        "1. Pikal, M. J., Roy, M. L., & Shah, S. (1984). Mass and heat transfer in freeze-drying: Modeling of the dynamic changes in cake resistance and the calculation of optimum primary drying cycles. <i>International Journal of Pharmaceutics</i>, 22(2&ndash;3), 193&ndash;214. https://doi.org/10.1016/0378-5173(84)90022-6",
+        "2. Rambhatla, S., & Pikal, M. J. (2003). Heat and mass transfer scale-up issues during freeze-drying, I: atypical radiation and the edge vial effect. <i>AAPS PharmSciTech</i>, 4(2), 22&ndash;31. https://doi.org/10.1208/pt040214",
+        "3. Tang, X. C., & Pikal, M. J. (2004). Design of freeze-drying processes for pharmaceuticals: Practical advice. <i>Pharmaceutical Research</i>, 21(2), 191&ndash;200. https://doi.org/10.1023/B:PHAM.0000016234.73023.75",
+        "4. Fissore, D., Pisano, R., & Barresi, A. A. (2011). Advanced approach to build the design space for the primary drying of a pharmaceutical freeze-drying process. <i>Journal of Pharmaceutical Sciences</i>, 100(11), 4922&ndash;4933. https://doi.org/10.1002/jps.22668",
+        "5. Pisano, R., Fissore, D., & Barresi, A. A. (2011). Heat transfer in freeze-drying apparatus. In <i>Developments in Heat Transfer</i> (pp. 91&ndash;114). InTech. https://doi.org/10.5772/24119",
+        "6. International Council for Harmonisation (ICH). (2009). <i>ICH Harmonised Tripartite Guideline: Pharmaceutical Development Q8(R2)</i>. Current Step 4 version, Geneva, Switzerland.",
+        "7. PT Kalbio Global Medika. (2024). <i>Corporate Biopharmaceutical Capabilities & Sterile Lyophilization Infrastructure</i>. Cikarang, West Java, Indonesia.",
     ]
     for r in refs:
         story.append(Paragraph(r, ParagraphStyle("Ref", fontName="Helvetica", fontSize=7, leading=9.2, textColor=colors.HexColor("#424242"), spaceAfter=2)))
