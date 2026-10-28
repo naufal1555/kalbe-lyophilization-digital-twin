@@ -816,7 +816,8 @@ with st.spinner("Executing Implicit Moving-Boundary ODE Solver & Monte Carlo Eng
         N=N_mc,
         seed=42,
         store_runs=True,
-        include_edge_vials=include_edge
+        include_edge_vials=include_edge,
+        Tc_mean=Tc_K
     )
 
 # -----------------------------------------------------------------------------
@@ -1075,42 +1076,57 @@ if nav_tab == "Dashboard Overview":
             st.plotly_chart(fig_donut, use_container_width=True)
 
         with b_col2:
-            render_html("""
+            if deploy_guard_rings:
+                kv_badge = "Kv = 22.0 W/(m²·K) (Shielded)"
+                p_gas = 72
+                p_contact = 28
+                p_rad = 0
+                rad_color = "#10B981"
+                note_text = "<b>Guard Rings Active:</b> Chamber wall radiant flux is fully suppressed. Perimeter vial Kv normalized to 22.0 W/(m²·K) with 0.00% edge collapse risk."
+            else:
+                kv_badge = "Kv = 26.5 W/(m²·K) (Unshielded)"
+                p_gas = 58
+                p_contact = 25
+                p_rad = 17
+                rad_color = "#EF4444"
+                note_text = "<b>Edge-Vial Impact:</b> Perimeter vials absorb +15% to +25% supplementary radiant flux from chamber walls, elevating failure risk unless radiation guard rings are deployed."
+
+            render_html(f"""
             <div class="white-panel" style="min-height:340px; height:340px;">
                 <div class="panel-header-row">
                     <div>
                         <h4 class="panel-heading">Heat Transfer (Kv)</h4>
                         <div style="font-size:0.72rem; color:#64748B;">Energy influx mechanisms</div>
                     </div>
-                    <span class="badge-pill-green">Kv = 26.5 W/(m²·K)</span>
+                    <span class="badge-pill-green">{kv_badge}</span>
                 </div>
                 <div style="margin-top:10px;">
                     <div class="progress-label-row">
                         <span>Gas Conduction (Rarefied)</span>
-                        <span class="progress-val-mono">58%</span>
+                        <span class="progress-val-mono">{p_gas}%</span>
                     </div>
                     <div class="progress-track">
-                        <div class="progress-bar-fill" style="width:58%; background:linear-gradient(90deg, #008837, #00B14F);"></div>
+                        <div class="progress-bar-fill" style="width:{p_gas}%; background:linear-gradient(90deg, #008837, #00B14F);"></div>
                     </div>
 
                     <div class="progress-label-row">
                         <span>Direct Vial-to-Shelf Contact</span>
-                        <span class="progress-val-mono">25%</span>
+                        <span class="progress-val-mono">{p_contact}%</span>
                     </div>
                     <div class="progress-track">
-                        <div class="progress-bar-fill" style="width:25%; background:#00A859;"></div>
+                        <div class="progress-bar-fill" style="width:{p_contact}%; background:#00A859;"></div>
                     </div>
 
                     <div class="progress-label-row">
                         <span>Chamber Wall IR Radiation (Edge Effect)</span>
-                        <span class="progress-val-mono" style="color:#EF4444;">17%</span>
+                        <span class="progress-val-mono" style="color:{rad_color};">{p_rad}%</span>
                     </div>
                     <div class="progress-track">
-                        <div class="progress-bar-fill" style="width:17%; background:#EF4444;"></div>
+                        <div class="progress-bar-fill" style="width:{p_rad}%; background:{rad_color};"></div>
                     </div>
 
                     <div class="heat-transfer-note">
-                        <b>Edge-Vial Impact:</b> Perimeter vials absorb +15% to +25% supplementary radiant flux from chamber walls, elevating failure risk unless radiation guard rings are deployed.
+                        {note_text}
                     </div>
                 </div>
             </div>

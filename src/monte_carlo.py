@@ -65,6 +65,7 @@ def run_monte_carlo(
     seed: int = cfg.SEED,
     store_runs: bool = False,
     include_edge_vials: bool = True,
+    Tc_mean: Optional[float] = None,
 ) -> MonteCarloResult:
     """
     Execute Monte Carlo simulation for a given setpoint.
@@ -84,6 +85,8 @@ def run_monte_carlo(
     include_edge_vials : bool
         Whether to include edge-vial radiation variability (+15-25% Kv).
         If False, simulates radiation shielding/guard rings (Kv ~ N(22, 1.2^2)).
+    Tc_mean : float, optional
+        Target mean collapse temperature [K]. Defaults to cfg.TC_MEAN.
 
     Returns
     -------
@@ -103,7 +106,8 @@ def run_monte_carlo(
     Rp_scale_samples = rng.normal(cfg.RP_SCALE_MEAN, cfg.RP_SCALE_STD, size=N)
     Rp_scale_samples = np.clip(Rp_scale_samples, 0.5, 2.0)
 
-    Tc_samples = rng.normal(cfg.TC_MEAN, cfg.TC_STD, size=N)
+    tc_center = Tc_mean if Tc_mean is not None else cfg.TC_MEAN
+    Tc_samples = rng.normal(tc_center, cfg.TC_STD, size=N)
 
     # Storage arrays
     T_max_arr = np.zeros(N)
