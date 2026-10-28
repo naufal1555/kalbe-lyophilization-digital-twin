@@ -1270,10 +1270,12 @@ elif nav_tab == "ICH Q8 Design Space":
 
     with z1:
         render_html("""
-        <div class="kpi-metric-card" style="height:180px; border-top: 4px solid #008837;">
-            <div class="card-top-row">
-                <span class="card-title-label" style="margin-left:0; color:#008837; font-weight:800;">PROVEN ACCEPTABLE RANGE (PAR)</span>
-                <span class="badge-pill-green">0.00% Risk</span>
+        <div class="kpi-metric-card" style="height:190px;">
+            <div class="card-top-row" style="align-items:flex-start; margin-bottom:8px;">
+                <div style="font-size:0.83rem; font-weight:800; color:#008837; line-height:1.25;">
+                    Proven Acceptable Range (PAR)
+                </div>
+                <span class="badge-pill-green" style="flex-shrink:0; margin-left:6px;">0.00% Risk</span>
             </div>
             <div style="font-size:0.80rem; color:#334155; line-height:1.5;">
                 <div><b>Shelf Temperature:</b> -35°C to -28°C</div>
@@ -1287,10 +1289,12 @@ elif nav_tab == "ICH Q8 Design Space":
 
     with z2:
         render_html("""
-        <div class="kpi-metric-card" style="height:180px; border-top: 4px solid #D97706;">
-            <div class="card-top-row">
-                <span class="card-title-label" style="margin-left:0; color:#D97706; font-weight:800;">QbD OPTIMAL SWEET SPOT</span>
-                <span class="badge-pill-amber">0.60% Risk</span>
+        <div class="kpi-metric-card" style="height:190px;">
+            <div class="card-top-row" style="align-items:flex-start; margin-bottom:8px;">
+                <div style="font-size:0.83rem; font-weight:800; color:#D97706; line-height:1.25;">
+                    QbD Optimal Sweet Spot
+                </div>
+                <span class="badge-pill-amber" style="flex-shrink:0; margin-left:6px;">0.60% Risk</span>
             </div>
             <div style="font-size:0.80rem; color:#334155; line-height:1.5;">
                 <div><b>Operating Point:</b> Ts = -28°C | Pc = 10 Pa</div>
@@ -1304,10 +1308,12 @@ elif nav_tab == "ICH Q8 Design Space":
 
     with z3:
         render_html("""
-        <div class="kpi-metric-card" style="height:180px; border-top: 4px solid #DC2626;">
-            <div class="card-top-row">
-                <span class="card-title-label" style="margin-left:0; color:#DC2626; font-weight:800;">CRITICAL FAILURE ZONE</span>
-                <span class="badge-pill-red">> 95% Risk</span>
+        <div class="kpi-metric-card" style="height:190px;">
+            <div class="card-top-row" style="align-items:flex-start; margin-bottom:8px;">
+                <div style="font-size:0.83rem; font-weight:800; color:#DC2626; line-height:1.25;">
+                    Critical Failure Zone
+                </div>
+                <span class="badge-pill-red" style="flex-shrink:0; margin-left:6px;">> 95% Risk</span>
             </div>
             <div style="font-size:0.80rem; color:#334155; line-height:1.5;">
                 <div><b>Shelf Temperature:</b> > -25°C</div>
