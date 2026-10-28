@@ -4,8 +4,8 @@ app.py — Kalbe AEC Biologics Lyophilization Digital Twin Console
 Modern Enterprise Bio-Industrial Dashboard (BorderFlow Aesthetic + Kalbe Green)
 Typography: Apple iOS System Stack (SF Pro Display / SF Pro Text / SF Mono)
 Target Facility: PT Kalbio Global Medika (KGM) — Cikarang Biologics Cleanroom
-Author: Naufal Fathin (Process Simulation Engineering Intern Assessment)
-Identity: Naufal Fathin (naufaalfathin15@gmail.com)
+Author: Ahmad Fathin Naufal (Process Simulation Engineering Intern Assessment)
+Identity: Ahmad Fathin Naufal (naufaalfathin15@gmail.com)
 """
 
 import sys
@@ -367,14 +367,14 @@ render_html("""
     }
 
     /* White Content Card Panels */
-    .white-panel {
-        background: #FFFFFF;
-        border: 1px solid #E2E8F0;
-        border-radius: 14px;
-        padding: 20px;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
-        margin-bottom: 18px;
-        box-sizing: border-box;
+    .white-panel, div[data-testid="stVerticalBlockBorderWrapper"] {
+        background: #FFFFFF !important;
+        border: 1px solid #E2E8F0 !important;
+        border-radius: 14px !important;
+        padding: 20px !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03) !important;
+        margin-bottom: 18px !important;
+        box-sizing: border-box !important;
     }
 
     .panel-header-row {
@@ -680,9 +680,9 @@ with st.sidebar:
         </div>
     </div>
     <div class="user-profile-card" style="padding:8px 10px; background:#F8FAFC; border:1px solid #E2E8F0; margin-bottom:12px; border-left:none;">
-        <div class="user-avatar-img">NF</div>
+        <div class="user-avatar-img">AFN</div>
         <div>
-            <div class="user-name-text">Naufal Fathin</div>
+            <div class="user-name-text">Ahmad Fathin Naufal</div>
             <div class="user-role-text">Process Simulation Engineer (PSE) | Kalbe AEC</div>
         </div>
     </div>
@@ -834,7 +834,7 @@ if nav_tab == "Dashboard Overview":
     render_html(f"""
     <div class="greeting-container">
         <div>
-            <h1 class="greeting-title">{time_greeting}, Naufal</h1>
+            <h1 class="greeting-title">{time_greeting}, Ahmad Fathin Naufal</h1>
             <p class="greeting-subtitle">Here is your lyophilization simulation overview and ICH Q8 QbD control space for Lyo Unit 02 (KGM Cikarang).</p>
         </div>
         <div class="greeting-pill-bar">
@@ -942,9 +942,9 @@ if nav_tab == "Dashboard Overview":
 
     with col_main:
         # 1. Main Chart Card (BorderFlow "Transfers & Volume" Style)
-        render_html("""
-        <div class="white-panel">
-            <div class="panel-header-row">
+        with st.container(border=True):
+            render_html("""
+            <div class="panel-header-row" style="margin-bottom:8px;">
                 <div>
                     <h3 class="panel-heading">Sublimation Dynamics & Thermal Envelope</h3>
                     <p style="font-size:0.78rem; color:#64748B; margin:2px 0 0 0;">Product Interface Temperature Trajectory vs. Formulation Collapse Limit</p>
@@ -954,153 +954,154 @@ if nav_tab == "Dashboard Overview":
                     <span style="font-size:0.73rem; color:#10B981; font-weight:600;">● 5th–95th Confidence Ribbon</span>
                 </div>
             </div>
-        </div>
-        """)
+            """)
 
-        fig_main = make_subplots(
-            rows=2, cols=1,
-            shared_xaxes=True,
-            vertical_spacing=0.08,
-            row_heights=[0.70, 0.30]
-        )
+            fig_main = make_subplots(
+                rows=2, cols=1,
+                shared_xaxes=True,
+                vertical_spacing=0.08,
+                row_heights=[0.70, 0.30]
+            )
 
-        # Shaded confidence band (5th - 95th percentile)
-        fig_main.add_trace(go.Scatter(
-            x=np.concatenate([mc_run.time_common, mc_run.time_common[::-1]]),
-            y=np.concatenate([mc_run.Tp_p95, mc_run.Tp_p5[::-1]]),
-            fill='toself',
-            fillcolor='rgba(0, 177, 79, 0.12)',
-            line=dict(color='rgba(255,255,255,0)'),
-            hoverinfo="skip",
-            name='5th–95th Percentile Envelope'
-        ), row=1, col=1)
+            # Shaded confidence band (5th - 95th percentile)
+            fig_main.add_trace(go.Scatter(
+                x=np.concatenate([mc_run.time_common, mc_run.time_common[::-1]]),
+                y=np.concatenate([mc_run.Tp_p95, mc_run.Tp_p5[::-1]]),
+                fill='toself',
+                fillcolor='rgba(0, 177, 79, 0.12)',
+                line=dict(color='rgba(255,255,255,0)'),
+                hoverinfo="skip",
+                name='5th–95th Percentile Envelope'
+            ), row=1, col=1)
 
-        # Median product interface temperature
-        fig_main.add_trace(go.Scatter(
-            x=mc_run.time_common,
-            y=mc_run.Tp_median,
-            mode='lines',
-            line=dict(color='#008837', width=3),
-            name='Median Tp(t)',
-            hovertemplate="Time: %{x:.2f} h<br>Tp: %{y:.2f} °C<extra></extra>"
-        ), row=1, col=1)
+            # Median product interface temperature
+            fig_main.add_trace(go.Scatter(
+                x=mc_run.time_common,
+                y=mc_run.Tp_median,
+                mode='lines',
+                line=dict(color='#008837', width=3),
+                name='Median Tp(t)',
+                hovertemplate="Time: %{x:.2f} h<br>Tp: %{y:.2f} °C<extra></extra>"
+            ), row=1, col=1)
 
-        # Shelf temperature setpoint
-        fig_main.add_trace(go.Scatter(
-            x=[0, max(mc_run.time_common)],
-            y=[T_shelf_C, T_shelf_C],
-            mode='lines',
-            line=dict(color='#64748B', width=1.5, dash='dot'),
-            name=f'Shelf Setpoint ({T_shelf_C:.1f} °C)'
-        ), row=1, col=1)
+            # Shelf temperature setpoint
+            fig_main.add_trace(go.Scatter(
+                x=[0, max(mc_run.time_common)],
+                y=[T_shelf_C, T_shelf_C],
+                mode='lines',
+                line=dict(color='#64748B', width=1.5, dash='dot'),
+                name=f'Shelf Setpoint ({T_shelf_C:.1f} °C)'
+            ), row=1, col=1)
 
-        # Collapse limit line
-        fig_main.add_trace(go.Scatter(
-            x=[0, max(mc_run.time_common)],
-            y=[T_c_C, T_c_C],
-            mode='lines',
-            line=dict(color='#EF4444', width=2, dash='dash'),
-            name=f'Collapse Limit Tc ({T_c_C:.1f} °C)'
-        ), row=1, col=1)
+            # Collapse limit line
+            fig_main.add_trace(go.Scatter(
+                x=[0, max(mc_run.time_common)],
+                y=[T_c_C, T_c_C],
+                mode='lines',
+                line=dict(color='#EF4444', width=2, dash='dash'),
+                name=f'Collapse Limit Tc ({T_c_C:.1f} °C)'
+            ), row=1, col=1)
 
-        # Dry layer thickness progress (bottom sub-chart)
-        fig_main.add_trace(go.Scatter(
-            x=det_run.time_hours,
-            y=det_run.L_dry * 1000,
-            mode='lines',
-            line=dict(color='#00B14F', width=2),
-            name='Dry Layer L(t) [mm]',
-            hovertemplate="Time: %{x:.2f} h<br>Dry Layer: %{y:.2f} mm<extra></extra>"
-        ), row=2, col=1)
+            # Dry layer thickness progress (bottom sub-chart)
+            fig_main.add_trace(go.Scatter(
+                x=det_run.time_hours,
+                y=det_run.L_dry * 1000,
+                mode='lines',
+                line=dict(color='#00B14F', width=2),
+                name='Dry Layer L(t) [mm]',
+                hovertemplate="Time: %{x:.2f} h<br>Dry Layer: %{y:.2f} mm<extra></extra>"
+            ), row=2, col=1)
 
-        fig_main.add_trace(go.Scatter(
-            x=[0, max(mc_run.time_common)],
-            y=[cfg.L_TOTAL * 1000, cfg.L_TOTAL * 1000],
-            mode='lines',
-            line=dict(color='#CBD5E1', width=1, dash='dot'),
-            name='Total Cake (8.19 mm)'
-        ), row=2, col=1)
+            fig_main.add_trace(go.Scatter(
+                x=[0, max(mc_run.time_common)],
+                y=[cfg.L_TOTAL * 1000, cfg.L_TOTAL * 1000],
+                mode='lines',
+                line=dict(color='#CBD5E1', width=1, dash='dot'),
+                name='Total Cake (8.19 mm)'
+            ), row=2, col=1)
 
-        fig_main.update_layout(
-            height=370,
-            margin=dict(l=10, r=10, t=10, b=10),
-            paper_bgcolor='#FFFFFF',
-            plot_bgcolor='#FFFFFF',
-            font=dict(family='-apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif', color='#64748B', size=11),
-            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
-        )
+            fig_main.update_layout(
+                height=370,
+                margin=dict(l=10, r=10, t=10, b=10),
+                paper_bgcolor='#FFFFFF',
+                plot_bgcolor='#FFFFFF',
+                font=dict(family='-apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif', color='#64748B', size=11),
+                legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
+            )
 
-        fig_main.update_xaxes(gridcolor='#F1F5F9', row=1, col=1)
-        fig_main.update_xaxes(title_text="Primary Drying Time [hours]", gridcolor='#F1F5F9', row=2, col=1)
-        fig_main.update_yaxes(title_text="Temp [°C]", gridcolor='#F1F5F9', row=1, col=1)
-        fig_main.update_yaxes(title_text="Layer [mm]", gridcolor='#F1F5F9', row=2, col=1)
+            fig_main.update_xaxes(gridcolor='#F1F5F9', row=1, col=1)
+            fig_main.update_xaxes(title_text="Primary Drying Time [hours]", gridcolor='#F1F5F9', row=2, col=1)
+            fig_main.update_yaxes(title_text="Temp [°C]", gridcolor='#F1F5F9', row=1, col=1)
+            fig_main.update_yaxes(title_text="Layer [mm]", gridcolor='#F1F5F9', row=2, col=1)
 
-        st.plotly_chart(fig_main, use_container_width=True)
+            st.plotly_chart(fig_main, use_container_width=True)
 
         # 2. Bottom Left Split Row (2 Square Cards: Donut + Progress Breakdown)
         b_col1, b_col2 = st.columns(2)
 
         with b_col1:
-            render_html(f"""
-            <div class="white-panel" style="min-height:340px; height:340px;">
-                <div class="panel-header-row">
-                    <h4 class="panel-heading">Tray Population Status</h4>
-                    <span class="badge-pill-green">N = {N_mc} Vials</span>
+            with st.container(border=True):
+                render_html(f"""
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px; gap:8px;">
+                    <div style="min-width:0;">
+                        <div style="font-size:0.92rem; font-weight:700; color:#0F172A; white-space:nowrap;">Tray Population Status</div>
+                        <div style="font-size:0.72rem; color:#64748B; margin-top:2px; white-space:nowrap;">Vial integrity distribution</div>
+                    </div>
+                    <span class="badge-pill-green" style="font-size:0.68rem; padding:3px 7px; white-space:nowrap; flex-shrink:0;">N = {N_mc} Vials</span>
                 </div>
-            </div>
-            """)
+                """)
 
-            n_safe = N_mc - int(np.sum(mc_run.collapse_arr))
-            n_fail = int(np.sum(mc_run.collapse_arr))
+                n_safe = N_mc - int(np.sum(mc_run.collapse_arr))
+                n_fail = int(np.sum(mc_run.collapse_arr))
 
-            fig_donut = go.Figure(data=[go.Pie(
-                labels=['Sound Vials', 'Perimeter Risk Vials'],
-                values=[n_safe, n_fail],
-                hole=0.68,
-                marker_colors=['#008837', '#EF4444'],
-                textinfo='percent',
-                hoverinfo='label+value+percent'
-            )])
+                fig_donut = go.Figure(data=[go.Pie(
+                    labels=['Sound Vials', 'Perimeter Risk Vials'],
+                    values=[n_safe, n_fail],
+                    hole=0.68,
+                    marker_colors=['#008837', '#EF4444'],
+                    textinfo='percent',
+                    hoverinfo='label+value+percent'
+                )])
 
-            fig_donut.update_layout(
-                height=230,
-                margin=dict(l=10, r=10, t=5, b=5),
-                paper_bgcolor='#FFFFFF',
-                plot_bgcolor='#FFFFFF',
-                font=dict(family='-apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif', color='#334155'),
-                annotations=[dict(text=f'<b>{N_mc}</b><br><span style="font-size:10px;color:#94A3B8;">Vials</span>', x=0.5, y=0.5, font_size=15, font_family='-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif', showarrow=False)],
-                showlegend=True,
-                legend=dict(orientation="h", yanchor="bottom", y=-0.2, xanchor="center", x=0.5)
-            )
+                fig_donut.update_layout(
+                    height=240,
+                    margin=dict(l=10, r=10, t=10, b=30),
+                    paper_bgcolor='#FFFFFF',
+                    plot_bgcolor='#FFFFFF',
+                    font=dict(family='-apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif', color='#334155'),
+                    annotations=[dict(text=f'<b>{N_mc}</b><br><span style="font-size:10px;color:#94A3B8;">Vials</span>', x=0.5, y=0.5, font_size=15, font_family='-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif', showarrow=False)],
+                    showlegend=True,
+                    legend=dict(orientation="h", yanchor="top", y=-0.05, xanchor="center", x=0.5)
+                )
 
-            st.plotly_chart(fig_donut, use_container_width=True)
+                st.plotly_chart(fig_donut, use_container_width=True)
 
         with b_col2:
-            if deploy_guard_rings:
-                kv_badge = "Kv = 22.0 W/(m²·K) (Shielded)"
-                p_gas = 72
-                p_contact = 28
-                p_rad = 0
-                rad_color = "#10B981"
-                note_text = "<b>Guard Rings Active:</b> Chamber wall radiant flux is fully suppressed. Perimeter vial Kv normalized to 22.0 W/(m²·K) with 0.00% edge collapse risk."
-            else:
-                kv_badge = "Kv = 26.5 W/(m²·K) (Unshielded)"
-                p_gas = 58
-                p_contact = 25
-                p_rad = 17
-                rad_color = "#EF4444"
-                note_text = "<b>Edge-Vial Impact:</b> Perimeter vials absorb +15% to +25% supplementary radiant flux from chamber walls, elevating failure risk unless radiation guard rings are deployed."
+            with st.container(border=True):
+                if deploy_guard_rings:
+                    kv_badge = "Kv = 22.0 · Shielded"
+                    p_gas = 72
+                    p_contact = 28
+                    p_rad = 0
+                    rad_color = "#10B981"
+                    note_text = "<b>Guard Rings Active:</b> Chamber wall radiant flux is fully suppressed. Perimeter vial Kv normalized to 22.0 W/(m²·K) with 0.00% edge collapse risk."
+                else:
+                    kv_badge = "Kv = 26.5 · Unshielded"
+                    p_gas = 58
+                    p_contact = 25
+                    p_rad = 17
+                    rad_color = "#EF4444"
+                    note_text = "<b>Edge-Vial Impact:</b> Perimeter vials absorb +15% to +25% supplementary radiant flux from chamber walls, elevating failure risk unless radiation guard rings are deployed."
 
-            render_html(f"""
-            <div class="white-panel" style="min-height:340px; height:340px;">
-                <div class="panel-header-row">
-                    <div>
-                        <h4 class="panel-heading">Heat Transfer (Kv)</h4>
-                        <div style="font-size:0.72rem; color:#64748B;">Energy influx mechanisms</div>
+                render_html(f"""
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px; gap:8px;">
+                    <div style="min-width:0;">
+                        <div style="font-size:0.92rem; font-weight:700; color:#0F172A; white-space:nowrap;">Heat Transfer (Kv)</div>
+                        <div style="font-size:0.72rem; color:#64748B; margin-top:2px; white-space:nowrap;">Energy influx distribution</div>
                     </div>
-                    <span class="badge-pill-green">{kv_badge}</span>
+                    <span class="badge-pill-green" style="font-size:0.68rem; padding:3px 7px; white-space:nowrap; flex-shrink:0;">{kv_badge}</span>
                 </div>
-                <div style="margin-top:10px;">
+                <div>
                     <div class="progress-label-row">
                         <span>Gas Conduction (Rarefied)</span>
                         <span class="progress-val-mono">{p_gas}%</span>
@@ -1118,7 +1119,7 @@ if nav_tab == "Dashboard Overview":
                     </div>
 
                     <div class="progress-label-row">
-                        <span>Chamber Wall IR Radiation (Edge Effect)</span>
+                        <span>Chamber Wall IR Radiation (Edge)</span>
                         <span class="progress-val-mono" style="color:{rad_color};">{p_rad}%</span>
                     </div>
                     <div class="progress-track">
@@ -1129,8 +1130,7 @@ if nav_tab == "Dashboard Overview":
                         {note_text}
                     </div>
                 </div>
-            </div>
-            """)
+                """)
 
     with col_side:
         # 1. Right Card: Comparative Recipe Benchmarks (BorderFlow "Recent Transfers" style)

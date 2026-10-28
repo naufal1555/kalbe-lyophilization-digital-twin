@@ -6,7 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 > **Kalbe Advanced Engineering Center (AEC) — Process Simulation Engineering (PSE) Case Study**  
-> **Author:** Naufal Fathin ([naufaalfathin15@gmail.com](mailto:naufaalfathin15@gmail.com))  
+> **Author:** Ahmad Fathin Naufal ([naufaalfathin15@gmail.com](mailto:naufaalfathin15@gmail.com))  
 > **Target Facility:** PT Kalbio Global Medika (KGM) — Cikarang Biopharmaceutical Plant
 
 ---

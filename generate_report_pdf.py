@@ -203,7 +203,7 @@ def build_pdf():
         [
             Paragraph("<b>Target Facility:</b> PT Kalbio Global Medika (KGM) &mdash; Cikarang", table_cell_style),
             Paragraph("<b>Focus Domain:</b> Sterile Parenteral Biomanufacturing", table_cell_style),
-            Paragraph("<b>Candidate:</b> Naufal Fathin", table_cell_style),
+            Paragraph("<b>Candidate:</b> Ahmad Fathin Naufal", table_cell_style),
         ],
         [
             Paragraph("<b>Regulatory Framework:</b> ICH Q8(R2) Quality by Design (QbD)", table_cell_style),
