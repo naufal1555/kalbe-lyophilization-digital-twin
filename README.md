@@ -2,7 +2,7 @@
 
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
 [![ICH Q8 Compliant](https://img.shields.io/badge/ICH%20Q8-Quality%20by%20Design-green.svg)](https://database.ich.org/sites/default/files/Q8_R2_Guideline.pdf)
-[![Streamlit App](https://img.shields.io/badge/Streamlit-Live%20Dashboard-red.svg)](https://streamlit.io/)
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://kalbe-lyophilization-digital-twin-fdwhwedshwhm6bevyd7qyu.streamlit.app/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 > **Kalbe Advanced Engineering Center (AEC) — Process Simulation Engineering (PSE) Case Study**  
@@ -105,6 +105,8 @@ python run_experiments.py
 ```bash
 streamlit run app.py
 ```
+> 🌐 **Live Cloud Simulation:** You can test the deployed digital twin directly without local setup at:  
+> **[https://kalbe-lyophilization-digital-twin-fdwhwedshwhm6bevyd7qyu.streamlit.app/](https://kalbe-lyophilization-digital-twin-fdwhwedshwhm6bevyd7qyu.streamlit.app/)**
 
 ---
 
