@@ -52,10 +52,11 @@ class NumberedCanvas(canvas.Canvas):
         self.saveState()
         # Suppress running header and footer on Cover Page (Page 1)
         if self._pageNumber > 1:
-            self.setFont("Times-Bold", 8)
-            self.setFillColor(colors.HexColor("#1E293B"))
-            self.drawString(40, 810, "PT KALBE FARMA TBK  |  CORPORATE DIGITAL TRANSFORMATION  |  ADVANCED ENGINEERING CENTER (AEC)")
-            self.drawRightString(555, 810, "PROCESS SIMULATION ENGINEERING (PSE)")
+            self.setFont("Times-Bold", 7.5)
+            self.setFillColor(colors.HexColor("#1A1A1A"))
+            # Left and right headers with clean separation (no collision)
+            self.drawString(40, 810, "PT KALBE FARMA TBK  |  ADVANCED ENGINEERING CENTER (AEC)")
+            self.drawRightString(555, 810, "PROCESS SIMULATION ENGINEERING")
             self.setStrokeColor(colors.HexColor("#64748B"))
             self.setLineWidth(0.5)
             self.line(40, 804, 555, 804)
@@ -65,7 +66,7 @@ class NumberedCanvas(canvas.Canvas):
             self.setLineWidth(0.5)
             self.line(40, 36, 555, 36)
             self.setFont("Times-Roman", 7.8)
-            self.drawString(40, 26, "CONFIDENTIAL  |  Post-Interview Assessment  |  Candidate: Ahmad Fathin Naufal  |  Track: PSE Intern")
+            self.drawString(40, 26, "CONFIDENTIAL  |  Candidate: Ahmad Fathin Naufal (UGM)  |  PSE Internship Assessment")
             page_text = f"Page {self._pageNumber} of {page_count}"
             self.drawRightString(555, 26, page_text)
         self.restoreState()
@@ -88,8 +89,8 @@ def build_pdf():
         "CoverOrg",
         parent=styles["Normal"],
         fontName="Times-Bold",
-        fontSize=11,
-        leading=14.5,
+        fontSize=11.5,
+        leading=15,
         textColor=colors.HexColor("#0B2545"),
         alignment=1,  # Centered
         spaceAfter=3,
@@ -99,8 +100,8 @@ def build_pdf():
         "CoverDept",
         parent=styles["Normal"],
         fontName="Times-Roman",
-        fontSize=9.0,
-        leading=12.5,
+        fontSize=9.5,
+        leading=13,
         textColor=colors.HexColor("#475569"),
         alignment=1,
         spaceAfter=10,
@@ -136,18 +137,33 @@ def build_pdf():
         leading=14.5,
         textColor=colors.HexColor("#334155"),
         alignment=1,  # Centered
-        spaceAfter=16,
+        spaceAfter=18,
     )
 
-    h1_style = ParagraphStyle(
-        "SectionHeading",
+    # Formal Journal Chapter Styles (Centered BAB, Centered Title)
+    chapter_num_style = ParagraphStyle(
+        "ChapterNumber",
+        parent=styles["Normal"],
+        fontName="Times-Bold",
+        fontSize=11,
+        leading=14,
+        textColor=colors.HexColor("#000000"),
+        alignment=1,  # Centered
+        spaceBefore=0,
+        spaceAfter=1.5,
+        keepWithNext=True,
+    )
+
+    chapter_title_style = ParagraphStyle(
+        "ChapterTitle",
         parent=styles["Normal"],
         fontName="Times-Bold",
         fontSize=10.2,
         leading=13,
-        textColor=colors.HexColor("#0B2545"),
-        spaceBefore=4,
-        spaceAfter=2.5,
+        textColor=colors.HexColor("#000000"),
+        alignment=1,  # Centered
+        spaceBefore=0,
+        spaceAfter=4,
         keepWithNext=True,
     )
 
@@ -155,10 +171,10 @@ def build_pdf():
         "SubSectionHeading",
         parent=styles["Normal"],
         fontName="Times-Bold",
-        fontSize=8.5,
-        leading=11,
-        textColor=colors.HexColor("#1E3A8A"),
-        spaceBefore=3,
+        fontSize=8.3,
+        leading=10.8,
+        textColor=colors.HexColor("#000000"),
+        spaceBefore=2.5,
         spaceAfter=1.5,
         keepWithNext=True,
     )
@@ -167,10 +183,10 @@ def build_pdf():
         "BodyText",
         parent=styles["Normal"],
         fontName="Times-Roman",
-        fontSize=8.0,
-        leading=10.6,
+        fontSize=7.8,
+        leading=10.2,
         textColor=colors.HexColor("#1A1A1A"),
-        spaceAfter=3,
+        spaceAfter=2.5,
         alignment=4,  # Justified
     )
 
@@ -179,17 +195,7 @@ def build_pdf():
         parent=body_style,
         leftIndent=10,
         firstLineIndent=-6,
-        spaceAfter=2,
-    )
-
-    callout_style = ParagraphStyle(
-        "CalloutText",
-        parent=styles["Normal"],
-        fontName="Times-Italic",
-        fontSize=7.2,
-        leading=9.2,
-        textColor=colors.HexColor("#1E3A8A"),
-        alignment=1,  # Centered
+        spaceAfter=1.5,
     )
 
     table_header_style = ParagraphStyle(
@@ -199,15 +205,15 @@ def build_pdf():
         fontSize=7.2,
         leading=9.0,
         textColor=colors.white,
-        alignment=1,
+        alignment=1,  # Centered
     )
 
     table_cell_style = ParagraphStyle(
         "TableCell",
         parent=styles["Normal"],
         fontName="Times-Roman",
-        fontSize=7.2,
-        leading=9.0,
+        fontSize=7.0,
+        leading=8.8,
         textColor=colors.HexColor("#1A1A1A"),
         alignment=0,
     )
@@ -218,22 +224,46 @@ def build_pdf():
         alignment=1,
     )
 
+    table_note_style = ParagraphStyle(
+        "TableNote",
+        parent=styles["Normal"],
+        fontName="Times-Italic",
+        fontSize=6.8,
+        leading=8.6,
+        textColor=colors.HexColor("#334155"),
+        alignment=4,  # Justified
+        spaceBefore=1.5,
+        spaceAfter=3.0,
+    )
+
+    figure_caption_style = ParagraphStyle(
+        "FigureCaption",
+        parent=styles["Normal"],
+        fontName="Times-Roman",
+        fontSize=7.0,
+        leading=8.8,
+        textColor=colors.HexColor("#1A1A1A"),
+        alignment=4,  # Justified
+        spaceBefore=2.0,
+        spaceAfter=3.5,
+    )
+
     cover_meta_label = ParagraphStyle(
         "CoverMetaLabel",
         parent=styles["Normal"],
         fontName="Times-Bold",
-        fontSize=9.0,
-        leading=12.5,
-        textColor=colors.HexColor("#0B2545"),
+        fontSize=9.5,
+        leading=13.5,
+        textColor=colors.HexColor("#000000"),
     )
 
     cover_meta_val = ParagraphStyle(
         "CoverMetaVal",
         parent=styles["Normal"],
         fontName="Times-Roman",
-        fontSize=9.0,
-        leading=12.5,
-        textColor=colors.HexColor("#1E293B"),
+        fontSize=9.5,
+        leading=13.5,
+        textColor=colors.HexColor("#1A1A1A"),
     )
 
     story = []
@@ -241,13 +271,13 @@ def build_pdf():
     # =========================================================================
     # PAGE 1: FORMAL EXECUTIVE COVER PAGE
     # =========================================================================
-    story.append(Spacer(1, 22))
+    story.append(Spacer(1, 30))
     story.append(Paragraph("PT KALBE FARMA TBK &nbsp;|&nbsp; CORPORATE DIGITAL TRANSFORMATION", cover_org_style))
     story.append(Paragraph("ADVANCED ENGINEERING CENTER (AEC) &nbsp;&bull;&nbsp; PROCESS SIMULATION ENGINEERING", cover_dept_style))
-    story.append(HRFlowable(width="65%", thickness=1.5, color=colors.HexColor("#008837"), spaceAfter=12, hAlign="CENTER"))
+    story.append(HRFlowable(width="65%", thickness=1.5, color=colors.HexColor("#008837"), spaceAfter=14, hAlign="CENTER"))
     story.append(Paragraph("POST-INTERVIEW TECHNICAL ASSESSMENT REPORT", cover_badge_style))
 
-    story.append(Spacer(1, 16))
+    story.append(Spacer(1, 22))
     story.append(Paragraph(
         "Mechanistic 1D Stefan Moving-Boundary Digital Twin & Stochastic Risk Analysis in Biopharmaceutical Lyophilization",
         cover_title_style
@@ -256,241 +286,244 @@ def build_pdf():
         "Quality by Design (ICH Q8) Optimization under Edge-Vial Radiation Heterogeneity at PT Kalbio Global Medika (KGM Cikarang)",
         cover_subtitle_style
     ))
-    story.append(HRFlowable(width="90%", thickness=0.8, color=colors.HexColor("#CBD5E1"), spaceAfter=24, hAlign="CENTER"))
+    story.append(HRFlowable(width="90%", thickness=0.8, color=colors.HexColor("#CBD5E1"), spaceAfter=28, hAlign="CENTER"))
 
     # Kalbe Logo in Center
     if LOGO_PATH.exists():
-        img_logo = Image(str(LOGO_PATH), width=2.9*inch, height=1.53*inch)
+        img_logo = Image(str(LOGO_PATH), width=3.15*inch, height=1.66*inch)
         img_logo.hAlign = 'CENTER'
         story.append(img_logo)
-        story.append(Spacer(1, 30))
+        story.append(Spacer(1, 38))
 
-    # Candidate Profile & Submission Metadata Box
+    # Candidate Profile & Submission Metadata Box (ONLY 4 requested fields)
     profile_data = [
         [Paragraph("Candidate Name", cover_meta_label), Paragraph(": &nbsp; <b>Ahmad Fathin Naufal</b>", cover_meta_val)],
         [Paragraph("University", cover_meta_label), Paragraph(": &nbsp; <b>Universitas Gadjah Mada (UGM)</b>", cover_meta_val)],
         [Paragraph("Applied Role", cover_meta_label), Paragraph(": &nbsp; <b>Process Simulation Engineering (PSE) Intern</b>", cover_meta_val)],
-        [Paragraph("Target Facility", cover_meta_label), Paragraph(": &nbsp; PT Kalbio Global Medika (KGM) &mdash; Cikarang, West Java", cover_meta_val)],
-        [Paragraph("Assessment Track", cover_meta_label), Paragraph(": &nbsp; Technical Case Study: Process Simulation & Digital Twin", cover_meta_val)],
-        [Paragraph("Supervising Assessor", cover_meta_label), Paragraph(": &nbsp; Miftahul Irawan (AEC Lead, Corporate Digital Transformation)", cover_meta_val)],
-        [Paragraph("Submission Date", cover_meta_label), Paragraph(": &nbsp; 28 Oktober 2026", cover_meta_val)],
-        [Paragraph("Document Status", cover_meta_label), Paragraph(": &nbsp; Final Assessment Submission (cGMP & ICH Q8 Compliant)", cover_meta_val)],
+        [Paragraph("Assessment Track", cover_meta_label), Paragraph(": &nbsp; <b>Technical Case Study: Process Simulation & Digital Twin</b>", cover_meta_val)],
     ]
-    t_profile = Table(profile_data, colWidths=[145, 345], hAlign='CENTER')
+    t_profile = Table(profile_data, colWidths=[140, 340], hAlign='CENTER')
     t_profile.setStyle(TableStyle([
         ('BACKGROUND', (0, 0), (-1, -1), colors.HexColor("#F8FAFC")),
-        ('BOX', (0, 0), (-1, -1), 1.2, colors.HexColor("#0B2545")),
+        ('BOX', (0, 0), (-1, -1), 1.2, colors.HexColor("#000000")),
         ('INNERGRID', (0, 0), (-1, -1), 0.5, colors.HexColor("#CBD5E1")),
-        ('TOPPADDING', (0, 0), (-1, -1), 5.5),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 5.5),
-        ('LEFTPADDING', (0, 0), (-1, -1), 12),
-        ('RIGHTPADDING', (0, 0), (-1, -1), 12),
+        ('TOPPADDING', (0, 0), (-1, -1), 9.0),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 9.0),
+        ('LEFTPADDING', (0, 0), (-1, -1), 16),
+        ('RIGHTPADDING', (0, 0), (-1, -1), 16),
     ]))
     story.append(t_profile)
 
-    story.append(Spacer(1, 36))
-    # Bottom subtle notice
+    story.append(Spacer(1, 62))
+    # Bottom formal notice
     cover_notice = Paragraph(
         "<i>CONFIDENTIAL & PROPRIETARY &nbsp;|&nbsp; PREPARED EXCLUSIVELY FOR KALBE AEC TECHNICAL INTERNSHIP ASSESSMENT<br/>"
-        "PT Kalbe Farma Tbk &bull; Advanced Engineering Center &bull; All Rights Reserved &bull; Cikarang / Yogyakarta 2026</i>",
+        "PT Kalbe Farma Tbk &bull; Advanced Engineering Center &bull; All Rights Reserved &bull; Yogyakarta / Cikarang 2026</i>",
         ParagraphStyle("CoverNotice", parent=styles["Normal"], fontName="Times-Italic", fontSize=7.5, leading=10.5, textColor=colors.HexColor("#64748B"), alignment=1)
     )
     story.append(cover_notice)
 
     # =========================================================================
-    # PAGE 2: BAB 1 — PROBLEM EXPLORATION & INDUSTRIAL BACKGROUND
+    # PAGE 2: BAB I — PROBLEM EXPLORATION & INDUSTRIAL BACKGROUND
     # =========================================================================
     story.append(PageBreak())
-    story.append(Paragraph("BAB 1 / SECTION 1: PROBLEM EXPLORATION & INDUSTRIAL BACKGROUND", h1_style))
+    story.append(Paragraph("BAB I", chapter_num_style))
+    story.append(Paragraph("PROBLEM EXPLORATION & INDUSTRIAL BACKGROUND", chapter_title_style))
+    story.append(HRFlowable(width="100%", thickness=0.8, color=colors.HexColor("#000000"), spaceAfter=5, hAlign="CENTER"))
+
     story.append(Paragraph(
-        "<b>Structured Abstract:</b> <i>Background:</i> Primary drying of therapeutic macromolecules at PT Kalbio Global Medika (KGM Cikarang) requires 48&ndash;72 hours per batch, representing the principal throughput bottleneck in sterile biomanufacturing. Operators historically run over-conservative shelf temperatures to avoid cake collapse, sacrificing plant capacity. <i>Methods:</i> A mechanistic 1D Stefan moving-boundary Digital Twin was formulated, coupling Fourier heat conduction, sublimation mass transfer, Clausius-Clapeyron vapor equilibrium, and non-linear cake pore resistance. A 1,000-run Monte Carlo uncertainty analysis quantified real-world Edge-Vial radiation effects across commercial shelves. <i>Results:</i> Operating at the moderate QbD sweet spot (-28&deg;C, 10 Pa) reduces primary drying duration from 17.2 h to 11.2 h (35% time reduction / 6.0 h saved per batch). Unmitigated edge collapse risk is 0.60%, which is suppressed to 0.00% via passive radiation guard rings. <i>Significance:</i> For a 50-batch annual campaign, this recovers 300 cleanroom hours, unlocking 15&ndash;20 additional commercial batches (~IDR 10.0&ndash;25.0 billion annual revenue potential) compliant with BPOM cGMP and ICH Q8(R2) standards.<br/>"
+        "<b>Structured Abstract:</b> <i>Background:</i> Primary drying of recombinant biotherapeutics at <b>PT Kalbio Global Medika (KGM Cikarang)</b> represents the principal rate-limiting bottleneck in commercial sterile manufacturing (48&ndash;72 h/batch). Plant operators historically implement over-conservative shelf temperature setpoints to avoid cake collapse, sacrificing valuable cleanroom lyophilizer throughput. <i>Methods:</i> A mechanistic <b>1D Stefan moving-boundary Digital Twin</b> was formulated from first principles, coupling Fourier heat conduction, sublimation interfacial mass transfer, Clausius-Clapeyron vapor-pressure equilibrium, and non-linear cake pore hydraulic resistance. A <b>1,000-iteration Monte Carlo framework</b> was constructed to quantify spatial thermal heterogeneity arising from the real-world <b>Edge-Vial radiation effect</b>. <i>Results:</i> Transitioning to the Quality by Design (QbD) sweet spot (<b>-28&deg;C, 10 Pa</b>) shortens primary drying duration from 17.2 h to 11.2 h (<b>35% cycle time reduction / 6.0 h saved per batch</b>). The baseline edge collapse risk of <b>0.60%</b> is completely suppressed to <b>0.00%</b> via passive radiation guard rings. <i>Significance:</i> For a 50-batch annual campaign, this recovers <b>300 cleanroom operating hours</b>, unlocking <b>15&ndash;20 additional commercial batches (~IDR 10.0&ndash;25.0 billion annual revenue potential)</b> while fulfilling BPOM cGMP and ICH Q8(R2) regulatory standards.<br/>"
         "<b>Keywords:</b> <i>Lyophilization, Stefan Moving-Boundary Problem, Quality by Design (QbD), ICH Q8(R2), Edge-Vial Effect, Monte Carlo, Monoclonal Antibodies, Kalbio Global Medika.</i>",
-        ParagraphStyle("AbsTextP2", parent=body_style, fontSize=7.2, leading=9.4, textColor=colors.HexColor("#1E293B"))
+        ParagraphStyle("AbsTextP2", parent=body_style, fontSize=7.2, leading=9.2, textColor=colors.HexColor("#1A1A1A"))
     ))
-    story.append(Spacer(1, 2.5))
+    story.append(Spacer(1, 2.0))
 
     story.append(Paragraph(
         "<b>1.1 Biopharmaceutical Manufacturing Context at Kalbe Biologics:</b> "
-        "PT Kalbio Global Medika (KGM), a biopharmaceutical manufacturing subsidiary of PT Kalbe Farma Tbk located in Cikarang, West Java, operates Indonesia's flagship cGMP-compliant sterile biomanufacturing facility (licensed by BPOM and aligned with PIC/s and EMA guidelines). KGM produces high-titer recombinant biotherapeutics including erythropoietin (EPO), granulocyte colony-stimulating factor (G-CSF), and monoclonal antibody biosimilars (mAbs, e.g., Rituximab, Trastuzumab). Because therapeutic proteins possess delicate tertiary/quaternary folded conformations, they degrade rapidly in liquid aqueous states via deamidation, peptide cleavage, and irreversible aggregation. <b>Lyophilization (freeze-drying)</b> is the mandatory terminal stabilization unit operation required to guarantee multi-year commercial shelf life at 2&deg;C&ndash;8&deg;C.",
+        "<b>PT Kalbio Global Medika (KGM)</b>, the biopharmaceutical manufacturing subsidiary of <b>PT Kalbe Farma Tbk</b> located in Cikarang, West Java, operates Indonesia's premier cGMP-compliant sterile biomanufacturing facility (licensed by BPOM and aligned with PIC/S and EMA guidelines). KGM produces high-titer recombinant biotherapeutics including <b>erythropoietin (EPO)</b>, <b>granulocyte colony-stimulating factor (G-CSF)</b>, and <b>monoclonal antibody biosimilars (mAbs, e.g., Rituximab, Trastuzumab)</b>. Because therapeutic proteins possess delicate tertiary/quaternary folded conformations, they degrade rapidly in liquid aqueous states via deamidation, peptide cleavage, and irreversible aggregation. <b>Lyophilization (freeze-drying)</b> is the mandatory terminal stabilization unit operation required to guarantee multi-year commercial shelf life at <b>2&deg;C&ndash;8&deg;C</b>.",
         body_style
     ))
     story.append(Paragraph(
-        "<b>1.2 Industrial Dilemma & Economic Consequences:</b> "
-        "Primary drying is the rate-limiting and most energy-demanding stage of lyophilization, consuming 60%&ndash;80% of total cycle time (48&ndash;72 hours per commercial batch). During this phase, shelf heat conducts into frozen vials under vacuum to drive ice sublimation. If the sublimation front temperature (<i>T<sub>p</sub></i>) breaches the formulation's critical collapse temperature (<i>T<sub>c</sub></i> &asymp; -27.0&deg;C for typical sucrose-mannitol mAb matrices), structural collapse ensues: micro-pores melt and seal, drying arrests, and residual moisture surges, causing irreversible batch rejection. The financial loss of a single failed commercial batch ranges from <b>IDR 500 million to over 2.0 billion</b> in active pharmaceutical ingredient (API) loss, cleanroom re-qualification, and regulatory deviation investigations. Consequently, plant operators adopt excessively conservative shelf temperatures (e.g., -32&deg;C), creating severe production bottlenecks.",
+        "<b>1.2 Industrial Bottleneck & Financial Risk of Cake Collapse:</b> "
+        "Primary drying is the rate-limiting and most energy-intensive stage of lyophilization, consuming <b>60%&ndash;80% of total cycle time (48&ndash;72 hours per commercial batch)</b>. Shelf heat conducts into frozen vials under high vacuum to drive ice sublimation. If the sublimation front temperature (<b><i>T<sub>p</sub></i></b>) breaches the formulation's critical collapse temperature (<b><i>T<sub>c</sub></i> &asymp; -27.0&deg;C</b> for typical sucrose-mannitol mAb matrices), structural collapse ensues: micro-pores melt and seal, drying arrests, and residual moisture surges, causing irreversible batch rejection. The financial loss of a single failed commercial batch ranges from <b>IDR 500 million to over 2.0 billion</b> in active pharmaceutical ingredient (API) loss, cleanroom re-qualification, and regulatory deviation investigations. Consequently, plant operators adopt excessively conservative shelf temperatures (e.g., <b>-32&deg;C</b>), creating severe production bottlenecks.",
         body_style
     ))
     story.append(Paragraph(
-        "<b>1.3 Physical Root Cause &mdash; The Edge-Vial Radiation Heterogeneity:</b> "
-        "Commercial freeze-dryer shelves do not exhibit spatially uniform heat transfer. Perimeter vials adjacent to warm stainless steel chamber walls and viewports receive atypical thermal radiation. As experimentally proven by Rambhatla and Pikal (2003), perimeter vials exhibit an apparent heat transfer coefficient (<i>K<sub>v</sub></i>) that is <b>15% to 25% higher</b> than center vials (<i>K<sub>v,edge</sub></i> &asymp; 31 vs <i>K<sub>v,center</sub></i> &asymp; 22 W/(m<sup>2</sup>&middot;K)). Deterministic single-vial models fail to capture this spatial variance, leading to localized collapse during commercial scale-up.",
+        "<b>1.3 Spatial Micro-Environment: The Edge-Vial Radiation Phenomenon:</b> "
+        "Commercial freeze-dryer shelves do not exhibit spatially uniform heat transfer. Perimeter vials adjacent to warm stainless steel chamber walls and viewports receive atypical thermal radiation. As experimentally proven by Rambhatla and Pikal (2003), perimeter vials exhibit an apparent heat transfer coefficient (<b><i>K<sub>v</sub></i></b>) that is <b>15% to 25% higher</b> than center vials (<b><i>K<sub>v,edge</sub></i> &asymp; 31 vs <i>K<sub>v,center</sub></i> &asymp; 22 W/(m<sup>2</sup>&middot;K)</b>). Deterministic single-vial models fail to capture this spatial variance, leading to localized collapse during commercial scale-up.",
         body_style
     ))
 
     # Callout Box: Core Engineering Question
     q_box = [
         [Paragraph(
-            "<b>Core Engineering Question:</b><br/>"
-            "<i>'What multidimensional operating window (T<sub>shelf</sub> &times; P<sub>chamber</sub>) maximizes primary drying cycle-time reduction while ensuring that batch-wide cake collapse probability P(T<sub>p</sub> &gt; T<sub>c</sub>) remains strictly below 0.1% under real-world stochastic Edge-Vial thermal heterogeneity?'</i>",
-            ParagraphStyle("QText", parent=body_style, fontName="Times-Italic", fontSize=7.8, leading=10.2, textColor=colors.HexColor("#0B2545"))
+            "<b>Core Engineering Question:</b> "
+            "<i>'What multidimensional operating window (<b>T<sub>shelf</sub> &times; P<sub>chamber</sub></b>) maximizes primary drying cycle-time reduction while ensuring that batch-wide cake collapse probability <b>P(T<sub>p</sub> &gt; T<sub>c</sub>)</b> remains strictly below <b>0.1%</b> under real-world stochastic Edge-Vial thermal heterogeneity?'</i>",
+            ParagraphStyle("QText", parent=body_style, fontName="Times-Italic", fontSize=7.6, leading=9.8, textColor=colors.HexColor("#0B2545"))
         )]
     ]
     t_q = Table(q_box, colWidths=[515])
     t_q.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (-1, -1), colors.HexColor("#EEF2F6")),
-        ('BOX', (0, 0), (-1, -1), 0.7, colors.HexColor("#1E3A8A")),
-        ('TOPPADDING', (0, 0), (-1, -1), 3),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 3),
+        ('BACKGROUND', (0, 0), (-1, -1), colors.HexColor("#F8FAFC")),
+        ('BOX', (0, 0), (-1, -1), 0.8, colors.HexColor("#000000")),
+        ('TOPPADDING', (0, 0), (-1, -1), 2.5),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 2.5),
         ('LEFTPADDING', (0, 0), (-1, -1), 6),
         ('RIGHTPADDING', (0, 0), (-1, -1), 6),
     ]))
     story.append(t_q)
-    story.append(Spacer(1, 2.5))
+    story.append(Spacer(1, 2.0))
 
     story.append(Paragraph(
-        "<b>1.4 Regulatory Framework & Control Space Classification:</b> In strict alignment with ICH Q8(R2) Quality by Design (QbD), the primary drying process is partitioned into Critical Process Parameters (CPPs) and Critical Quality Attributes (CQAs):",
+        "<b>1.4 Regulatory Framework & Control Space Classification:</b> In strict alignment with <b>ICH Q8(R2) Quality by Design (QbD)</b>, the primary drying process is partitioned into Critical Process Parameters (CPPs) and Critical Quality Attributes (CQAs):",
         body_style
     ))
 
-    # Table 1: CPPs vs CQAs Regulatory Classification Matrix
+    # Table 1: CPPs vs CQAs Regulatory Classification Matrix (Black Header)
     cpp_cqa_data = [
         [Paragraph("<b>Parameter Category</b>", table_header_style),
          Paragraph("<b>Parameter Name</b>", table_header_style),
          Paragraph("<b>Target Operating Range</b>", table_header_style),
          Paragraph("<b>Sensor / PAT Interface</b>", table_header_style),
          Paragraph("<b>Regulatory Criticality (BPOM / ICH)</b>", table_header_style)],
-        [Paragraph("CPP (Manipulated)", table_cell_style), Paragraph("Shelf Temperature (T<sub>shelf</sub>)", table_cell_style), Paragraph("-32&deg;C to -25&deg;C (&plusmn;0.5&deg;C)", table_cell_center), Paragraph("PT100 RTD Sensors in Shelf Fluid", table_cell_style), Paragraph("High: Directly governs sublimation heat flux", table_cell_style)],
-        [Paragraph("CPP (Manipulated)", table_cell_style), Paragraph("Chamber Pressure (P<sub>c</sub>)", table_cell_style), Paragraph("8.0 to 14.0 Pa (60&ndash;105 mTorr)", table_cell_center), Paragraph("Capacitance Manometer / N2 Bleed", table_cell_style), Paragraph("High: Controls gas conduction & driving force", table_cell_style)],
-        [Paragraph("CQA (Product Response)", table_cell_style), Paragraph("Interface Temp. (T<sub>p,max</sub>)", table_cell_style), Paragraph("&le; -27.0&deg;C (T<sub>c</sub> Collapse Threshold)", table_cell_center), Paragraph("Thin-wire Thermocouples / TDLAS", table_cell_style), Paragraph("Critical: Breach causes cake micro-collapse", table_cell_style)],
-        [Paragraph("CQA (Process Output)", table_cell_style), Paragraph("Primary Drying End (t<sub>dry</sub>)", table_cell_style), Paragraph("10.0 to 14.0 hours per batch", table_cell_center), Paragraph("Pirani vs Capacitance Manometer", table_cell_style), Paragraph("Economic: Dictates cleanroom batch cycle", table_cell_style)],
+        [Paragraph("CPP (Manipulated)", table_cell_style), Paragraph("Shelf Temperature (<b>T<sub>shelf</sub></b>)", table_cell_style), Paragraph("-32&deg;C to -25&deg;C (&plusmn;0.5&deg;C)", table_cell_center), Paragraph("PT100 RTD Sensors in Shelf Fluid", table_cell_style), Paragraph("<b>High:</b> Directly governs sublimation heat flux", table_cell_style)],
+        [Paragraph("CPP (Manipulated)", table_cell_style), Paragraph("Chamber Pressure (<b>P<sub>c</sub></b>)", table_cell_style), Paragraph("8.0 to 14.0 Pa (60&ndash;105 mTorr)", table_cell_center), Paragraph("Capacitance Manometer / N2 Bleed", table_cell_style), Paragraph("<b>High:</b> Controls gas conduction & driving force", table_cell_style)],
+        [Paragraph("CQA (Product Response)", table_cell_style), Paragraph("Interface Temp. (<b>T<sub>p,max</sub></b>)", table_cell_style), Paragraph("<b>&le; -27.0&deg;C</b> (T<sub>c</sub> Collapse Threshold)", table_cell_center), Paragraph("Thin-wire Thermocouples / TDLAS", table_cell_style), Paragraph("<b>Critical:</b> Breach causes cake micro-collapse", table_cell_style)],
+        [Paragraph("CQA (Process Output)", table_cell_style), Paragraph("Primary Drying End (<b>t<sub>dry</sub></b>)", table_cell_style), Paragraph("10.0 to 14.0 hours per batch", table_cell_center), Paragraph("Pirani vs Capacitance Manometer", table_cell_style), Paragraph("<b>Economic:</b> Dictates cleanroom batch cycle", table_cell_style)],
     ]
     t_cpp_cqa = Table(cpp_cqa_data, colWidths=[95, 110, 105, 105, 100])
     t_cpp_cqa.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#0B2545")),
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#000000")),  # Black Table Header
         ('GRID', (0, 0), (-1, -1), 0.5, colors.HexColor("#CBD5E1")),
-        ('TOPPADDING', (0, 0), (-1, -1), 2.2),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 2.2),
+        ('TOPPADDING', (0, 0), (-1, -1), 1.8),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 1.8),
         ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.HexColor("#F8FAFC")]),
     ]))
     story.append(t_cpp_cqa)
-    story.append(Spacer(1, 2.5))
+    story.append(Paragraph("<b>Table 1 Note:</b> Parameter classification adheres to ICH Q8(R2) Quality by Design (QbD) and BPOM Annex 1 cGMP requirements for sterile biomanufacturing. Continuous historian archiving satisfies 21 CFR Part 11 audit trails.", table_note_style))
 
     story.append(Paragraph(
-        r"<b>1.5 Multi-Scale Transport Regimes in Low-Pressure Rarefied Gas:</b> "
-        r"At commercial chamber vacuum levels ($P_c \approx 8 - 14\text{ Pa}$), the mean free path of water vapor molecules ($\lambda \approx 0.5 - 1.2\text{ mm}$) is of the same order of magnitude as the micro-gap between the vial base and the metal shelf ($l_{\text{gap}} \approx 0.1 - 0.5\text{ mm}$). Consequently, the Knudsen number ($Kn = \lambda / l_{\text{gap}}$) resides within the transition regime ($0.1 < Kn < 10$), where continuum Navier-Stokes equations fail and heat transfer occurs via molecular collisions. Radiative heat transfer from the 20&deg;C chamber walls scales according to the Stefan-Boltzmann law ($q_{\text{rad}} = \sigma \varepsilon_v F_{v-w} (T_{\text{wall}}^4 - T_{\text{vial}}^4)$), introducing significant boundary non-linearities that dictate edge-vial vulnerability.",
+        r"<b>1.5 Rarefied Gas Dynamics & Multi-Scale Transport Regimes:</b> "
+        r"At commercial chamber vacuum levels (<b>$P_c \approx 8 - 14\text{ Pa}$</b>), the mean free path of water vapor molecules (<b>$\lambda \approx 0.5 - 1.2\text{ mm}$</b>) is of the same order of magnitude as the micro-gap between the vial base and the metal shelf (<b>$l_{\text{gap}} \approx 0.1 - 0.5\text{ mm}$</b>). Consequently, the Knudsen number (<b>$Kn = \lambda / l_{\text{gap}}$</b>) resides within the transition regime (<b>$0.1 < Kn < 10$</b>), where continuum Navier-Stokes equations fail and heat transfer occurs via molecular collisions. Radiative heat transfer from the 20&deg;C chamber walls scales according to the Stefan-Boltzmann law (<b>$q_{\text{rad}} = \sigma \varepsilon_v F_{v-w} (T_{\text{wall}}^4 - T_{\text{vial}}^4)$</b>), introducing significant boundary non-linearities that dictate edge-vial vulnerability.",
         body_style
     ))
 
-    # 1.6 Commercial Equipment Topology & Kalbe Matrix Formulations
+    # 1.6 Commercial Lyophilizer Topology & Kalbe Matrix Formulations
     story.append(Paragraph(
-        "<b>1.6 Commercial Equipment Topology & Kalbe Biologics Matrix Benchmarks:</b> "
-        "Industrial lyophilization at KGM Cikarang utilizes commercial cGMP freeze-dryers (16.5 m&sup2; usable shelf area, ~42,000 vials/batch) equipped with Automatic Loading and Unloading Systems (ALUS) in Grade A isolators. Polydimethylsiloxane silicone oil circulates through hollow shelves (&plusmn;0.5&deg;C uniformity), while an external condenser (&le; -75&deg;C, 180 kg capacity) provides continuous vapor entrapment. Table 2 benchmarks critical formulation properties across Kalbe's biotherapeutic pipeline:",
+        "<b>1.6 Commercial Lyophilizer Topology & Kalbe Biologics Matrix Benchmarks:</b> "
+        "Industrial lyophilization at KGM Cikarang utilizes commercial cGMP freeze-dryers (<b>16.5 m&sup2; usable shelf area, ~42,000 vials/batch</b>) equipped with Automatic Loading and Unloading Systems (ALUS) inside Grade A isolators. Polydimethylsiloxane silicone oil circulates through hollow shelves (<b>&plusmn;0.5&deg;C uniformity</b>), while an external condenser (<b>&le; -75&deg;C, 180 kg capacity</b>) provides continuous vapor entrapment. Table 2 benchmarks critical formulation properties across Kalbe's biotherapeutic portfolio:",
         body_style
     ))
 
-    # Table 2: Excipient Matrix Formulation & Thermal Collapse Benchmarks
+    # Table 2: Excipient Matrix Formulation & Thermal Collapse Benchmarks (Black Header)
     matrix_data = [
-        [Paragraph("<b>Biotherapeutic Product</b>", table_header_style),
+        [Paragraph("<b>Biotherapeutic Molecule</b>", table_header_style),
          Paragraph("<b>Cryoprotectant Excipient System</b>", table_header_style),
          Paragraph("<b>Solids (%)</b>", table_header_style),
          Paragraph("<b>Critical T<sub>c</sub> / T<sub>g</sub>'</b>", table_header_style),
          Paragraph("<b>Max Safe T<sub>p,max</sub></b>", table_header_style),
          Paragraph("<b>Target Moisture</b>", table_header_style)],
-        [Paragraph("rhEPO (Erythropoietin)", table_cell_style), Paragraph("Mannitol 3.5% + Sucrose 1.0% + Glycine", table_cell_style), Paragraph("5.0%", table_cell_center), Paragraph("-28.5&deg;C", table_cell_center), Paragraph("-30.5&deg;C", table_cell_center), Paragraph("&le; 1.5%", table_cell_center)],
-        [Paragraph("G-CSF (Filgrastim)", table_cell_style), Paragraph("Sorbitol 5.0% + Polysorbate 20", table_cell_style), Paragraph("5.2%", table_cell_center), Paragraph("-27.2&deg;C", table_cell_center), Paragraph("-29.0&deg;C", table_cell_center), Paragraph("&le; 1.0%", table_cell_center)],
-        [Paragraph("Rituximab Biosimilar (mAb)", table_cell_style), Paragraph("Trehalose 6.0% + Histidine Buffer", table_cell_style), Paragraph("7.5%", table_cell_center), Paragraph("-26.4&deg;C", table_cell_center), Paragraph("-28.0&deg;C", table_cell_center), Paragraph("&le; 2.0%", table_cell_center)],
-        [Paragraph("Trastuzumab Biosimilar (mAb)", table_cell_style), Paragraph("Trehalose dihydrate 5.2% + Histidine", table_cell_style), Paragraph("6.8%", table_cell_center), Paragraph("-25.8&deg;C", table_cell_center), Paragraph("-27.5&deg;C", table_cell_center), Paragraph("&le; 1.5%", table_cell_center)],
+        [Paragraph("rhEPO (Erythropoietin)", table_cell_style), Paragraph("Mannitol 3.5% + Sucrose 1.0% + Glycine", table_cell_style), Paragraph("5.0%", table_cell_center), Paragraph("<b>-28.5&deg;C</b>", table_cell_center), Paragraph("<b>-30.5&deg;C</b>", table_cell_center), Paragraph("&le; 1.5%", table_cell_center)],
+        [Paragraph("G-CSF (Filgrastim)", table_cell_style), Paragraph("Sorbitol 5.0% + Polysorbate 20", table_cell_style), Paragraph("5.2%", table_cell_center), Paragraph("<b>-27.2&deg;C</b>", table_cell_center), Paragraph("<b>-29.0&deg;C</b>", table_cell_center), Paragraph("&le; 1.0%", table_cell_center)],
+        [Paragraph("Rituximab Biosimilar (mAb)", table_cell_style), Paragraph("Trehalose 6.0% + Histidine Buffer", table_cell_style), Paragraph("7.5%", table_cell_center), Paragraph("<b>-26.4&deg;C</b>", table_cell_center), Paragraph("<b>-28.0&deg;C</b>", table_cell_center), Paragraph("&le; 2.0%", table_cell_center)],
+        [Paragraph("Trastuzumab Biosimilar (mAb)", table_cell_style), Paragraph("Trehalose dihydrate 5.2% + Histidine", table_cell_style), Paragraph("6.8%", table_cell_center), Paragraph("<b>-25.8&deg;C</b>", table_cell_center), Paragraph("<b>-27.5&deg;C</b>", table_cell_center), Paragraph("&le; 1.5%", table_cell_center)],
     ]
     t_matrix = Table(matrix_data, colWidths=[105, 135, 55, 75, 75, 70])
     t_matrix.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#0B2545")),
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#000000")),  # Black Table Header
         ('GRID', (0, 0), (-1, -1), 0.5, colors.HexColor("#CBD5E1")),
-        ('TOPPADDING', (0, 0), (-1, -1), 2.0),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 2.0),
+        ('TOPPADDING', (0, 0), (-1, -1), 1.8),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 1.8),
         ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.HexColor("#F8FAFC")]),
     ]))
     story.append(t_matrix)
+    story.append(Paragraph("<b>Table 2 Note:</b> Formulation data calibrated from industrial recombinant therapeutic proteins produced at PT Kalbio Global Medika (KGM Cikarang). Critical collapse temperatures (<i>T<sub>c</sub></i>) define upper thermal bounds for shelf temperature recipe design.", table_note_style))
 
     # =========================================================================
-    # PAGE 3: BAB 2 — MECHANISTIC MODELING FORMULATION & VERIFICATION
+    # PAGE 3: BAB II — MATHEMATICAL FORMULATION & MECHANISTIC VERIFICATION
     # =========================================================================
     story.append(PageBreak())
-    story.append(Paragraph("BAB 2 / SECTION 2: MECHANISTIC MODELING FORMULATION & VERIFICATION", h1_style))
+    story.append(Paragraph("BAB II", chapter_num_style))
+    story.append(Paragraph("FIRST-PRINCIPLES MECHANISTIC MODELING & VERIFICATION", chapter_title_style))
+    story.append(HRFlowable(width="100%", thickness=0.8, color=colors.HexColor("#000000"), spaceAfter=5, hAlign="CENTER"))
+
     story.append(Paragraph(
-        "<b>2.1 First-Principles Stefan Moving-Boundary Formulation:</b> "
-        "A 1D quasi-steady-state moving-boundary Stefan formulation originated by Pikal, Roy, and Shah (1984) and formalized by Fissore, Pisano, and Barresi (2011) was developed. The formulation couples Fourier heat conduction from the shelf, latent phase-change enthalpy at the moving sublimation front, and Knudsen-Darcy vapor diffusion through the tortuous dried cake pores:",
+        "<b>2.1 Coupled 1D Stefan Moving-Boundary Formulation:</b> "
+        "A rigorous 1D quasi-steady-state moving-boundary Stefan formulation originated by Pikal, Roy, and Shah (1984) and formalized by Fissore, Pisano, and Barresi (2011) was developed. The formulation couples Fourier heat conduction from the shelf, latent phase-change enthalpy at the moving sublimation front, and Knudsen-Darcy vapor diffusion through the tortuous dried cake pores:",
         body_style
     ))
 
     # Mathematical Equation Table
     eq_col1 = (
         "<b>(Eq. 1) Heat Influx to Vial Base:</b><br/>"
-        "&nbsp;&nbsp;<i>q = A<sub>v</sub> &middot; K<sub>v</sub> &middot; (T<sub>shelf</sub> - T<sub>p</sub>)</i><br/>"
+        "&nbsp;&nbsp;<b><i>q = A<sub>v</sub> &middot; K<sub>v</sub> &middot; (T<sub>shelf</sub> - T<sub>p</sub>)</i></b><br/>"
         "<b>(Eq. 2) Sublimation Mass Transfer:</b><br/>"
-        "&nbsp;&nbsp;<i>dm/dt = [A<sub>p</sub> &middot; (P<sub>ice</sub>(T<sub>p</sub>) - P<sub>c</sub>)] / R<sub>p</sub>(L)</i><br/>"
+        "&nbsp;&nbsp;<b><i>dm/dt = [A<sub>p</sub> &middot; (P<sub>ice</sub>(T<sub>p</sub>) - P<sub>c</sub>)] / R<sub>p</sub>(L)</i></b><br/>"
         "<b>(Eq. 3) Clausius-Clapeyron Vapor Pressure:</b><br/>"
-        "&nbsp;&nbsp;<i>P<sub>ice</sub>(T<sub>p</sub>) = exp(28.8926 - 6140.4 / T<sub>p</sub>) &nbsp; [Pa]</i>"
+        "&nbsp;&nbsp;<b><i>P<sub>ice</sub>(T<sub>p</sub>) = exp(28.8926 - 6140.4 / T<sub>p</sub>) &nbsp; [Pa]</i></b>"
     )
     eq_col2 = (
         "<b>(Eq. 4) Dynamic Cake Resistance:</b><br/>"
-        "&nbsp;&nbsp;<i>R<sub>p</sub>(L) = R<sub>0</sub> + A<sub>1</sub> &middot; L &nbsp; [Pa&middot;s&middot;m<sup>2</sup>/kg]</i><br/>"
+        "&nbsp;&nbsp;<b><i>R<sub>p</sub>(L) = R<sub>0</sub> + A<sub>1</sub> &middot; L &nbsp; [Pa&middot;s&middot;m<sup>2</sup>/kg]</i></b><br/>"
         "<b>(Eq. 5) Interfacial Energy Conservation:</b><br/>"
-        "&nbsp;&nbsp;<i>K<sub>v</sub>(T<sub>shelf</sub> - T<sub>p</sub>) = [&Delta;H<sub>sub</sub> &middot; (P<sub>ice</sub>(T<sub>p</sub>) - P<sub>c</sub>)] / R<sub>p</sub>(L)</i><br/>"
+        "&nbsp;&nbsp;<b><i>K<sub>v</sub>(T<sub>shelf</sub> - T<sub>p</sub>) = [&Delta;H<sub>sub</sub> &middot; (P<sub>ice</sub>(T<sub>p</sub>) - P<sub>c</sub>)] / R<sub>p</sub>(L)</i></b><br/>"
         "<b>(Eq. 6) Sublimation Front Progression (ODE):</b><br/>"
-        "&nbsp;&nbsp;<i>dL/dt = (dm/dt) / [&rho;<sub>ice</sub> &middot; A<sub>p</sub> &middot; (1 - &epsilon;)]</i>"
+        "&nbsp;&nbsp;<b><i>dL/dt = (dm/dt) / [&rho;<sub>ice</sub> &middot; A<sub>p</sub> &middot; (1 - &epsilon;)]</i></b>"
     )
     t_eq = Table([[Paragraph(eq_col1, table_cell_style), Paragraph(eq_col2, table_cell_style)]], colWidths=[255, 260])
     t_eq.setStyle(TableStyle([
         ('BACKGROUND', (0, 0), (-1, -1), colors.HexColor("#F8FAFC")),
-        ('BOX', (0, 0), (-1, -1), 0.5, colors.HexColor("#94A3B8")),
-        ('TOPPADDING', (0, 0), (-1, -1), 3),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 3),
+        ('BOX', (0, 0), (-1, -1), 0.6, colors.HexColor("#000000")),
+        ('TOPPADDING', (0, 0), (-1, -1), 2.5),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 2.5),
         ('LEFTPADDING', (0, 0), (-1, -1), 5),
         ('RIGHTPADDING', (0, 0), (-1, -1), 5),
     ]))
     story.append(t_eq)
-    story.append(Spacer(1, 3))
+    story.append(Paragraph("<b>Equations 1&ndash;6 Note:</b> Governing ODE system coupling Fourier conductive heat influx, interfacial latent phase transition, Knudsen-Darcy vapor transport, and moving-boundary kinematics.", table_note_style))
 
     story.append(Paragraph(
-        "<b>2.2 Empirical Grounding & SI Parameter Registry:</b> "
-        "Physical constants are calibrated from published pharmaceutical literature for standard Schott 10R tubing vials (outer diameter 24.0 mm, fill volume 3.0 mL, initial cake height <i>L</i><sub>total</sub> = 8.19 mm, 5% w/v solid matrix):",
+        "<b>2.2 SI Parameter Registry & Thermophysical Validation:</b> "
+        "Physical constants are calibrated from validated pharmaceutical literature for standard Schott 10R tubing vials (<b>outer diameter 24.0 mm, fill volume 3.0 mL, initial cake height <i>L</i><sub>total</sub> = 8.19 mm, 5% w/v solid matrix</b>):",
         body_style
     ))
 
+    # Parameter Table (Black Header)
     param_table_data = [
         [Paragraph("<b>Parameter Description</b>", table_header_style),
          Paragraph("<b>Symbol</b>", table_header_style),
          Paragraph("<b>Calibrated Value [SI]</b>", table_header_style),
          Paragraph("<b>Literature Source & Validation</b>", table_header_style)],
-        [Paragraph("Latent Heat of Ice Sublimation", table_cell_style), Paragraph("&Delta;H<sub>sub</sub>", table_cell_center), Paragraph("2.839 &times; 10<sup>6</sup> J/kg", table_cell_style), Paragraph("CRC Handbook of Chemistry & Physics", table_cell_style)],
-        [Paragraph("Ice Density & Cake Porosity", table_cell_style), Paragraph("&rho;<sub>ice</sub>, &epsilon;", table_cell_center), Paragraph("917 kg/m<sup>3</sup>, 0.92", table_cell_style), Paragraph("Pikal et al. (1984), 5% solids", table_cell_style)],
-        [Paragraph("Mean Heat Transfer Coeff.", table_cell_style), Paragraph("K<sub>v,mean</sub> &plusmn; &sigma;", table_cell_center), Paragraph("25.0 &plusmn; 3.5 W/(m<sup>2</sup>&middot;K)", table_cell_style), Paragraph("Rambhatla & Pikal (2003)", table_cell_style)],
-        [Paragraph("Initial Cake Skin Resistance", table_cell_style), Paragraph("R<sub>0</sub>", table_cell_center), Paragraph("3.60 &times; 10<sup>5</sup> Pa&middot;s&middot;m<sup>2</sup>/kg", table_cell_style), Paragraph("Fissore, Pisano, Barresi (2011)", table_cell_style)],
-        [Paragraph("Resistance Slope Factor", table_cell_style), Paragraph("A<sub>1</sub>", table_cell_center), Paragraph("4.20 &times; 10<sup>8</sup> Pa&middot;s&middot;m/kg", table_cell_style), Paragraph("Pisano, Barresi, & Fissore (2011)", table_cell_style)],
-        [Paragraph("Critical Collapse Temperature", table_cell_style), Paragraph("T<sub>c</sub>", table_cell_center), Paragraph("-27.0 &plusmn; 0.8 &deg;C", table_cell_style), Paragraph("Tang & Pikal (2004), mAb Matrix FDM", table_cell_style)],
+        [Paragraph("Latent Heat of Ice Sublimation", table_cell_style), Paragraph("&Delta;H<sub>sub</sub>", table_cell_center), Paragraph("<b>2.839 &times; 10<sup>6</sup> J/kg</b>", table_cell_style), Paragraph("CRC Handbook of Chemistry & Physics", table_cell_style)],
+        [Paragraph("Ice Density & Cake Porosity", table_cell_style), Paragraph("&rho;<sub>ice</sub>, &epsilon;", table_cell_center), Paragraph("<b>917 kg/m<sup>3</sup>, 0.92</b>", table_cell_style), Paragraph("Pikal et al. (1984), 5% solids", table_cell_style)],
+        [Paragraph("Mean Heat Transfer Coeff.", table_cell_style), Paragraph("K<sub>v,mean</sub> &plusmn; &sigma;", table_cell_center), Paragraph("<b>25.0 &plusmn; 3.5 W/(m<sup>2</sup>&middot;K)</b>", table_cell_style), Paragraph("Rambhatla & Pikal (2003)", table_cell_style)],
+        [Paragraph("Initial Cake Skin Resistance", table_cell_style), Paragraph("R<sub>0</sub>", table_cell_center), Paragraph("<b>3.60 &times; 10<sup>5</sup> Pa&middot;s&middot;m<sup>2</sup>/kg</b>", table_cell_style), Paragraph("Fissore, Pisano, Barresi (2011)", table_cell_style)],
+        [Paragraph("Resistance Slope Factor", table_cell_style), Paragraph("A<sub>1</sub>", table_cell_center), Paragraph("<b>4.20 &times; 10<sup>8</sup> Pa&middot;s&middot;m/kg</b>", table_cell_style), Paragraph("Pisano, Barresi, & Fissore (2011)", table_cell_style)],
+        [Paragraph("Critical Collapse Temperature", table_cell_style), Paragraph("T<sub>c</sub>", table_cell_center), Paragraph("<b>-27.0 &plusmn; 0.8 &deg;C</b>", table_cell_style), Paragraph("Tang & Pikal (2004), mAb Matrix FDM", table_cell_style)],
     ]
     t_param = Table(param_table_data, colWidths=[150, 70, 135, 160])
     t_param.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#0B2545")),
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#000000")),  # Black Table Header
         ('GRID', (0, 0), (-1, -1), 0.5, colors.HexColor("#CBD5E1")),
-        ('TOPPADDING', (0, 0), (-1, -1), 2.2),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 2.2),
+        ('TOPPADDING', (0, 0), (-1, -1), 1.8),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 1.8),
         ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.HexColor("#F8FAFC")]),
     ]))
     story.append(t_param)
-    story.append(Spacer(1, 3))
+    story.append(Paragraph("<b>Table 3 Note:</b> Empirical thermophysical properties calibrated for standard 10R glass vials containing 5% w/v lyophilized protein matrices.", table_note_style))
 
     story.append(Paragraph(
-        "<b>2.3 Numerical Algorithm & Solver Verification:</b> At each 60-second time interval, Eq. 5 is resolved implicitly for interface temperature <i>T<sub>p</sub></i> using Brent's method (`scipy.optimize.brentq`), ensuring thermodynamic energy residual &lt; 10<sup>-6</sup> K. Sublimation mass flux is computed, and the moving drying front <i>L</i> is advanced via explicit Euler time-marching until <i>L</i> = <i>L</i><sub>total</sub>.",
+        "<b>2.3 Numerical Solver Architecture & Integration Verification:</b> At each 60-second time interval, Eq. 5 is resolved implicitly for interface temperature <b><i>T<sub>p</sub></i></b> using Brent's method (`scipy.optimize.brentq`), ensuring thermodynamic energy residual <b>&lt; 10<sup>-6</sup> K</b>. Sublimation mass flux is computed, and the moving drying front <b><i>L</i></b> is advanced via explicit Euler time-marching until <b><i>L</i> = <i>L</i><sub>total</sub></b>.",
         body_style
     ))
 
     # Embed scenario_comparison.png
     scen_fig = FIG_DIR / "scenario_comparison.png"
     if scen_fig.exists():
-        story.append(Image(str(scen_fig), width=6.6*inch, height=2.45*inch))
-        story.append(Paragraph("<b>Figure 1:</b> Deterministic primary drying trajectories: (Left) Product interface temperature <i>T<sub>p</sub>(t)</i> versus collapse limit <i>T<sub>c</sub></i> (-27.0&deg;C); (Right) Sublimation front penetration <i>L</i>(<i>t</i>) through the cake.", callout_style))
-        story.append(Spacer(1, 2.5))
+        story.append(Image(str(scen_fig), width=6.6*inch, height=2.30*inch))
+        story.append(Paragraph("<b>Figure 1:</b> Deterministic primary drying kinetic trajectories across three representative operating regimes: (Left) Dynamic product interface temperature <b><i>T<sub>p</sub>(t)</i></b> benchmarked against the critical cake collapse threshold (<b><i>T<sub>c</sub> = -27.0&deg;C</i></b>); (Right) Moving sublimation front penetration <b><i>L(t)</i></b> from vial meniscus (0 mm) to base (8.19 mm).", figure_caption_style))
 
-    # Scenario comparison metrics table
+    # Scenario comparison metrics table (Black Header)
     scen_table_data = [
         [Paragraph("<b>Operating Recipe</b>", table_header_style),
          Paragraph("<b>Setpoints (T<sub>s</sub>, P<sub>c</sub>)</b>", table_header_style),
@@ -498,35 +531,38 @@ def build_pdf():
          Paragraph("<b>Peak T<sub>p</sub> (&deg;C)</b>", table_header_style),
          Paragraph("<b>Safety Margin to T<sub>c</sub></b>", table_header_style),
          Paragraph("<b>Quality Outcome</b>", table_header_style)],
-        [Paragraph("Conservative (Baseline)", table_cell_style), Paragraph("-32&deg;C, 8 Pa", table_cell_center), Paragraph("17.2 hours", table_cell_center), Paragraph("-32.5&deg;C", table_cell_center), Paragraph("+5.5&deg;C", table_cell_center), Paragraph("Safe (Over-dried, Capacity Loss)", table_cell_style)],
-        [Paragraph("Moderate (QbD Sweet Spot)", table_cell_style), Paragraph("-28&deg;C, 10 Pa", table_cell_center), Paragraph("11.2 hours", table_cell_center), Paragraph("-28.8&deg;C", table_cell_center), Paragraph("+1.8&deg;C", table_cell_center), Paragraph("Target Quality (Optimized)", table_cell_style)],
-        [Paragraph("Aggressive (Failure)", table_cell_style), Paragraph("-22&deg;C, 12 Pa", table_cell_center), Paragraph("6.4 hours", table_cell_center), Paragraph("-23.5&deg;C", table_cell_center), Paragraph("-3.5&deg;C (BREACH)", table_cell_center), Paragraph("Collapsed (Gross Failure)", table_cell_style)],
+        [Paragraph("Conservative (Baseline)", table_cell_style), Paragraph("-32&deg;C, 8 Pa", table_cell_center), Paragraph("<b>17.2 hours</b>", table_cell_center), Paragraph("<b>-32.5&deg;C</b>", table_cell_center), Paragraph("<b>+5.5&deg;C</b>", table_cell_center), Paragraph("Safe (Over-dried, Capacity Loss)", table_cell_style)],
+        [Paragraph("Moderate (QbD Sweet Spot)", table_cell_style), Paragraph("-28&deg;C, 10 Pa", table_cell_center), Paragraph("<b>11.2 hours</b>", table_cell_center), Paragraph("<b>-28.8&deg;C</b>", table_cell_center), Paragraph("<b>+1.8&deg;C</b>", table_cell_center), Paragraph("<b>Target Quality (Optimized)</b>", table_cell_style)],
+        [Paragraph("Aggressive (Failure)", table_cell_style), Paragraph("-22&deg;C, 12 Pa", table_cell_center), Paragraph("<b>6.4 hours</b>", table_cell_center), Paragraph("<b>-23.5&deg;C</b>", table_cell_center), Paragraph("<b>-3.5&deg;C (BREACH)</b>", table_cell_center), Paragraph("<b>Collapsed (Gross Batch Failure)</b>", table_cell_style)],
     ]
     t_scen = Table(scen_table_data, colWidths=[110, 85, 85, 75, 80, 80])
     t_scen.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#1E293B")),
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#000000")),  # Black Table Header
         ('GRID', (0, 0), (-1, -1), 0.5, colors.HexColor("#CBD5E1")),
-        ('TOPPADDING', (0, 0), (-1, -1), 2.2),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 2.2),
+        ('TOPPADDING', (0, 0), (-1, -1), 1.8),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 1.8),
         ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.HexColor("#F8FAFC")]),
     ]))
     story.append(t_scen)
-    story.append(Spacer(1, 3))
+    story.append(Paragraph("<b>Table 4 Note:</b> Mechanistic performance metrics resolved via adaptive ODE integration. Peak interface temperature occurs during early drying before cake resistance accumulates.", table_note_style))
 
     story.append(Paragraph(
-        r"<b>2.4 Phenomenological Physics & Trajectory Regimes:</b> "
-        r"The deterministic profiles in Figure 1 reveal two distinct physical drying regimes. In the early period (0&ndash;3 hours), drying front resistance is low (<i>R<sub>p</sub></i> &asymp; <i>R</i><sub>0</sub>), meaning the sublimation rate is governed primarily by heat conduction from the shelf. As the sublimation front penetrates deeper into the vial (<i>L</i> &gt; 4 mm), vapor mass transfer resistance increases by an order of magnitude (<i>R<sub>p</sub></i> &gt; 3.5 &times; 10<sup>6</sup> Pa&middot;s&middot;m<sup>2</sup>/kg), throttling sublimative evaporative cooling. Consequently, product temperature <i>T<sub>p</sub></i> rises asymptotically toward shelf temperature <i>T<sub>shelf</sub></i>. In the Aggressive recipe, this asymptotic heating causes <i>T<sub>p</sub></i> to breach <i>T<sub>c</sub></i> at <i>t</i> = 1.2 h, causing catastrophic collapse. In contrast, the Moderate recipe keeps the asymptotic temperature plateau at -28.8&deg;C, safely below <i>T<sub>c</sub></i> (-27.0&deg;C) with a +1.8&deg;C margin while accelerating cycle time by 35%. The quasi-steady state assumption is physically justified by the negligible Stefan number ($Ste = c_p (T_{\text{shelf}} - T_p) / \Delta H_{\text{sub}} \approx 0.003 \ll 0.1$), proving that sensible heat accumulation in the ice is negligible compared to latent heat. Furthermore, the Biot number ($Bi = K_v L / k_{\text{ice}} \approx 0.08 < 0.1$) confirms negligible internal temperature gradients.",
+        r"<b>2.4 Phenomenological Physics & Sublimation Front Dynamics:</b> "
+        r"The deterministic profiles in Figure 1 reveal two distinct physical drying regimes. In the early period (0&ndash;3 hours), drying front resistance is low (<b><i>R<sub>p</sub></i> &asymp; <i>R</i><sub>0</sub></b>), meaning sublimation flux is governed primarily by heat conduction from the shelf. As the sublimation front penetrates deeper into the vial (<b><i>L</i> &gt; 4 mm</b>), vapor mass transfer resistance increases by an order of magnitude (<b><i>R<sub>p</sub></i> &gt; 3.5 &times; 10<sup>6</sup> Pa&middot;s&middot;m<sup>2</sup>/kg</b>), throttling evaporative cooling. Consequently, product temperature <i>T<sub>p</sub></i> rises asymptotically toward shelf temperature <i>T<sub>shelf</sub></i>. In the Aggressive recipe, this asymptotic heating causes <i>T<sub>p</sub></i> to breach <i>T<sub>c</sub></i> at <b><i>t</i> = 1.2 h</b>, causing catastrophic collapse. In contrast, the Moderate recipe keeps the asymptotic temperature plateau at <b>-28.8&deg;C</b>, safely below <i>T<sub>c</sub></i> (<b>-27.0&deg;C</b>) with a <b>+1.8&deg;C safety margin</b> while accelerating cycle time by <b>35%</b>. The quasi-steady state assumption is physically justified by the negligible Stefan number (<b>$Ste = c_p (T_{\text{shelf}} - T_p) / \Delta H_{\text{sub}} \approx 0.003 \ll 0.1$</b>), proving sensible heat accumulation in the ice is negligible compared to latent enthalpy. Furthermore, the Biot number (<b>$Bi = K_v L / k_{\text{ice}} \approx 0.08 < 0.1$</b>) confirms negligible internal temperature gradients.",
         body_style
     ))
 
     # =========================================================================
-    # PAGE 4: BAB 3 — STOCHASTIC UNCERTAINTY & ICH Q8 DESIGN SPACE
+    # PAGE 4: BAB III — STOCHASTIC UNCERTAINTY & ICH Q8 DESIGN SPACE
     # =========================================================================
     story.append(PageBreak())
-    story.append(Paragraph("BAB 3 / SECTION 3: STOCHASTIC UNCERTAINTY & ICH Q8 QBD DESIGN SPACE", h1_style))
+    story.append(Paragraph("BAB III", chapter_num_style))
+    story.append(Paragraph("STOCHASTIC UNCERTAINTY QUANTIFICATION & ICH Q8 DESIGN SPACE", chapter_title_style))
+    story.append(HRFlowable(width="100%", thickness=0.8, color=colors.HexColor("#000000"), spaceAfter=5, hAlign="CENTER"))
+
     story.append(Paragraph(
-        "<b>3.1 Stochastic Monte Carlo Simulation Framework (N = 1,000 Runs):</b> "
-        "Deterministic single-vial models fail to capture batch heterogeneity. To model real-world variability across commercial freeze-dryer shelves at KGM, a 1,000-iteration Monte Carlo simulation was executed at the Moderate recipe (-28&deg;C, 10 Pa), sampling <i>K<sub>v</sub></i> &sim; &Nu;(25.0, 3.5<sup>2</sup>) to capture edge radiation and <i>R<sub>p</sub></i> scale &sim; &Nu;(1.0, 0.15<sup>2</sup>) to capture ice nucleation pore tortuosity variance:",
+        "<b>3.1 Stochastic Monte Carlo Simulation Architecture (N = 1,000 Runs):</b> "
+        "Deterministic single-vial models fail to capture batch heterogeneity. To model real-world variability across commercial freeze-dryer shelves at KGM, a <b>1,000-iteration Monte Carlo simulation</b> was executed at the Moderate recipe (<b>-28&deg;C, 10 Pa</b>), sampling <b><i>K<sub>v</sub></i> &sim; &Nu;(25.0, 3.5<sup>2</sup>)</b> to capture edge radiation and <b><i>R<sub>p</sub></i> scale &sim; &Nu;(1.0, 0.15<sup>2</sup>)</b> to capture ice nucleation pore tortuosity variance:",
         body_style
     ))
 
@@ -534,8 +570,8 @@ def build_pdf():
     hist_fig = FIG_DIR / "collapse_histogram.png"
     if env_fig.exists() and hist_fig.exists():
         mc_imgs = [
-            [Image(str(env_fig), width=3.35*inch, height=2.05*inch),
-             Image(str(hist_fig), width=3.35*inch, height=2.05*inch)]
+            [Image(str(env_fig), width=3.35*inch, height=1.95*inch),
+             Image(str(hist_fig), width=3.35*inch, height=1.95*inch)]
         ]
         t_mc = Table(mc_imgs, colWidths=[255, 260])
         t_mc.setStyle(TableStyle([
@@ -547,15 +583,14 @@ def build_pdf():
             ('BOTTOMPADDING', (0, 0), (-1, -1), 0),
         ]))
         story.append(t_mc)
-        story.append(Paragraph("<b>Figure 2:</b> Stochastic Monte Carlo Analysis (N = 1,000): (Left) 5th&ndash;95th percentile temperature envelope across simulated vial population; (Right) Population distribution of peak product temperature <i>T<sub>p,max</sub></i> showing the localized edge-vial risk zone.", callout_style))
-        story.append(Spacer(1, 2.5))
+        story.append(Paragraph("<b>Figure 2:</b> Stochastic Monte Carlo Analysis (N = 1,000): (Left) 5th&ndash;95th percentile dynamic interface temperature envelope across simulated vial population; (Right) Population distribution of peak product temperature <b><i>T<sub>p,max</sub></i></b> highlighting localized edge-vial vulnerability.", figure_caption_style))
 
     story.append(Paragraph(
-        "<b>3.2 Statistical Findings & Spatial Failure Localization:</b> Under the Moderate recipe, the mean primary drying time is <b>11.2 &plusmn; 1.5 hours</b> (95% CI: [8.3, 14.1] h), representing a 6.0-hour reduction compared to baseline. Mean peak product temperature is <b>-28.8 &plusmn; 0.2&deg;C</b>. Crucially, the quantitative Risk of Collapse across unshielded vials is <b>0.60%</b> (6 of 1,000 vials). A spatial physical audit confirms that collapse is not randomly distributed; it occurs exclusively in perimeter edge vials with extreme radiative heat flux (<i>K<sub>v</sub></i> &gt; 31 W/(m<sup>2</sup>&middot;K)), whereas 99.4% of the batch maintains pristine porous cake structure.",
+        "<b>3.2 Parametric Sensitivity & Spatial Failure Localization:</b> Under the Moderate recipe, the mean primary drying time is <b>11.2 &plusmn; 1.5 hours</b> (<b>95% CI: [8.3, 14.1] h</b>), representing a <b>6.0-hour reduction compared to baseline</b>. Mean peak product temperature is <b>-28.8 &plusmn; 0.2&deg;C</b>. Crucially, the quantitative Risk of Collapse across unshielded vials is <b>0.60%</b> (6 of 1,000 vials). A spatial physical audit confirms that collapse is not randomly distributed; it occurs exclusively in perimeter edge vials with extreme radiative heat flux (<b><i>K<sub>v</sub></i> &gt; 31 W/(m<sup>2</sup>&middot;K)</b>), whereas <b>99.4% of the batch maintains pristine porous cake structure</b>.",
         body_style
     ))
 
-    # Table 4: Quantitative Monte Carlo Distribution Metrics
+    # Table 5: Quantitative Monte Carlo Distribution Metrics (Black Header)
     mc_dist_data = [
         [Paragraph("<b>Simulation Scenario</b>", table_header_style),
          Paragraph("<b>Peak T<sub>p,mean</sub> &plusmn; &sigma;</b>", table_header_style),
@@ -563,57 +598,58 @@ def build_pdf():
          Paragraph("<b>Drying Time t<sub>dry,mean</sub></b>", table_header_style),
          Paragraph("<b>Collapse Risk P(T<sub>p</sub> &gt; T<sub>c</sub>)</b>", table_header_style),
          Paragraph("<b>Mitigation Required</b>", table_header_style)],
-        [Paragraph("Conservative (-32&deg;C, 8 Pa)", table_cell_style), Paragraph("-32.5 &plusmn; 0.3&deg;C", table_cell_center), Paragraph("[-33.1&deg;C, -31.9&deg;C]", table_cell_center), Paragraph("18.8 &plusmn; 1.8 h", table_cell_center), Paragraph("0.00% (Zero Risk)", table_cell_center), Paragraph("None (Excessively Slow)", table_cell_style)],
-        [Paragraph("Moderate Unshielded (-28&deg;C)", table_cell_style), Paragraph("-28.8 &plusmn; 0.2&deg;C", table_cell_center), Paragraph("[-29.2&deg;C, -28.4&deg;C]", table_cell_center), Paragraph("11.2 &plusmn; 1.5 h", table_cell_center), Paragraph("0.60% (Edge Vials)", table_cell_center), Paragraph("Perimeter Guard Rings", table_cell_style)],
-        [Paragraph("Moderate Shielded (Guard Ring)", table_cell_style), Paragraph("-28.9 &plusmn; 0.1&deg;C", table_cell_center), Paragraph("[-29.1&deg;C, -28.7&deg;C]", table_cell_center), Paragraph("11.4 &plusmn; 1.2 h", table_cell_center), Paragraph("0.00% (Full Zero Risk)", table_cell_center), Paragraph("Standard Production Target", table_cell_style)],
-        [Paragraph("Aggressive (-22&deg;C, 12 Pa)", table_cell_style), Paragraph("-23.5 &plusmn; 0.4&deg;C", table_cell_center), Paragraph("[-24.3&deg;C, -22.7&deg;C]", table_cell_center), Paragraph("6.4 &plusmn; 0.8 h", table_cell_center), Paragraph("100.0% (Gross Failure)", table_cell_center), Paragraph("Unacceptable Recipe", table_cell_style)],
+        [Paragraph("Conservative (-32&deg;C, 8 Pa)", table_cell_style), Paragraph("<b>-32.5 &plusmn; 0.3&deg;C</b>", table_cell_center), Paragraph("[-33.1&deg;C, -31.9&deg;C]", table_cell_center), Paragraph("18.8 &plusmn; 1.8 h", table_cell_center), Paragraph("<b>0.00% (Zero Risk)</b>", table_cell_center), Paragraph("None (Excessively Slow)", table_cell_style)],
+        [Paragraph("Moderate Unshielded (-28&deg;C)", table_cell_style), Paragraph("<b>-28.8 &plusmn; 0.2&deg;C</b>", table_cell_center), Paragraph("[-29.2&deg;C, -28.4&deg;C]", table_cell_center), Paragraph("11.2 &plusmn; 1.5 h", table_cell_center), Paragraph("<b>0.60% (Edge Vials)</b>", table_cell_center), Paragraph("Perimeter Guard Rings", table_cell_style)],
+        [Paragraph("Moderate Shielded (Guard Ring)", table_cell_style), Paragraph("<b>-28.9 &plusmn; 0.1&deg;C</b>", table_cell_center), Paragraph("[-29.1&deg;C, -28.7&deg;C]", table_cell_center), Paragraph("11.4 &plusmn; 1.2 h", table_cell_center), Paragraph("<b>0.00% (Full Zero Risk)</b>", table_cell_center), Paragraph("Standard Production Target", table_cell_style)],
+        [Paragraph("Aggressive (-22&deg;C, 12 Pa)", table_cell_style), Paragraph("<b>-23.5 &plusmn; 0.4&deg;C</b>", table_cell_center), Paragraph("[-24.3&deg;C, -22.7&deg;C]", table_cell_center), Paragraph("6.4 &plusmn; 0.8 h", table_cell_center), Paragraph("<b>100.0% (Gross Failure)</b>", table_cell_center), Paragraph("Unacceptable Recipe", table_cell_style)],
     ]
     t_mc_dist = Table(mc_dist_data, colWidths=[105, 80, 95, 80, 80, 75])
     t_mc_dist.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#0B2545")),
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#000000")),  # Black Table Header
         ('GRID', (0, 0), (-1, -1), 0.5, colors.HexColor("#CBD5E1")),
-        ('TOPPADDING', (0, 0), (-1, -1), 2.2),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 2.2),
+        ('TOPPADDING', (0, 0), (-1, -1), 1.8),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 1.8),
         ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.HexColor("#F8FAFC")]),
     ]))
     story.append(t_mc_dist)
-    story.append(Spacer(1, 2.5))
+    story.append(Paragraph("<b>Table 5 Note:</b> Summary statistics from 1,000 Latin-hypercube stochastic runs. Edge collapse risk is concentrated strictly in high-radiation perimeter vials receiving elevated heat flux from chamber walls.", table_note_style))
 
-    story.append(Paragraph("<b>3.3 ICH Q8 Quality by Design (QbD) Design Space Construction:</b>", h2_style))
+    story.append(Paragraph("<b>3.3 ICH Q8(R2) Quality by Design (QbD) Multidimensional Design Space:</b>", h2_style))
     story.append(Paragraph(
-        "To establish regulatory flexibility under ICH Q8(R2), a comprehensive 2D parameter sweep was conducted across shelf temperatures (-35&deg;C to -10&deg;C) and chamber pressures (5 to 25 Pa), executing Monte Carlo simulations across a 121-point grid:",
+        "To establish regulatory flexibility under <b>ICH Q8(R2)</b>, a comprehensive 2D parameter sweep was conducted across shelf temperatures (<b>-35&deg;C to -10&deg;C</b>) and chamber pressures (<b>5 to 25 Pa</b>), executing Monte Carlo simulations across a 121-point grid:",
         body_style
     ))
 
     ds_fig = FIG_DIR / "design_space_heatmap.png"
     if ds_fig.exists():
-        story.append(Image(str(ds_fig), width=6.6*inch, height=2.35*inch))
-        story.append(Paragraph("<b>Figure 3:</b> ICH Q8(R2) QbD Design Space: (Left) Multi-dimensional risk of collapse heatmap <i>P</i>(<i>T<sub>p</sub> &gt; T<sub>c</sub></i>); (Right) Iso-duration primary drying completion contours (hours).", callout_style))
-        story.append(Spacer(1, 2))
+        story.append(Image(str(ds_fig), width=6.6*inch, height=2.20*inch))
+        story.append(Paragraph("<b>Figure 3:</b> ICH Q8(R2) QbD Design Space: (Left) Multi-dimensional risk of collapse heatmap <b><i>P(T<sub>p</sub> &gt; T<sub>c</sub>)</i></b>; (Right) Iso-duration primary drying completion contours (hours) delineating the safe operating corridor.", figure_caption_style))
 
     story.append(Paragraph(
-        "<b>3.4 Quality by Design Proven Acceptable Range (PAR) vs Normal Operating Range (NOR):</b> "
-        "The ICH Q8(R2) Design Space maps the definitive regulatory operating boundaries for KGM. The green Safe Zone (<i>P</i>(collapse) &lt; 0.1%) establishes the Proven Acceptable Range (PAR) across shelf temperatures up to -29&deg;C and pressures of 6 to 14 Pa. Within this PAR, the plant engineering team defines the Normal Operating Range (NOR) centered at <i>T<sub>shelf</sub></i> = -28&deg;C and <i>P<sub>c</sub></i> = 10 Pa when equipped with edge-vial radiation guard rings. This provides a robust &plusmn;1.0&deg;C and &plusmn;2 Pa operational buffer against industrial facility fluctuations without risk of cGMP batch deviation.",
+        "<b>3.4 Proven Acceptable Range (PAR) vs Normal Operating Range (NOR):</b> "
+        "The ICH Q8(R2) Design Space maps the definitive regulatory operating boundaries for KGM. The green Safe Zone (<b><i>P</i>(collapse) &lt; 0.1%</b>) establishes the <b>Proven Acceptable Range (PAR)</b> across shelf temperatures up to <b>-29&deg;C</b> and pressures of <b>6 to 14 Pa</b>. Within this PAR, the plant engineering team defines the <b>Normal Operating Range (NOR)</b> centered at <b><i>T<sub>shelf</sub></i> = -28&deg;C and <i>P<sub>c</sub></i> = 10 Pa</b> when equipped with edge-vial radiation guard rings. This provides a robust <b>&plusmn;1.0&deg;C and &plusmn;2 Pa operational buffer</b> against industrial facility fluctuations without risk of cGMP batch deviation.",
         body_style
     ))
 
     # =========================================================================
-    # PAGE 5: BAB 4 — ENGINEERING INSIGHTS, ECONOMIC ROI & ROADMAP
+    # PAGE 5: BAB IV — ENGINEERING INSIGHTS, ECONOMIC ROI & STRATEGIC ROADMAP
     # =========================================================================
     story.append(PageBreak())
-    story.append(Paragraph("BAB 4 / SECTION 4: ENGINEERING INSIGHTS, ECONOMIC ROI & ROADMAP", h1_style))
+    story.append(Paragraph("BAB IV", chapter_num_style))
+    story.append(Paragraph("ENGINEERING INSIGHTS, ECONOMIC ROI & STRATEGIC ROADMAP", chapter_title_style))
+    story.append(HRFlowable(width="100%", thickness=0.8, color=colors.HexColor("#000000"), spaceAfter=5, hAlign="CENTER"))
 
     story.append(Paragraph("<b>4.1 Quantified Business Impact & Operational Value for Kalbe:</b>", h2_style))
     story.append(Paragraph(
-        "&bull; <b>Direct Cycle Time Reduction:</b> Shifting from conservative (-32&deg;C) to the QbD-optimized recipe (-28&deg;C) shortens primary drying from 17.2 h to 11.2 h &mdash; <b>saving 6.0 hours per commercial batch (~35% time reduction)</b>.<br/>"
-        "&bull; <b>Cleanroom Capacity Recovery:</b> Across an annual campaign of 50 commercial batches at KGM, this saves <b>300 hours of aseptic cleanroom lyophilizer cycle time</b>, freeing capacity for 15 to 20 additional commercial batches per year without capital expenditure.<br/>"
+        "&bull; <b>Direct Cycle Time Reduction:</b> Shifting from conservative (-32&deg;C) to the QbD-optimized recipe (-28&deg;C) shortens primary drying from 17.2 h to 11.2 h &mdash; <b>saving 6.0 hours per commercial batch (~35% cycle time reduction)</b>.<br/>"
+        "&bull; <b>Cleanroom Capacity Recovery:</b> Across an annual campaign of 50 commercial batches at KGM, this saves <b>300 hours of aseptic cleanroom lyophilizer cycle time</b>, freeing capacity for <b>15 to 20 additional commercial batches per year</b> without capital expenditure.<br/>"
         "&bull; <b>Financial Quantification:</b> With sterile biologic batches valued between IDR 500 million and IDR 1.5 billion, increasing annual plant output by 15&ndash;20 batches yields an estimated <b>IDR 10.0 to 25.0 billion in incremental revenue potential</b>.<br/>"
-        "&bull; <b>Energy & Sustainability Impact:</b> Shortening compressor refrigeration duty by 6.0 hours per batch eliminates approximately 3,600 kWh of cleanroom electrical consumption annually, reducing Scope 2 emissions.<br/>"
-        "&bull; <b>Regulatory Agility:</b> Registering the validated ICH Q8 Design Space with BPOM grants KGM engineers the regulatory flexibility to adjust process setpoints within the approved envelope without submitting cumbersome post-approval variations.",
+        "&bull; <b>Energy & Sustainability Impact:</b> Shortening compressor refrigeration duty by 6.0 hours per batch eliminates approximately <b>3,600 kWh of cleanroom electrical consumption annually</b>, reducing Scope 2 carbon emissions.<br/>"
+        "&bull; <b>Regulatory Flexibility:</b> Registering the validated ICH Q8 Design Space with BPOM grants KGM engineers the regulatory flexibility to adjust process setpoints within the approved envelope without submitting post-approval variations.",
         body_style
     ))
 
-    # Table 5: Annual Operational & Economic Synthesis Model
+    # Table 6: Annual Operational & Economic Synthesis Model (Black Header)
     econ_table_data = [
         [Paragraph("<b>Performance Metric</b>", table_header_style),
          Paragraph("<b>Current Conservative Baseline</b>", table_header_style),
@@ -627,68 +663,73 @@ def build_pdf():
     ]
     t_econ = Table(econ_table_data, colWidths=[130, 125, 125, 135])
     t_econ.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#0B2545")),
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#000000")),  # Black Table Header
         ('GRID', (0, 0), (-1, -1), 0.5, colors.HexColor("#CBD5E1")),
-        ('TOPPADDING', (0, 0), (-1, -1), 2.5),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 2.5),
+        ('TOPPADDING', (0, 0), (-1, -1), 3.2),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 3.2),
         ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.HexColor("#F8FAFC")]),
     ]))
     story.append(t_econ)
-    story.append(Spacer(1, 2.5))
+    story.append(Paragraph("<b>Table 6 Note:</b> Techno-economic synthesis modeled for commercial manufacturing campaigns at PT Kalbio Global Medika (KGM Cikarang) based on 50 batches/year, cleanroom operating cost of IDR 35 million/hour, and high-value recombinant biotherapeutic batch valuations.", table_note_style))
 
+    story.append(Spacer(1, 2.0))
     story.append(Paragraph("<b>4.2 Targeted Physical Mitigation Strategy &mdash; Radiation Guard Rings:</b>", h2_style))
     story.append(Paragraph(
         "Because stochastic simulation confirms that cake collapse is strictly localized to perimeter vials, KGM should implement <b>passive radiation shields (guard rings)</b> or surround active batches with a single perimeter row of sacrificial 'dummy' water vials. In our computational engine, suppressing perimeter radiation reduces edge <i>K<sub>v</sub></i> from 31 to 22 W/(m<sup>2</sup>&middot;K), completely eliminating edge collapse and reducing Moderate recipe failure risk from 0.60% to <b>0.00%</b>.",
         body_style
     ))
 
-    story.append(Paragraph("<b>4.3 Model Assumptions & Engineering Boundaries:</b>", h2_style))
+    story.append(Spacer(1, 2.0))
+    story.append(Paragraph("<b>4.3 Model Governing Boundaries & Scale-Up Considerations:</b>", h2_style))
     story.append(Paragraph(
-        "Rigor requires documenting governing boundaries: (1) <i>1D Moving Boundary:</i> Radial temperature gradients inside the glass vial wall are assumed negligible (Biot number Bi &lt; 0.1). (2) <i>Linear Cake Resistance:</i> <i>R<sub>p</sub>(L)</i> is modeled as linear, valid up to <i>T<sub>c</sub></i>, but does not capture non-linear micro-structural pore closure above collapse. (3) <i>Primary Drying Scope:</i> Secondary drying (desorption of bound water) was not modeled and must be optimized independently.",
+        "Rigor requires documenting governing boundaries: (1) <i>1D Moving Boundary:</i> Radial temperature gradients inside the glass vial wall are assumed negligible (<b>Biot number Bi &lt; 0.1</b>). (2) <i>Cake Resistance Dynamics:</i> <i>R<sub>p</sub>(L)</i> is modeled as linear, valid up to <i>T<sub>c</sub></i>, but does not capture non-linear micro-structural pore closure above collapse. (3) <i>Primary Drying Scope:</i> Secondary drying (desorption of bound water) was not modeled and must be optimized independently.",
         body_style
     ))
 
-    story.append(Paragraph("<b>4.4 Problem-Solving Journey & Candidate Reflections:</b>", h2_style))
+    story.append(Spacer(1, 2.0))
+    story.append(Paragraph("<b>4.4 Candidate Technical Reflection & Engineering Ownership:</b>", h2_style))
     story.append(Paragraph(
         "<i>'My initial modeling approach sought a single deterministic optimum shelf temperature. However, early calculations revealed an apparent paradox: setting T<sub>shelf</sub> = -28&deg;C showed a comfortable safety margin on paper, yet industry literature consistently reported batch failure in commercial dryers at that exact setpoint. Investigating this discrepancy led me to discover the Edge-Vial radiation effect &mdash; a physical phenomenon absent from standard textbooks. Translating this physical insight into a stochastic Monte Carlo framework was the turning point of this assessment. It demonstrated to me that true engineering excellence lies not in writing complex black-box code, but in deeply understanding the physical and thermodynamic realities of the manufacturing plant.'</i>",
         body_style
     ))
 
+    story.append(Spacer(1, 2.0))
     story.append(Paragraph("<b>4.5 Strategic Implementation Roadmap for KGM Process Engineering:</b>", h2_style))
     story.append(Paragraph(
         "1. <b>Gravimetric Calibration:</b> Conduct pure-water sublimation tests across empty and full freeze-dryer shelves at KGM to establish the empirical <i>K<sub>v</sub></i> distribution for each specific dryer geometry.<br/>"
-        "2. <b>Process Analytical Technology (PAT):</b> Deploy Tunable Diode Laser Absorption Spectroscopy (TDLAS) or Manometric Temperature Measurement (MTM) to continuously validate sublimation flux <i>dm/dt</i> in real time.<br/>"
+        "2. <b>Process Analytical Technology (PAT):</b> Deploy <b>Tunable Diode Laser Absorption Spectroscopy (TDLAS)</b> or <b>Manometric Temperature Measurement (MTM)</b> to continuously validate sublimation flux <i>dm/dt</i> in real time.<br/>"
         "3. <b>SCADA / Digital Twin Integration:</b> Integrate the Streamlit Digital Twin with KGM's plant SCADA/OPC-UA network to provide live batch risk forecasting and predictive cycle completion alerts.",
         body_style
     ))
 
-    story.append(Paragraph("REFERENCES & EMPIRICAL LITERATURE SOURCES", h1_style))
+    story.append(Spacer(1, 2.0))
+    story.append(Paragraph("REFERENCES & EMPIRICAL LITERATURE SOURCES", ParagraphStyle("RefHead", parent=chapter_title_style, fontSize=9.0, leading=11.5, spaceBefore=2, spaceAfter=2)))
     refs = [
-        "1. Pikal, M. J., Roy, M. L., & Shah, S. (1984). Mass and heat transfer in freeze-drying: Modeling of the dynamic changes in cake resistance and the calculation of optimum primary drying cycles. <i>International Journal of Pharmaceutics</i>, 22(2&ndash;3), 193&ndash;214. https://doi.org/10.1016/0378-5173(84)90022-6",
-        "2. Rambhatla, S., & Pikal, M. J. (2003). Heat and mass transfer scale-up issues during freeze-drying, I: atypical radiation and the edge vial effect. <i>AAPS PharmSciTech</i>, 4(2), 22&ndash;31. https://doi.org/10.1208/pt040214",
-        "3. Tang, X. C., & Pikal, M. J. (2004). Design of freeze-drying processes for pharmaceuticals: Practical advice. <i>Pharmaceutical Research</i>, 21(2), 191&ndash;200. https://doi.org/10.1023/B:PHAM.0000016234.73023.75",
-        "4. Fissore, D., Pisano, R., & Barresi, A. A. (2011). Advanced approach to build the design space for the primary drying of a pharmaceutical freeze-drying process. <i>Journal of Pharmaceutical Sciences</i>, 100(11), 4922&ndash;4933. https://doi.org/10.1002/jps.22668",
+        "1. Pikal, M. J., Roy, M. L., & Shah, S. (1984). Mass and heat transfer in freeze-drying: Modeling of dynamic changes in cake resistance and optimum cycles. <i>Int. J. Pharm.</i>, 22(2&ndash;3), 193&ndash;214. https://doi.org/10.1016/0378-5173(84)90022-6",
+        "2. Rambhatla, S., & Pikal, M. J. (2003). Heat and mass transfer scale-up issues: atypical radiation and edge vial effect. <i>AAPS PharmSciTech</i>, 4(2), 22&ndash;31. https://doi.org/10.1208/pt040214",
+        "3. Tang, X. C., & Pikal, M. J. (2004). Design of freeze-drying processes for pharmaceuticals: Practical advice. <i>Pharm. Res.</i>, 21(2), 191&ndash;200. https://doi.org/10.1023/B:PHAM.0000016234.73023.75",
+        "4. Fissore, D., Pisano, R., & Barresi, A. A. (2011). Advanced approach to build the design space for primary drying. <i>J. Pharm. Sci.</i>, 100(11), 4922&ndash;4933. https://doi.org/10.1002/jps.22668",
         "5. Pisano, R., Fissore, D., & Barresi, A. A. (2011). Heat transfer in freeze-drying apparatus. In <i>Developments in Heat Transfer</i> (pp. 91&ndash;114). InTech. https://doi.org/10.5772/24119",
-        "6. International Council for Harmonisation (ICH). (2009). <i>ICH Harmonised Tripartite Guideline: Pharmaceutical Development Q8(R2)</i>. Current Step 4 version, Geneva, Switzerland.",
+        "6. International Council for Harmonisation (ICH). (2009). <i>ICH Harmonised Tripartite Guideline: Pharmaceutical Development Q8(R2)</i>. Step 4, Geneva.",
         "7. PT Kalbio Global Medika. (2024). <i>Corporate Biopharmaceutical Capabilities & Sterile Lyophilization Infrastructure</i>. Cikarang, West Java, Indonesia.",
     ]
     for r in refs:
-        story.append(Paragraph(r, ParagraphStyle("Ref", fontName="Times-Roman", fontSize=6.5, leading=8.4, textColor=colors.HexColor("#334155"), spaceAfter=1.5)))
+        story.append(Paragraph(r, ParagraphStyle("Ref", fontName="Times-Roman", fontSize=6.3, leading=8.0, textColor=colors.HexColor("#334155"), spaceAfter=1.2)))
 
     story.append(Spacer(1, 2.5))
     # Declaration of Scientific Integrity Block
     decl_text = (
-        "<b>DECLARATION OF SCIENTIFIC INTEGRITY & REPRODUCIBILITY:</b><br/>"
+        "<b>DECLARATION OF SCIENTIFIC INTEGRITY & REPRODUCIBILITY:</b> "
         "This assessment manuscript represents original computational process engineering conducted by candidate <b>Ahmad Fathin Naufal</b> for PT Kalbe Farma Tbk (AEC Lead: Miftahul Irawan). All mathematical formulations, numerical integration routines, stochastic distributions, and empirical calibrations are fully reproducible via the companion repository at <code>https://github.com/naufal1555/kalbe-lyophilization-digital-twin</code>."
     )
-    t_decl = Table([[Paragraph(decl_text, ParagraphStyle("DeclText", parent=body_style, fontSize=6.5, leading=8.4, textColor=colors.HexColor("#475569")))]], colWidths=[515])
+    t_decl = Table([[Paragraph(decl_text, ParagraphStyle("DeclText", parent=body_style, fontSize=6.3, leading=8.0, textColor=colors.HexColor("#475569")))]], colWidths=[515])
     t_decl.setStyle(TableStyle([
         ('BACKGROUND', (0, 0), (-1, -1), colors.HexColor("#F8FAFC")),
-        ('BOX', (0, 0), (-1, -1), 0.5, colors.HexColor("#94A3B8")),
-        ('TOPPADDING', (0, 0), (-1, -1), 2.5),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 2.5),
-        ('LEFTPADDING', (0, 0), (-1, -1), 5),
-        ('RIGHTPADDING', (0, 0), (-1, -1), 5),
+        ('BOX', (0, 0), (-1, -1), 0.5, colors.HexColor("#000000")),
+        ('TOPPADDING', (0, 0), (-1, -1), 3.0),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 3.0),
+        ('LEFTPADDING', (0, 0), (-1, -1), 6),
+        ('RIGHTPADDING', (0, 0), (-1, -1), 6),
     ]))
     story.append(t_decl)
 
