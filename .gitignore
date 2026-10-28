@@ -24,3 +24,7 @@ Desktop.ini
 # PDF reports (submit separately to Notion form, not tracked in repo)
 *.pdf
 report/*.pdf
+
+# Word documents (submit separately to Notion form, not tracked in repo)
+*.docx
+report/*.docx
