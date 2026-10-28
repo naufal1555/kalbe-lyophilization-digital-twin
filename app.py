@@ -679,6 +679,13 @@ with st.sidebar:
             <div style="font-size:0.7rem; color:#94A3B8; font-weight:600;">AEC CDT // Lyo Digital Twin</div>
         </div>
     </div>
+    <div class="user-profile-card" style="padding:8px 10px; background:#F8FAFC; border:1px solid #E2E8F0; margin-bottom:12px; border-left:none;">
+        <div class="user-avatar-img">NF</div>
+        <div>
+            <div class="user-name-text">Naufal Fathin</div>
+            <div class="user-role-text">Process Simulation Engineer (PSE) | Kalbe AEC</div>
+        </div>
+    </div>
     """)
 
     render_html('<div class="sidebar-category-header">PROCESS NAVIGATION</div>')
@@ -813,36 +820,10 @@ with st.spinner("Executing Implicit Moving-Boundary ODE Solver & Monte Carlo Eng
     )
 
 # -----------------------------------------------------------------------------
-# TOP NAVIGATION BAR (BORDERFLOW STYLE)
+# DYNAMIC TIME GREETING
 # -----------------------------------------------------------------------------
 current_hour = datetime.now().hour
 time_greeting = "Good morning" if current_hour < 12 else ("Good afternoon" if current_hour < 18 else "Good evening")
-
-render_html(f"""
-<div class="top-nav-bar">
-    <div class="search-input-box">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2" style="margin-right:8px; flex-shrink:0;"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-        <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">Search batch ID, recipe CPPs, or sensor tag...</span>
-        <span class="shortcut">Ctrl+K</span>
-    </div>
-    <div class="nav-profile-block">
-        <div class="nav-icon-btn" title="Cikarang Sterile Suite Status">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-        </div>
-        <div class="nav-icon-btn" title="Plant Telemetry Alerts">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
-            <span class="badge-dot"></span>
-        </div>
-        <div class="user-profile-card">
-            <div class="user-avatar-img">NF</div>
-            <div>
-                <div class="user-name-text">Naufal Fathin</div>
-                <div class="user-role-text">Process Simulation Engineer (PSE) | Kalbe AEC</div>
-            </div>
-        </div>
-    </div>
-</div>
-""")
 
 # =============================================================================
 # VIEW ROUTING: TAB 1 — DASHBOARD OVERVIEW (BORDERFLOW 1-TO-1 REPLICATION)
