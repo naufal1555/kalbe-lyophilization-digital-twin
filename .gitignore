@@ -20,3 +20,7 @@ ENV/
 .DS_Store
 Thumbs.db
 Desktop.ini
+
+# PDF reports (submit separately to Notion form, not tracked in repo)
+*.pdf
+report/*.pdf

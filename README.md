@@ -138,15 +138,18 @@ kalbe-lyophilization-digital-twin/
 │       └── design_space_grid.csv
 │
 └── report/
-    └── Technical_Report.pdf       # Formal submission report for Kalbe AEC
+    ├── page_1.png ... page_4.png  # High-resolution report page previews
+    └── (Technical_Report.pdf)     # Generate locally via `python generate_report_pdf.py`
 ```
 
 ---
 
 ## 📚 Key References
 
-1. **Pikal, M. J., Shah, S., Roy, M. L., & Putman, R.** (1990). The secondary drying stage of freeze drying: drying kinetics as a function of temperature and chamber pressure. *Int. J. Pharm.*, 60(3), 203–207.
-2. **Pikal, M. J.** (2004). Mechanisms of protein stabilization during freeze-drying and storage. *Drugs and the Pharmaceutical Sciences*, 137, 63–107.
-3. **Fissore, D., Pisano, R., & Barresi, A. A.** (2011). Advanced approach to build the design space for the primary drying of a pharmaceutical freeze-drying process. *J. Pharm. Sci.*, 100(11), 4922–4933.
-4. **Rambhatla, S., & Pikal, M. J.** (2003). Heat and mass transfer scale-up issues during freeze-drying, I: atypical radiation and the edge vial effect. *AAPS PharmSciTech*, 4(2), 22–31.
-5. **International Council for Harmonisation (ICH).** (2009). *ICH Harmonised Tripartite Guideline: Pharmaceutical Development Q8(R2)*.
+1. **Pikal, M. J., Roy, M. L., & Shah, S.** (1984). Mass and heat transfer in freeze-drying: Modeling of the dynamic changes in cake resistance and the calculation of optimum primary drying cycles. *International Journal of Pharmaceutics*, 22(2–3), 193–214. [DOI: 10.1016/0378-5173(84)90022-6](https://doi.org/10.1016/0378-5173(84)90022-6)
+2. **Rambhatla, S., & Pikal, M. J.** (2003). Heat and mass transfer scale-up issues during freeze-drying, I: atypical radiation and the edge vial effect. *AAPS PharmSciTech*, 4(2), 22–31. [DOI: 10.1208/pt040214](https://doi.org/10.1208/pt040214)
+3. **Tang, X. C., & Pikal, M. J.** (2004). Design of freeze-drying processes for pharmaceuticals: Practical advice. *Pharmaceutical Research*, 21(2), 191–200. [DOI: 10.1023/B:PHAM.0000016234.73023.75](https://doi.org/10.1023/B:PHAM.0000016234.73023.75)
+4. **Fissore, D., Pisano, R., & Barresi, A. A.** (2011). Advanced approach to build the design space for the primary drying of a pharmaceutical freeze-drying process. *Journal of Pharmaceutical Sciences*, 100(11), 4922–4933. [DOI: 10.1002/jps.22668](https://doi.org/10.1002/jps.22668)
+5. **Pisano, R., Fissore, D., & Barresi, A. A.** (2011). Heat transfer in freeze-drying apparatus. In *Developments in Heat Transfer* (pp. 91–114). InTech. [DOI: 10.5772/24119](https://doi.org/10.5772/24119)
+6. **International Council for Harmonisation (ICH).** (2009). *ICH Harmonised Tripartite Guideline: Pharmaceutical Development Q8(R2)*. Current Step 4 version, Geneva, Switzerland.
+7. **PT Kalbio Global Medika.** (2024). *Corporate Biopharmaceutical Capabilities & Sterile Lyophilization Infrastructure*. Cikarang, West Java, Indonesia.
