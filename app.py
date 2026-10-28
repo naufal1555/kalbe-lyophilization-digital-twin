@@ -85,79 +85,11 @@ render_html("""
         padding-top: 2.2rem !important;
     }
 
-    /* Top Navigation Search & Profile Bar */
-    .top-nav-bar {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background: #FFFFFF;
-        border: 1px solid #E2E8F0;
-        border-radius: 14px;
-        padding: 9px 18px;
-        margin-bottom: 18px;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
-    }
-
-    .search-input-box {
-        display: flex;
-        align-items: center;
-        background: #F1F5F9;
-        border: 1px solid #E2E8F0;
-        border-radius: 8px;
-        padding: 6px 12px;
-        width: 360px;
-        color: #64748B;
-        font-size: 0.82rem;
-    }
-
-    .search-input-box span.shortcut {
-        margin-left: auto;
-        background: #FFFFFF;
-        border: 1px solid #CBD5E1;
-        border-radius: 0px !important;
-        padding: 1px 5px;
-        font-size: 0.68rem;
-        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
-        color: #94A3B8;
-    }
-
-    .nav-profile-block {
-        display: flex;
-        align-items: center;
-        gap: 14px;
-    }
-
-    .nav-icon-btn {
-        width: 34px;
-        height: 34px;
-        border-radius: 0px !important;
-        background: #F8FAFC;
-        border: 1px solid #E2E8F0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #64748B;
-        cursor: pointer;
-        position: relative;
-    }
-
-    .nav-icon-btn .badge-dot {
-        position: absolute;
-        top: 5px;
-        right: 5px;
-        width: 8px;
-        height: 8px;
-        background: #008837;
-        border: 2px solid #FFFFFF;
-        border-radius: 0px !important;
-    }
-
+    /* Sidebar User Profile Card */
     .user-profile-card {
         display: flex;
         align-items: center;
         gap: 10px;
-        padding-left: 10px;
-        border-left: 1px solid #E2E8F0;
     }
 
     .user-avatar-img {
@@ -938,7 +870,7 @@ if nav_tab == "Dashboard Overview":
     st.markdown("<div style='height: 14px;'></div>", unsafe_allow_html=True)
 
     # Main Workspace Grid (64% Left / 36% Right)
-    col_main, col_side = st.columns([0.64, 0.36])
+    col_main, col_side = st.columns([0.65, 0.35])
 
     with col_main:
         # 1. Main Chart Card (BorderFlow "Transfers & Volume" Style)
@@ -1325,22 +1257,22 @@ elif nav_tab == "ICH Q8 Design Space":
     st.markdown("<div style='height: 14px;'></div>", unsafe_allow_html=True)
 
     # Design Space Heatmap Visualizer
-    render_html("""
-    <div class="white-panel">
-        <div class="panel-header-row">
+    with st.container(border=True):
+        render_html("""
+        <div class="panel-header-row" style="margin-bottom:12px;">
             <div>
                 <h3 class="panel-heading">Design Space Matrix: Shelf Temperature vs. Chamber Pressure</h3>
                 <p style="font-size:0.80rem; color:#64748B; margin:2px 0 0 0;">Evaluated over 121 discrete CPP combinations via stochastic moving-boundary modeling.</p>
             </div>
+            <span class="badge-pill-green">121 Stochastic Points</span>
         </div>
-    </div>
-    """)
+        """)
 
-    ds_img_path = PROJECT_ROOT / "outputs" / "figures" / "design_space_heatmap.png"
-    if ds_img_path.exists():
-        st.image(str(ds_img_path), use_container_width=True)
-    else:
-        st.info("Heatmap file not found. Re-run simulation to generate figure.")
+        ds_img_path = PROJECT_ROOT / "outputs" / "figures" / "design_space_heatmap.png"
+        if ds_img_path.exists():
+            st.image(str(ds_img_path), use_container_width=True)
+        else:
+            st.info("Heatmap file not found. Re-run simulation to generate figure.")
 
     # CQA vs CPP Regulatory Matrix
     render_html("""
@@ -1748,40 +1680,40 @@ elif nav_tab == "Batch Run Datasets":
 
     # Dataset Tabs (Monte Carlo, Deterministic Baseline, Design Space Grid)
     d_tab1, d_tab2, d_tab3 = st.tabs([
-        "Stochastic Monte Carlo Dataset (1,000 Vials)",
+        f"Stochastic Monte Carlo Dataset ({N_mc} Vials)",
         "Deterministic Dynamic Trajectory",
         "ICH Q8 Design Space Grid (121 Points)"
     ])
 
     with d_tab1:
-        mc_csv_path = PROJECT_ROOT / "outputs" / "data" / "monte_carlo_results.csv"
-        if mc_csv_path.exists():
-            df_mc = pd.read_csv(mc_csv_path)
-            st.dataframe(df_mc.head(100), use_container_width=True, height=320)
-            with open(mc_csv_path, "rb") as f:
-                st.download_button(
-                    label="Download Monte Carlo Dataset (CSV)",
-                    data=f.read(),
-                    file_name="kalbe_monte_carlo_1000_vials.csv",
-                    mime="text/csv"
-                )
-        else:
-            st.info("Monte Carlo CSV file not found in outputs/data.")
+        from src.monte_carlo import results_to_dataframe
+        df_mc = results_to_dataframe(mc_run)
+        st.dataframe(df_mc, use_container_width=True, height=330)
+        csv_mc_bytes = df_mc.to_csv(index=False).encode('utf-8')
+        st.download_button(
+            label=f"Download Live Monte Carlo Dataset ({len(df_mc)} Vials CSV)",
+            data=csv_mc_bytes,
+            file_name=f"kalbe_monte_carlo_{len(df_mc)}_vials.csv",
+            mime="text/csv"
+        )
 
     with d_tab2:
-        det_csv_path = PROJECT_ROOT / "outputs" / "data" / "deterministic_baseline.csv"
-        if det_csv_path.exists():
-            df_det = pd.read_csv(det_csv_path)
-            st.dataframe(df_det, use_container_width=True, height=320)
-            with open(det_csv_path, "rb") as f:
-                st.download_button(
-                    label="Download Deterministic Baseline (CSV)",
-                    data=f.read(),
-                    file_name="kalbe_deterministic_baseline.csv",
-                    mime="text/csv"
-                )
-        else:
-            st.info("Deterministic baseline CSV file not found in outputs/data.")
+        df_det = pd.DataFrame({
+            "Time_hr": np.round(det_run.time_hours, 3),
+            "Product_Temp_C": np.round(det_run.T_product_C, 2),
+            "Product_Temp_K": np.round(det_run.T_product, 2),
+            "Dry_Layer_mm": np.round(det_run.L_dry * 1000, 3),
+            "Sublimation_Flux_kg_m2_s": det_run.sublimation_rate,
+            "Collapsed": det_run.collapsed,
+        })
+        st.dataframe(df_det, use_container_width=True, height=330)
+        csv_det_bytes = df_det.to_csv(index=False).encode('utf-8')
+        st.download_button(
+            label="Download Live Deterministic Trajectory (CSV)",
+            data=csv_det_bytes,
+            file_name=f"kalbe_deterministic_trajectory_{T_shelf_C}C_{P_chamber_Pa}Pa.csv",
+            mime="text/csv"
+        )
 
     with d_tab3:
         ds_csv_path = PROJECT_ROOT / "outputs" / "data" / "design_space_grid.csv"
