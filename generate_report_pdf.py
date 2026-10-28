@@ -54,22 +54,14 @@ class NumberedCanvas(canvas.Canvas):
         # Suppress running header and footer on Cover Page (Page 1)
         if self._pageNumber > 1:
             self.setFont("Times-Bold", 7.5)
-            self.setFillColor(colors.HexColor("#1A1A1A"))
-            # Left and right headers with clean separation (zero collision)
-            self.drawString(40, 810, "PT KALBE FARMA TBK  |  ADVANCED ENGINEERING CENTER (AEC)")
+            self.setFillColor(colors.HexColor("#64748B"))
+            # Running Header: Image 2 specification (PT KALBE FARMA TBK ... PROCESS SIMULATION ENGINEERING)
+            self.drawString(40, 810, "PT KALBE FARMA TBK")
             self.drawRightString(555, 810, "PROCESS SIMULATION ENGINEERING")
-            self.setStrokeColor(colors.HexColor("#64748B"))
+            self.setStrokeColor(colors.HexColor("#CBD5E1"))
             self.setLineWidth(0.5)
             self.line(40, 804, 555, 804)
-
-            # Footer
-            self.setStrokeColor(colors.HexColor("#64748B"))
-            self.setLineWidth(0.5)
-            self.line(40, 36, 555, 36)
-            self.setFont("Times-Roman", 7.8)
-            self.drawString(40, 26, "CONFIDENTIAL  |  Candidate: Ahmad Fathin Naufal (UGM)  |  PSE Internship Assessment")
-            page_text = f"Page {self._pageNumber} of {page_count}"
-            self.drawRightString(555, 26, page_text)
+            # Footer: User requested completely blank (no footer elements)
         self.restoreState()
 
 
@@ -278,10 +270,9 @@ def build_pdf():
     # =========================================================================
     # PAGE 1: FORMAL EXECUTIVE COVER PAGE
     # =========================================================================
-    story.append(Spacer(1, 30))
-    story.append(Paragraph("PT KALBE FARMA TBK &nbsp;|&nbsp; CORPORATE DIGITAL TRANSFORMATION", cover_org_style))
-    story.append(Paragraph("ADVANCED ENGINEERING CENTER (AEC)  |  PROCESS SIMULATION ENGINEERING", cover_dept_style))
-    story.append(HRFlowable(width="65%", thickness=1.5, color=colors.HexColor("#008837"), spaceAfter=14, hAlign="CENTER"))
+    story.append(Spacer(1, 36))
+    story.append(Paragraph("PT KALBE FARMA TBK", cover_org_style))
+    story.append(Spacer(1, 4))
     story.append(Paragraph("POST-INTERVIEW TECHNICAL ASSESSMENT REPORT", cover_badge_style))
 
     story.append(Spacer(1, 22))
@@ -289,11 +280,12 @@ def build_pdf():
         "Mechanistic 1D Stefan Moving-Boundary Digital Twin & Stochastic Risk Analysis in Biopharmaceutical Lyophilization",
         cover_title_style
     ))
+    story.append(Spacer(1, 6))
     story.append(Paragraph(
         "Quality by Design (ICH Q8) Optimization under Edge-Vial Radiation Heterogeneity at PT Kalbio Global Medika (KGM Cikarang)",
         cover_subtitle_style
     ))
-    story.append(HRFlowable(width="90%", thickness=0.8, color=colors.HexColor("#CBD5E1"), spaceAfter=28, hAlign="CENTER"))
+    story.append(Spacer(1, 28))
 
     # Kalbe Logo in Center
     if LOGO_PATH.exists():
@@ -305,7 +297,7 @@ def build_pdf():
     # Candidate Profile Box (ONLY 4 requested fields)
     profile_data = [
         [Paragraph("Candidate Name", cover_meta_label), Paragraph(": &nbsp; <b>Ahmad Fathin Naufal</b>", cover_meta_val)],
-        [Paragraph("University", cover_meta_label), Paragraph(": &nbsp; <b>Universitas Gadjah Mada (UGM)</b>", cover_meta_val)],
+        [Paragraph("University", cover_meta_label), Paragraph(": &nbsp; <b>Universitas Gadjah Mada</b>", cover_meta_val)],
         [Paragraph("Applied Role", cover_meta_label), Paragraph(": &nbsp; <b>Process Simulation Engineering (PSE) Intern</b>", cover_meta_val)],
         [Paragraph("Assessment Track", cover_meta_label), Paragraph(": &nbsp; <b>Technical Case Study: Process Simulation & Digital Twin</b>", cover_meta_val)],
     ]
@@ -321,14 +313,7 @@ def build_pdf():
     ]))
     story.append(t_profile)
 
-    story.append(Spacer(1, 95))
-    # Bottom formal notice (clean, no long dashes)
-    cover_notice = Paragraph(
-        "CONFIDENTIAL &nbsp;|&nbsp; Candidate: Ahmad Fathin Naufal (UGM) &nbsp;|&nbsp; PSE Internship Assessment<br/>"
-        "<i>PT Kalbe Farma Tbk  |  Advanced Engineering Center  |  Yogyakarta / Cikarang 2026</i>",
-        ParagraphStyle("CoverNotice", parent=styles["Normal"], fontName="Times-Roman", fontSize=7.6, leading=10.5, textColor=colors.HexColor("#64748B"), alignment=1)
-    )
-    story.append(cover_notice)
+
 
     # =========================================================================
     # PAGE 2: BAB I - PROBLEM EXPLORATION & INDUSTRIAL BACKGROUND
@@ -762,36 +747,7 @@ def build_pdf():
     for ref_str in references:
         story.append(Paragraph(ref_str, ref_item_style))
 
-    story.append(Spacer(1, 14.0))
 
-    # Companion Open-Source Code Repository Card
-    code_box = [
-        [Paragraph("<b>Companion Open-Source Digital Twin & Computational Repository:</b><br/>"
-                   "&bull; <b>GitHub Repository:</b> <code>https://github.com/naufal1555/kalbe-lyophilization-digital-twin</code><br/>"
-                   "&bull; <b>Interactive Web Simulation:</b> <code>streamlit run app.py</code><br/>"
-                   "&bull; <b>Scientific Stack:</b> Python 3.10+ (NumPy, SciPy ODE, Matplotlib, Streamlit, ReportLab, python-docx). Cleanroom process model calibrated for PT Kalbio Global Medika (KGM Cikarang).",
-                   ParagraphStyle("CodeBoxText", parent=body_style, fontSize=7.4, leading=10.2, textColor=colors.HexColor("#0B2545")))]
-    ]
-    t_code = Table(code_box, colWidths=[515])
-    t_code.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (-1, -1), colors.HexColor("#F8FAFC")),
-        ('BOX', (0, 0), (-1, -1), 0.8, colors.HexColor("#008837")),  # Kalbe Green Accent
-        ('TOPPADDING', (0, 0), (-1, -1), 8.0),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 8.0),
-        ('LEFTPADDING', (0, 0), (-1, -1), 12),
-        ('RIGHTPADDING', (0, 0), (-1, -1), 12),
-    ]))
-    story.append(t_code)
-
-    story.append(Spacer(1, 20.0))
-
-    # Bottom formal candidate confidentiality notice
-    bottom_notice = Paragraph(
-        "CONFIDENTIAL &nbsp;|&nbsp; Candidate: Ahmad Fathin Naufal (UGM) &nbsp;|&nbsp; PSE Internship Assessment<br/>"
-        "<i>PT Kalbe Farma Tbk  |  Advanced Engineering Center (AEC)  |  Corporate Digital Transformation</i>",
-        ParagraphStyle("RefBottomNotice", parent=styles["Normal"], fontName="Times-Roman", fontSize=7.6, leading=10.5, textColor=colors.HexColor("#64748B"), alignment=1)
-    )
-    story.append(bottom_notice)
 
     # Build document
     doc.build(story, canvasmaker=NumberedCanvas)

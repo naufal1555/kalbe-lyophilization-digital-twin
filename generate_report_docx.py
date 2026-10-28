@@ -6,21 +6,23 @@ Assessment Track: Technical Case Study: Process Simulation & Digital Twin
 Target Facility: PT Kalbio Global Medika (KGM Cikarang)
 Assessor: Miftahul Irawan (AEC Lead, Corporate Digital Transformation, PT Kalbe Farma Tbk)
 
-Key Formatting Enhancements:
-- Continuous academic journal layout for BAB I - BAB IV (eliminates awkward blank spaces).
-- Explicit page break before REFERENCES (places bibliography on its own separate final page).
+User Specifications:
+- Cover top layout: "PT KALBE FARMA TBK" above "POST-INTERVIEW TECHNICAL ASSESSMENT REPORT", matching user sample image.
+- Document header (top of pages): "PT KALBE FARMA TBK" (left) and "PROCESS SIMULATION ENGINEERING" (right), matching Image 2.
+- Running footer: Completely empty across all pages.
+- Cover candidate profile: "Universitas Gadjah Mada" (removed "(UGM)").
+- Cover footer: Completely empty.
+- References section: Clean 8 peer-reviewed citations only; removed companion repository box and removed confidentiality notice.
 - XML <w:cantSplit/> on EVERY table row (prevents tables from being sliced across page breaks).
 - XML <w:tblHeader/> on table header rows (repeats solid black header if a table crosses a page).
-- keep_with_next on headings, subheadings, and introductory paragraphs (eliminates orphan text).
-- Compact, publication-grade typography (Times New Roman, line spacing 1.1, space_after 3.5 pt).
-- Compact image sizing (4.8 in) so figures and tables fit harmoniously without pushing content.
-- 100% free of long dashes (-- and —) and free of raw dash separator lines.
+- Continuous academic journal layout for BAB I - BAB IV with keep_with_next on headings and table intros.
+- 100% free of long dashes (-- and —) and free of raw dash lines.
 """
 
 from pathlib import Path
 import docx
 from docx.shared import Inches, Pt, RGBColor
-from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_TAB_ALIGNMENT
 from docx.enum.table import WD_TABLE_ALIGNMENT, WD_ALIGN_VERTICAL
 from docx.oxml import parse_xml, OxmlElement
 from docx.oxml.ns import nsdecls, qn
@@ -101,7 +103,7 @@ def format_paragraph(p, space_before=0, space_after=3.5, line_spacing=1.1, align
 def build_docx():
     doc = docx.Document()
 
-    # 1. Page Setup: Standard Letter, 0.65 in margins for optimal printable grid
+    # 1. Page Setup: Standard Letter, 0.65 in top/bottom, 0.70 in left/right margins
     for section in doc.sections:
         section.top_margin = Inches(0.65)
         section.bottom_margin = Inches(0.65)
@@ -109,25 +111,23 @@ def build_docx():
         section.right_margin = Inches(0.70)
         section.different_first_page_header_footer = True
 
-        # Running Header for normal pages (Pages 2+)
+        # Running Header for normal pages (Pages 2+): Image 2 specification
+        # Left: "PT KALBE FARMA TBK" | Right: "PROCESS SIMULATION ENGINEERING"
         header = section.header
         hp = header.paragraphs[0]
-        hp.text = "PT KALBE FARMA TBK  |  ADVANCED ENGINEERING CENTER (AEC)\tPROCESS SIMULATION ENGINEERING"
+        hp.text = "PT KALBE FARMA TBK\tPROCESS SIMULATION ENGINEERING"
         format_paragraph(hp, space_before=0, space_after=4, line_spacing=1.0)
+        # Add right-aligned tab stop at 7.1 inches
+        hp.paragraph_format.tab_stops.add_tab_stop(Inches(7.1), WD_TAB_ALIGNMENT.RIGHT)
         for r in hp.runs:
             r.font.name = "Times New Roman"
             r.font.size = Pt(8.0)
             r.font.color.rgb = C_MUTED
 
-        # Running Footer for normal pages (Pages 2+)
+        # Running Footer: User requested "dibagian footer gausa dikasih apa apa" (Completely blank)
         footer = section.footer
         fp = footer.paragraphs[0]
-        fp.text = "CONFIDENTIAL  |  Candidate: Ahmad Fathin Naufal (UGM)  |  PSE Internship Assessment"
-        format_paragraph(fp, space_before=4, space_after=0, line_spacing=1.0)
-        for r in fp.runs:
-            r.font.name = "Times New Roman"
-            r.font.size = Pt(8.0)
-            r.font.color.rgb = C_MUTED
+        fp.text = ""
 
     # Base Normal Style setup
     style_normal = doc.styles["Normal"]
@@ -136,37 +136,36 @@ def build_docx():
     style_normal.font.color.rgb = C_DARK
 
     # =========================================================================
-    # PAGE 1: FORMAL EXECUTIVE COVER PAGE (EXACT SINGLE-PAGE FIT)
+    # PAGE 1: FORMAL EXECUTIVE COVER PAGE (EXACT IMAGE 1 & IMAGE 2 SPECIFICATIONS)
     # =========================================================================
+    # Top block matching Image 1:
+    # 1. "PT KALBE FARMA TBK" (navy bold, centered)
+    # 2. "POST-INTERVIEW TECHNICAL ASSESSMENT REPORT" (green bold, centered)
     p_org = doc.add_paragraph()
-    format_paragraph(p_org, space_before=14, space_after=2, align=WD_ALIGN_PARAGRAPH.CENTER)
-    r_org = p_org.add_run("PT KALBE FARMA TBK  |  CORPORATE DIGITAL TRANSFORMATION")
+    format_paragraph(p_org, space_before=24, space_after=2, align=WD_ALIGN_PARAGRAPH.CENTER)
+    r_org = p_org.add_run("PT KALBE FARMA TBK")
     r_org.font.bold = True
-    r_org.font.size = Pt(11.0)
+    r_org.font.size = Pt(11.5)
     r_org.font.color.rgb = C_NAVY
 
-    p_dept = doc.add_paragraph()
-    format_paragraph(p_dept, space_before=0, space_after=6, align=WD_ALIGN_PARAGRAPH.CENTER)
-    r_dept = p_dept.add_run("ADVANCED ENGINEERING CENTER (AEC)  |  PROCESS SIMULATION ENGINEERING")
-    r_dept.font.size = Pt(9.5)
-    r_dept.font.color.rgb = C_MUTED
-
     p_badge = doc.add_paragraph()
-    format_paragraph(p_badge, space_before=2, space_after=14, align=WD_ALIGN_PARAGRAPH.CENTER)
+    format_paragraph(p_badge, space_before=0, space_after=18, align=WD_ALIGN_PARAGRAPH.CENTER)
     r_badge = p_badge.add_run("POST-INTERVIEW TECHNICAL ASSESSMENT REPORT")
     r_badge.font.bold = True
-    r_badge.font.size = Pt(9.0)
+    r_badge.font.size = Pt(9.5)
     r_badge.font.color.rgb = C_GREEN
 
+    # Title matching Image 1:
     p_title = doc.add_paragraph()
-    format_paragraph(p_title, space_before=6, space_after=6, line_spacing=1.15, align=WD_ALIGN_PARAGRAPH.CENTER)
+    format_paragraph(p_title, space_before=0, space_after=8, line_spacing=1.15, align=WD_ALIGN_PARAGRAPH.CENTER)
     r_title = p_title.add_run("Mechanistic 1D Stefan Moving-Boundary Digital Twin & Stochastic Risk Analysis in Biopharmaceutical Lyophilization")
     r_title.font.bold = True
-    r_title.font.size = Pt(15.5)
+    r_title.font.size = Pt(16.0)
     r_title.font.color.rgb = C_BLACK
 
+    # Subtitle matching Image 1:
     p_sub = doc.add_paragraph()
-    format_paragraph(p_sub, space_before=0, space_after=20, line_spacing=1.12, align=WD_ALIGN_PARAGRAPH.CENTER)
+    format_paragraph(p_sub, space_before=0, space_after=28, line_spacing=1.12, align=WD_ALIGN_PARAGRAPH.CENTER)
     r_sub = p_sub.add_run("Quality by Design (ICH Q8) Optimization under Edge-Vial Radiation Heterogeneity at PT Kalbio Global Medika (KGM Cikarang)")
     r_sub.font.italic = True
     r_sub.font.size = Pt(10.5)
@@ -175,17 +174,17 @@ def build_docx():
     # Kalbe Logo in Center
     if LOGO_PATH.exists():
         p_logo = doc.add_paragraph()
-        format_paragraph(p_logo, space_before=4, space_after=22, align=WD_ALIGN_PARAGRAPH.CENTER)
+        format_paragraph(p_logo, space_before=6, space_after=32, align=WD_ALIGN_PARAGRAPH.CENTER)
         p_logo.add_run().add_picture(str(LOGO_PATH), width=Inches(2.7))
 
-    # Candidate Profile Box (4 required fields, cleanly bounded)
+    # Candidate Profile Box (University: "Universitas Gadjah Mada" without UGM)
     tbl_profile = doc.add_table(rows=4, cols=2)
     tbl_profile.alignment = WD_TABLE_ALIGNMENT.CENTER
     set_table_borders(tbl_profile, color="000000", sz="6", val="single")
 
     profile_rows = [
         ("Candidate Name", ":  Ahmad Fathin Naufal"),
-        ("University", ":  Universitas Gadjah Mada (UGM)"),
+        ("University", ":  Universitas Gadjah Mada"),
         ("Applied Role", ":  Process Simulation Engineering (PSE) Intern"),
         ("Assessment Track", ":  Technical Case Study: Process Simulation & Digital Twin"),
     ]
@@ -214,18 +213,7 @@ def build_docx():
         r1.font.size = Pt(9.0)
         r1.font.color.rgb = C_BLACK
 
-    # Bottom notice on cover (tuned space_before so it never overflows to page 2)
-    p_cover_notice = doc.add_paragraph()
-    format_paragraph(p_cover_notice, space_before=36, space_after=0, align=WD_ALIGN_PARAGRAPH.CENTER)
-    r_cn1 = p_cover_notice.add_run("CONFIDENTIAL  |  Candidate: Ahmad Fathin Naufal (UGM)  |  PSE Internship Assessment\n")
-    r_cn1.font.size = Pt(8.0)
-    r_cn1.font.color.rgb = C_MUTED
-    r_cn2 = p_cover_notice.add_run("PT Kalbe Farma Tbk  |  Advanced Engineering Center  |  Yogyakarta / Cikarang 2026")
-    r_cn2.font.italic = True
-    r_cn2.font.size = Pt(7.5)
-    r_cn2.font.color.rgb = C_MUTED
-
-    # Page Break to start Technical Assessment Body
+    # No bottom footer on cover (User requested: "dibagian footer gausa dikasih apa apa")
     doc.add_page_break()
 
     # =========================================================================
@@ -736,7 +724,7 @@ def build_docx():
     )
     add_table_generic(t5_headers, t5_rows, t5_widths, t5_note)
 
-    # 3.3 Standalone Heading
+    # 3.3 Multi-Dimensional ICH Q8(R2) Proven Acceptable Range (PAR) & Design Space
     add_subheading("3.3 Multi-Dimensional ICH Q8(R2) Proven Acceptable Range (PAR) & Design Space")
     add_body(
         "A 2D parameter sweep across Tshelf ∈ [-35°C, -20°C] and Pchamber ∈ [5 Pa, 20 Pa] (100 simulation grid points) "
@@ -860,7 +848,7 @@ def build_docx():
     )
 
     # =========================================================================
-    # DEDICATED SEPARATE PAGE: REFERENCES & DATA REPRODUCIBILITY
+    # DEDICATED SEPARATE PAGE: REFERENCES & DATA REPRODUCIBILITY (CLEAN ACADEMIC)
     # =========================================================================
     doc.add_page_break()
 
@@ -900,47 +888,10 @@ def build_docx():
         p_ref = doc.add_paragraph()
         p_ref.paragraph_format.left_indent = Inches(0.35)
         p_ref.paragraph_format.first_line_indent = Inches(-0.35)
-        format_paragraph(p_ref, space_before=0, space_after=6.0, line_spacing=1.1, align=WD_ALIGN_PARAGRAPH.JUSTIFY)
+        format_paragraph(p_ref, space_before=0, space_after=8.0, line_spacing=1.12, align=WD_ALIGN_PARAGRAPH.JUSTIFY)
         r_rf = p_ref.add_run(ref_str)
-        r_rf.font.size = Pt(8.0)
+        r_rf.font.size = Pt(8.2)
         r_rf.font.color.rgb = C_DARK
-
-    # Companion Open-Source Code Repository Card (cantSplit, clean padding)
-    tbl_code = doc.add_table(rows=1, cols=1)
-    tbl_code.alignment = WD_TABLE_ALIGNMENT.CENTER
-    make_row_cant_split(tbl_code.rows[0])
-    set_table_borders(tbl_code, color="008837", sz="8", val="single")
-    c_code = tbl_code.rows[0].cells[0]
-    set_cell_background(c_code, "F8FAFC")
-    set_cell_margins(c_code, top=90, bottom=90, left=140, right=140)
-    c_code.width = Inches(6.4)
-
-    p_cd = c_code.paragraphs[0]
-    format_paragraph(p_cd, space_before=0, space_after=0, line_spacing=1.15)
-    rc1 = p_cd.add_run("Companion Open-Source Digital Twin & Computational Repository:\n")
-    rc1.font.bold = True
-    rc1.font.size = Pt(8.2)
-    rc1.font.color.rgb = C_NAVY
-
-    rc2 = p_cd.add_run(
-        "• GitHub Repository: https://github.com/naufal1555/kalbe-lyophilization-digital-twin\n"
-        "• Interactive Web Simulation: streamlit run app.py\n"
-        "• Scientific Stack: Python 3.10+ (NumPy, SciPy ODE, Matplotlib, Streamlit, ReportLab, python-docx). "
-        "Cleanroom process model calibrated for PT Kalbio Global Medika (KGM Cikarang)."
-    )
-    rc2.font.size = Pt(7.8)
-    rc2.font.color.rgb = C_DARK
-
-    # Bottom formal confidentiality notice
-    p_bot_notice = doc.add_paragraph()
-    format_paragraph(p_bot_notice, space_before=24, space_after=0, align=WD_ALIGN_PARAGRAPH.CENTER)
-    rbn1 = p_bot_notice.add_run("CONFIDENTIAL  |  Candidate: Ahmad Fathin Naufal (UGM)  |  PSE Internship Assessment\n")
-    rbn1.font.size = Pt(7.8)
-    rbn1.font.color.rgb = C_MUTED
-    rbn2 = p_bot_notice.add_run("PT Kalbe Farma Tbk  |  Advanced Engineering Center (AEC)  |  Corporate Digital Transformation")
-    rbn2.font.italic = True
-    rbn2.font.size = Pt(7.3)
-    rbn2.font.color.rgb = C_MUTED
 
     # Save document
     doc.save(str(DOCX_PATH))
