@@ -1,10 +1,20 @@
 """
-generate_report_docx.py - Automated Generation of Kalbe AEC Technical Report in Word (.docx) format
+generate_report_docx.py - Publication-Grade Automated Generation of Kalbe AEC Technical Report in Word (.docx)
 Candidate: Ahmad Fathin Naufal (Universitas Gadjah Mada)
 Applied Role: Process Simulation Engineering (PSE) Intern
 Assessment Track: Technical Case Study: Process Simulation & Digital Twin
 Target Facility: PT Kalbio Global Medika (KGM Cikarang)
 Assessor: Miftahul Irawan (AEC Lead, Corporate Digital Transformation, PT Kalbe Farma Tbk)
+
+Key Formatting Enhancements:
+- Continuous academic journal layout for BAB I - BAB IV (eliminates awkward blank spaces).
+- Explicit page break before REFERENCES (places bibliography on its own separate final page).
+- XML <w:cantSplit/> on EVERY table row (prevents tables from being sliced across page breaks).
+- XML <w:tblHeader/> on table header rows (repeats solid black header if a table crosses a page).
+- keep_with_next on headings, subheadings, and introductory paragraphs (eliminates orphan text).
+- Compact, publication-grade typography (Times New Roman, line spacing 1.1, space_after 3.5 pt).
+- Compact image sizing (4.8 in) so figures and tables fit harmoniously without pushing content.
+- 100% free of long dashes (-- and —) and free of raw dash separator lines.
 """
 
 from pathlib import Path
@@ -22,7 +32,7 @@ DOCX_PATH = REPORT_DIR / "Technical_Report.docx"
 FIG_DIR = BASE_DIR / "outputs" / "figures"
 LOGO_PATH = BASE_DIR / "assets" / "kalbe_logo.png"
 
-# Colors
+# Institutional Palette
 C_BLACK = RGBColor(0x00, 0x00, 0x00)
 C_DARK = RGBColor(0x1A, 0x1A, 0x1A)
 C_MUTED = RGBColor(0x64, 0x74, 0x8B)
@@ -37,7 +47,7 @@ def set_cell_background(cell, hex_color):
     cell._tc.get_or_add_tcPr().append(shading_elm)
 
 
-def set_cell_margins(cell, top=120, bottom=120, left=160, right=160):
+def set_cell_margins(cell, top=60, bottom=60, left=90, right=90):
     """Set internal cell padding (in dxa: 20 dxa = 1 pt)."""
     tcPr = cell._tc.get_or_add_tcPr()
     tcMar = parse_xml(
@@ -51,8 +61,20 @@ def set_cell_margins(cell, top=120, bottom=120, left=160, right=160):
     tcPr.append(tcMar)
 
 
+def make_row_cant_split(row):
+    """Ensure a table row cannot be split across a page boundary."""
+    trPr = row._tr.get_or_add_trPr()
+    trPr.append(parse_xml(f'<w:cantSplit {nsdecls("w")}/>'))
+
+
+def make_row_header(row):
+    """Designate row as a repeating table header on page breaks."""
+    trPr = row._tr.get_or_add_trPr()
+    trPr.append(parse_xml(f'<w:tblHeader {nsdecls("w")}/>'))
+
+
 def set_table_borders(table, color="CBD5E1", sz="4", val="single"):
-    """Set subtle clean table borders."""
+    """Set subtle clean table borders without vertical noise."""
     tblPr = table._tbl.tblPr
     borders = parse_xml(
         f'<w:tblBorders {nsdecls("w")}>'
@@ -67,39 +89,41 @@ def set_table_borders(table, color="CBD5E1", sz="4", val="single"):
     tblPr.append(borders)
 
 
-def format_paragraph(p, space_before=0, space_after=4, line_spacing=1.15, align=WD_ALIGN_PARAGRAPH.LEFT):
+def format_paragraph(p, space_before=0, space_after=3.5, line_spacing=1.1, align=WD_ALIGN_PARAGRAPH.LEFT, keep_with_next=False):
     p.paragraph_format.space_before = Pt(space_before)
     p.paragraph_format.space_after = Pt(space_after)
     p.paragraph_format.line_spacing = line_spacing
     p.alignment = align
+    if keep_with_next:
+        p.paragraph_format.keep_with_next = True
 
 
 def build_docx():
     doc = docx.Document()
 
-    # 1. Page Setup: Standard Letter, 0.7 in margins
+    # 1. Page Setup: Standard Letter, 0.65 in margins for optimal printable grid
     for section in doc.sections:
-        section.top_margin = Inches(0.7)
-        section.bottom_margin = Inches(0.7)
-        section.left_margin = Inches(0.75)
-        section.right_margin = Inches(0.75)
+        section.top_margin = Inches(0.65)
+        section.bottom_margin = Inches(0.65)
+        section.left_margin = Inches(0.70)
+        section.right_margin = Inches(0.70)
         section.different_first_page_header_footer = True
 
-        # Header for normal pages (Pages 2+)
+        # Running Header for normal pages (Pages 2+)
         header = section.header
         hp = header.paragraphs[0]
         hp.text = "PT KALBE FARMA TBK  |  ADVANCED ENGINEERING CENTER (AEC)\tPROCESS SIMULATION ENGINEERING"
-        format_paragraph(hp, space_before=0, space_after=6, line_spacing=1.0)
+        format_paragraph(hp, space_before=0, space_after=4, line_spacing=1.0)
         for r in hp.runs:
             r.font.name = "Times New Roman"
             r.font.size = Pt(8.0)
             r.font.color.rgb = C_MUTED
 
-        # Footer for normal pages (Pages 2+)
+        # Running Footer for normal pages (Pages 2+)
         footer = section.footer
         fp = footer.paragraphs[0]
         fp.text = "CONFIDENTIAL  |  Candidate: Ahmad Fathin Naufal (UGM)  |  PSE Internship Assessment"
-        format_paragraph(fp, space_before=6, space_after=0, line_spacing=1.0)
+        format_paragraph(fp, space_before=4, space_after=0, line_spacing=1.0)
         for r in fp.runs:
             r.font.name = "Times New Roman"
             r.font.size = Pt(8.0)
@@ -108,59 +132,56 @@ def build_docx():
     # Base Normal Style setup
     style_normal = doc.styles["Normal"]
     style_normal.font.name = "Times New Roman"
-    style_normal.font.size = Pt(9.5)
+    style_normal.font.size = Pt(9.0)
     style_normal.font.color.rgb = C_DARK
 
     # =========================================================================
-    # PAGE 1: FORMAL EXECUTIVE COVER PAGE
+    # PAGE 1: FORMAL EXECUTIVE COVER PAGE (EXACT SINGLE-PAGE FIT)
     # =========================================================================
-    p_top_spacer = doc.add_paragraph()
-    format_paragraph(p_top_spacer, space_before=15, space_after=0)
-
     p_org = doc.add_paragraph()
-    format_paragraph(p_org, space_before=0, space_after=2, align=WD_ALIGN_PARAGRAPH.CENTER)
+    format_paragraph(p_org, space_before=14, space_after=2, align=WD_ALIGN_PARAGRAPH.CENTER)
     r_org = p_org.add_run("PT KALBE FARMA TBK  |  CORPORATE DIGITAL TRANSFORMATION")
     r_org.font.bold = True
     r_org.font.size = Pt(11.0)
     r_org.font.color.rgb = C_NAVY
 
     p_dept = doc.add_paragraph()
-    format_paragraph(p_dept, space_before=0, space_after=8, align=WD_ALIGN_PARAGRAPH.CENTER)
+    format_paragraph(p_dept, space_before=0, space_after=6, align=WD_ALIGN_PARAGRAPH.CENTER)
     r_dept = p_dept.add_run("ADVANCED ENGINEERING CENTER (AEC)  |  PROCESS SIMULATION ENGINEERING")
     r_dept.font.size = Pt(9.5)
     r_dept.font.color.rgb = C_MUTED
 
     p_badge = doc.add_paragraph()
-    format_paragraph(p_badge, space_before=4, space_after=18, align=WD_ALIGN_PARAGRAPH.CENTER)
+    format_paragraph(p_badge, space_before=2, space_after=14, align=WD_ALIGN_PARAGRAPH.CENTER)
     r_badge = p_badge.add_run("POST-INTERVIEW TECHNICAL ASSESSMENT REPORT")
     r_badge.font.bold = True
     r_badge.font.size = Pt(9.0)
     r_badge.font.color.rgb = C_GREEN
 
     p_title = doc.add_paragraph()
-    format_paragraph(p_title, space_before=10, space_after=8, line_spacing=1.2, align=WD_ALIGN_PARAGRAPH.CENTER)
+    format_paragraph(p_title, space_before=6, space_after=6, line_spacing=1.15, align=WD_ALIGN_PARAGRAPH.CENTER)
     r_title = p_title.add_run("Mechanistic 1D Stefan Moving-Boundary Digital Twin & Stochastic Risk Analysis in Biopharmaceutical Lyophilization")
     r_title.font.bold = True
-    r_title.font.size = Pt(16.5)
+    r_title.font.size = Pt(15.5)
     r_title.font.color.rgb = C_BLACK
 
     p_sub = doc.add_paragraph()
-    format_paragraph(p_sub, space_before=0, space_after=24, line_spacing=1.15, align=WD_ALIGN_PARAGRAPH.CENTER)
+    format_paragraph(p_sub, space_before=0, space_after=20, line_spacing=1.12, align=WD_ALIGN_PARAGRAPH.CENTER)
     r_sub = p_sub.add_run("Quality by Design (ICH Q8) Optimization under Edge-Vial Radiation Heterogeneity at PT Kalbio Global Medika (KGM Cikarang)")
     r_sub.font.italic = True
-    r_sub.font.size = Pt(11.0)
+    r_sub.font.size = Pt(10.5)
     r_sub.font.color.rgb = C_NAVY
 
     # Kalbe Logo in Center
     if LOGO_PATH.exists():
         p_logo = doc.add_paragraph()
-        format_paragraph(p_logo, space_before=8, space_after=28, align=WD_ALIGN_PARAGRAPH.CENTER)
-        p_logo.add_run().add_picture(str(LOGO_PATH), width=Inches(2.8))
+        format_paragraph(p_logo, space_before=4, space_after=22, align=WD_ALIGN_PARAGRAPH.CENTER)
+        p_logo.add_run().add_picture(str(LOGO_PATH), width=Inches(2.7))
 
-    # Candidate Profile Box (4 required fields)
+    # Candidate Profile Box (4 required fields, cleanly bounded)
     tbl_profile = doc.add_table(rows=4, cols=2)
     tbl_profile.alignment = WD_TABLE_ALIGNMENT.CENTER
-    set_table_borders(tbl_profile, color="000000", sz="8", val="single")
+    set_table_borders(tbl_profile, color="000000", sz="6", val="single")
 
     profile_rows = [
         ("Candidate Name", ":  Ahmad Fathin Naufal"),
@@ -171,32 +192,31 @@ def build_docx():
 
     for idx, (label, val) in enumerate(profile_rows):
         row = tbl_profile.rows[idx]
+        make_row_cant_split(row)
         set_cell_background(row.cells[0], "F8FAFC")
         set_cell_background(row.cells[1], "F8FAFC")
-        set_cell_margins(row.cells[0], top=120, bottom=120, left=180, right=140)
-        set_cell_margins(row.cells[1], top=120, bottom=120, left=140, right=180)
-        row.cells[0].width = Inches(2.0)
+        set_cell_margins(row.cells[0], top=80, bottom=80, left=140, right=100)
+        set_cell_margins(row.cells[1], top=80, bottom=80, left=100, right=140)
+        row.cells[0].width = Inches(1.9)
         row.cells[1].width = Inches(4.5)
 
         p0 = row.cells[0].paragraphs[0]
         format_paragraph(p0, space_before=0, space_after=0)
         r0 = p0.add_run(label)
         r0.font.bold = True
-        r0.font.size = Pt(9.5)
+        r0.font.size = Pt(9.0)
         r0.font.color.rgb = C_BLACK
 
         p1 = row.cells[1].paragraphs[0]
         format_paragraph(p1, space_before=0, space_after=0)
         r1 = p1.add_run(val)
         r1.font.bold = True
-        r1.font.size = Pt(9.5)
+        r1.font.size = Pt(9.0)
         r1.font.color.rgb = C_BLACK
 
-    p_bottom_spacer = doc.add_paragraph()
-    format_paragraph(p_bottom_spacer, space_before=40, space_after=0)
-
+    # Bottom notice on cover (tuned space_before so it never overflows to page 2)
     p_cover_notice = doc.add_paragraph()
-    format_paragraph(p_cover_notice, space_before=0, space_after=0, align=WD_ALIGN_PARAGRAPH.CENTER)
+    format_paragraph(p_cover_notice, space_before=36, space_after=0, align=WD_ALIGN_PARAGRAPH.CENTER)
     r_cn1 = p_cover_notice.add_run("CONFIDENTIAL  |  Candidate: Ahmad Fathin Naufal (UGM)  |  PSE Internship Assessment\n")
     r_cn1.font.size = Pt(8.0)
     r_cn1.font.color.rgb = C_MUTED
@@ -205,49 +225,45 @@ def build_docx():
     r_cn2.font.size = Pt(7.5)
     r_cn2.font.color.rgb = C_MUTED
 
+    # Page Break to start Technical Assessment Body
     doc.add_page_break()
 
     # =========================================================================
-    # HELPER FUNCTIONS FOR CHAPTERS & SECTIONS
+    # HELPER FUNCTIONS FOR CHAPTERS & SECTIONS (CONTINUOUS FLOW)
     # =========================================================================
     def add_chapter_heading(roman_str, title_str):
         p_rom = doc.add_paragraph()
-        format_paragraph(p_rom, space_before=6, space_after=1, align=WD_ALIGN_PARAGRAPH.CENTER)
+        format_paragraph(p_rom, space_before=14, space_after=1, align=WD_ALIGN_PARAGRAPH.CENTER, keep_with_next=True)
         r_rom = p_rom.add_run(roman_str)
         r_rom.font.bold = True
-        r_rom.font.size = Pt(13.0)
+        r_rom.font.size = Pt(12.5)
         r_rom.font.color.rgb = C_BLACK
 
         p_tit = doc.add_paragraph()
-        format_paragraph(p_tit, space_before=0, space_after=6, align=WD_ALIGN_PARAGRAPH.CENTER)
+        format_paragraph(p_tit, space_before=0, space_after=5, align=WD_ALIGN_PARAGRAPH.CENTER, keep_with_next=True)
         r_tit = p_tit.add_run(title_str)
         r_tit.font.bold = True
-        r_tit.font.size = Pt(11.0)
+        r_tit.font.size = Pt(10.5)
         r_tit.font.color.rgb = C_BLACK
-
-        p_line = doc.add_paragraph()
-        format_paragraph(p_line, space_before=0, space_after=6)
-        r_line = p_line.add_run("―" * 58)
-        r_line.font.size = Pt(8.0)
-        r_line.font.color.rgb = C_BLACK
 
     def add_subheading(title_str):
         p = doc.add_paragraph()
-        format_paragraph(p, space_before=7, space_after=2)
+        format_paragraph(p, space_before=8, space_after=2, keep_with_next=True)
         r = p.add_run(title_str)
         r.font.bold = True
-        r.font.size = Pt(10.0)
+        r.font.size = Pt(9.5)
         r.font.color.rgb = C_BLACK
         return p
 
-    def add_body(text_str, bold_prefix=None, space_after=4):
+    def add_body(text_str, bold_prefix=None, space_after=3.5, keep_with_next=False):
         p = doc.add_paragraph()
-        format_paragraph(p, space_before=0, space_after=space_after, line_spacing=1.12, align=WD_ALIGN_PARAGRAPH.JUSTIFY)
+        format_paragraph(p, space_before=0, space_after=space_after, line_spacing=1.1, align=WD_ALIGN_PARAGRAPH.JUSTIFY, keep_with_next=keep_with_next)
         if bold_prefix:
             r_pre = p.add_run(bold_prefix)
             r_pre.font.bold = True
+            r_pre.font.size = Pt(8.8)
         r = p.add_run(text_str)
-        r.font.size = Pt(9.0)
+        r.font.size = Pt(8.8)
         return p
 
     def add_table_generic(headers, data_rows, col_widths, note=None):
@@ -255,50 +271,55 @@ def build_docx():
         table.alignment = WD_TABLE_ALIGNMENT.CENTER
         set_table_borders(table, color="CBD5E1", sz="4", val="single")
 
-        # Header Row: Solid Black (#000000)
-        hdr_cells = table.rows[0].cells
+        # Header Row: Solid Black (#000000), cantSplit, tblHeader
+        hdr_row = table.rows[0]
+        make_row_cant_split(hdr_row)
+        make_row_header(hdr_row)
+        hdr_cells = hdr_row.cells
         for col_idx, h_text in enumerate(headers):
             hdr_cells[col_idx].width = Inches(col_widths[col_idx])
             set_cell_background(hdr_cells[col_idx], "000000")
-            set_cell_margins(hdr_cells[col_idx], top=80, bottom=80, left=100, right=100)
+            set_cell_margins(hdr_cells[col_idx], top=60, bottom=60, left=80, right=80)
             p = hdr_cells[col_idx].paragraphs[0]
-            format_paragraph(p, space_before=0, space_after=0)
+            format_paragraph(p, space_before=0, space_after=0, keep_with_next=True)
             r = p.add_run(h_text)
             r.font.bold = True
-            r.font.size = Pt(8.0)
+            r.font.size = Pt(7.8)
             r.font.color.rgb = C_WHITE
 
-        # Data Rows: Alternating white / #F8FAFC
+        # Data Rows: Alternating white / #F8FAFC, cantSplit
         for row_idx, row_data in enumerate(data_rows):
-            cells = table.rows[row_idx + 1].cells
+            row = table.rows[row_idx + 1]
+            make_row_cant_split(row)
+            cells = row.cells
             bg_hex = "F8FAFC" if row_idx % 2 == 1 else "FFFFFF"
             for col_idx, c_text in enumerate(row_data):
                 cells[col_idx].width = Inches(col_widths[col_idx])
                 set_cell_background(cells[col_idx], bg_hex)
-                set_cell_margins(cells[col_idx], top=60, bottom=60, left=100, right=100)
+                set_cell_margins(cells[col_idx], top=45, bottom=45, left=80, right=80)
                 p = cells[col_idx].paragraphs[0]
                 format_paragraph(p, space_before=0, space_after=0)
                 r = p.add_run(c_text)
-                r.font.size = Pt(8.0)
+                r.font.size = Pt(7.8)
                 r.font.color.rgb = C_DARK
 
         if note:
             p_note = doc.add_paragraph()
-            format_paragraph(p_note, space_before=2, space_after=5, line_spacing=1.05, align=WD_ALIGN_PARAGRAPH.JUSTIFY)
+            format_paragraph(p_note, space_before=1.5, space_after=4.5, line_spacing=1.05, align=WD_ALIGN_PARAGRAPH.JUSTIFY)
             r_n = p_note.add_run(note)
-            r_n.font.size = Pt(7.4)
+            r_n.font.size = Pt(7.3)
             r_n.font.color.rgb = C_MUTED
 
     def add_figure_image(img_path, width_in, caption_text):
         if img_path.exists():
             p_img = doc.add_paragraph()
-            format_paragraph(p_img, space_before=3, space_after=2, align=WD_ALIGN_PARAGRAPH.CENTER)
+            format_paragraph(p_img, space_before=3, space_after=1.5, align=WD_ALIGN_PARAGRAPH.CENTER, keep_with_next=True)
             p_img.add_run().add_picture(str(img_path), width=Inches(width_in))
 
             p_cap = doc.add_paragraph()
             format_paragraph(p_cap, space_before=1, space_after=4, line_spacing=1.05, align=WD_ALIGN_PARAGRAPH.JUSTIFY)
             r_c = p_cap.add_run(caption_text)
-            r_c.font.size = Pt(7.6)
+            r_c.font.size = Pt(7.5)
             r_c.font.color.rgb = C_DARK
 
     # =========================================================================
@@ -308,10 +329,10 @@ def build_docx():
 
     # Structured Abstract
     p_abs = doc.add_paragraph()
-    format_paragraph(p_abs, space_before=0, space_after=4, line_spacing=1.1, align=WD_ALIGN_PARAGRAPH.JUSTIFY)
+    format_paragraph(p_abs, space_before=0, space_after=3.5, line_spacing=1.08, align=WD_ALIGN_PARAGRAPH.JUSTIFY)
     r_absh = p_abs.add_run("Structured Abstract: ")
     r_absh.font.bold = True
-    r_absh.font.size = Pt(7.8)
+    r_absh.font.size = Pt(7.6)
 
     abstract_text = (
         "Background: Primary drying of recombinant biotherapeutics at PT Kalbio Global Medika (KGM Cikarang) "
@@ -332,7 +353,7 @@ def build_docx():
     )
     r_abst = p_abs.add_run(abstract_text)
     r_abst.font.italic = True
-    r_abst.font.size = Pt(7.6)
+    r_abst.font.size = Pt(7.5)
 
     # 1.1 Standalone Heading
     add_subheading("1.1 Biopharmaceutical Manufacturing Context at Kalbe Biologics")
@@ -370,19 +391,20 @@ def build_docx():
         "this spatial variance, leading to localized collapse during commercial scale-up."
     )
 
-    # Callout Box: Core Engineering Question
+    # Callout Box: Core Engineering Question (cantSplit, tightly padded)
     tbl_q = doc.add_table(rows=1, cols=1)
     tbl_q.alignment = WD_TABLE_ALIGNMENT.CENTER
+    make_row_cant_split(tbl_q.rows[0])
     set_table_borders(tbl_q, color="000000", sz="6", val="single")
     c_q = tbl_q.rows[0].cells[0]
     set_cell_background(c_q, "F8FAFC")
-    set_cell_margins(c_q, top=100, bottom=100, left=160, right=160)
-    c_q.width = Inches(6.5)
+    set_cell_margins(c_q, top=70, bottom=70, left=120, right=120)
+    c_q.width = Inches(6.4)
     pq = c_q.paragraphs[0]
-    format_paragraph(pq, space_before=0, space_after=0, line_spacing=1.1)
+    format_paragraph(pq, space_before=0, space_after=0, line_spacing=1.08)
     rq1 = pq.add_run("Core Engineering Question: ")
     rq1.font.bold = True
-    rq1.font.size = Pt(8.5)
+    rq1.font.size = Pt(8.2)
     rq1.font.color.rgb = C_NAVY
     rq2 = pq.add_run(
         "'What multidimensional operating window (Tshelf × Pchamber) maximizes primary drying cycle-time reduction "
@@ -390,31 +412,32 @@ def build_docx():
         "real-world stochastic Edge-Vial thermal heterogeneity?'"
     )
     rq2.font.italic = True
-    rq2.font.size = Pt(8.5)
+    rq2.font.size = Pt(8.2)
     rq2.font.color.rgb = C_NAVY
 
     # 1.4 Standalone Heading
     add_subheading("1.4 Regulatory Framework & Control Space Classification")
     add_body(
         "In strict alignment with ICH Q8(R2) Quality by Design (QbD), the primary drying process is partitioned "
-        "into Critical Process Parameters (CPPs) and Critical Quality Attributes (CQAs):"
+        "into Critical Process Parameters (CPPs) and Critical Quality Attributes (CQAs):",
+        keep_with_next=True
     )
 
-    # Table 1: CPPs vs CQAs Regulatory Classification Matrix
+    # Table 1: CPPs vs CQAs Regulatory Classification Matrix (Safe Widths = 6.4 in)
     t1_headers = [
         "Parameter Category",
         "Parameter Name",
-        "Target Operating Range",
+        "Target Range",
         "Sensor / PAT Interface",
         "Regulatory Criticality (BPOM / ICH)"
     ]
     t1_rows = [
-        ["CPP (Manipulated)", "Shelf Temperature (Tshelf)", "-32°C to -25°C (±0.5°C)", "PT100 RTD Sensors in Shelf Fluid", "High: Directly governs sublimation heat flux"],
+        ["CPP (Manipulated)", "Shelf Temperature (Tshelf)", "-32°C to -25°C (±0.5°C)", "PT100 RTD in Shelf Fluid", "High: Directly governs sublimation heat flux"],
         ["CPP (Manipulated)", "Chamber Pressure (Pc)", "8.0 to 14.0 Pa (60 to 105 mTorr)", "Capacitance Manometer / N2 Bleed", "High: Controls gas conduction & driving force"],
         ["CQA (Product Response)", "Interface Temp. (Tp,max)", "≤ -27.0°C (Tc Collapse Threshold)", "Thin-wire Thermocouples / TDLAS", "Critical: Breach causes cake micro-collapse"],
         ["CQA (Process Output)", "Primary Drying End (tdry)", "10.0 to 14.0 hours per batch", "Pirani vs Capacitance Manometer", "Economic: Dictates cleanroom batch cycle"],
     ]
-    t1_widths = [1.2, 1.4, 1.3, 1.3, 1.3]
+    t1_widths = [1.3, 1.3, 1.2, 1.3, 1.3]
     t1_note = (
         "Table 1 Note: Parameter classification adheres to ICH Q8(R2) Quality by Design (QbD) and BPOM Annex 1 cGMP "
         "requirements for sterile biomanufacturing. Continuous historian archiving satisfies 21 CFR Part 11 audit trails."
@@ -439,14 +462,15 @@ def build_docx():
         "~42,000 vials/batch) equipped with Automatic Loading and Unloading Systems (ALUS) inside Grade A isolators. "
         "Polydimethylsiloxane silicone oil circulates through hollow shelves (±0.5°C uniformity), while an external condenser "
         "(≤ -75°C, 180 kg capacity) provides continuous vapor entrapment. Table 2 benchmarks critical formulation properties "
-        "across Kalbe's biotherapeutic portfolio:"
+        "across Kalbe's biotherapeutic portfolio:",
+        keep_with_next=True
     )
 
-    # Table 2: Excipient Matrix Formulation & Thermal Collapse Benchmarks
+    # Table 2: Excipient Matrix Formulation & Thermal Collapse Benchmarks (Safe Widths = 6.4 in)
     t2_headers = [
         "Biotherapeutic Molecule",
-        "Cryoprotectant Excipient System",
-        "Solids (%)",
+        "Cryoprotectant System",
+        "Solids",
         "Critical Tc / Tg'",
         "Max Safe Tp,max",
         "Target Moisture"
@@ -457,7 +481,7 @@ def build_docx():
         ["Rituximab Biosimilar (mAb)", "Trehalose 6.0% + Histidine Buffer", "7.5%", "-26.4°C", "-28.0°C", "≤ 2.0%"],
         ["Trastuzumab Biosimilar (mAb)", "Trehalose dihydrate 5.2% + Histidine", "6.8%", "-25.8°C", "-27.5°C", "≤ 1.5%"],
     ]
-    t2_widths = [1.3, 1.8, 0.7, 0.9, 0.9, 0.9]
+    t2_widths = [1.3, 1.7, 0.7, 0.9, 0.9, 0.9]
     t2_note = (
         "Table 2 Note: Formulation data calibrated from industrial recombinant therapeutic proteins produced at "
         "PT Kalbio Global Medika (KGM Cikarang). Critical collapse temperatures (Tc) define upper thermal bounds "
@@ -465,10 +489,8 @@ def build_docx():
     )
     add_table_generic(t2_headers, t2_rows, t2_widths, t2_note)
 
-    doc.add_page_break()
-
     # =========================================================================
-    # BAB II: FIRST-PRINCIPLES MECHANISTIC MODELING & VERIFICATION
+    # BAB II: FIRST-PRINCIPLES MECHANISTIC MODELING & VERIFICATION (CONTINUOUS)
     # =========================================================================
     add_chapter_heading("BAB II", "FIRST-PRINCIPLES MECHANISTIC MODELING & VERIFICATION")
 
@@ -478,70 +500,83 @@ def build_docx():
         "A rigorous 1D quasi-steady-state moving-boundary Stefan formulation originated by Pikal, Roy, and Shah (1984) "
         "and formalized by Fissore, Pisano, and Barresi (2011) was developed. The formulation couples Fourier heat conduction "
         "from the shelf, latent phase-change enthalpy at the moving sublimation front, and Knudsen-Darcy vapor diffusion "
-        "through the tortuous dried cake pores:"
+        "through the tortuous dried cake pores:",
+        keep_with_next=True
     )
 
-    # Equations Table
+    # Structured Equations Table (Clean separate paragraphs, cantSplit)
     tbl_eq = doc.add_table(rows=1, cols=2)
     tbl_eq.alignment = WD_TABLE_ALIGNMENT.CENTER
+    make_row_cant_split(tbl_eq.rows[0])
     set_table_borders(tbl_eq, color="000000", sz="6", val="single")
 
     eq_c1 = tbl_eq.rows[0].cells[0]
     eq_c2 = tbl_eq.rows[0].cells[1]
     set_cell_background(eq_c1, "F8FAFC")
     set_cell_background(eq_c2, "F8FAFC")
-    set_cell_margins(eq_c1, top=100, bottom=100, left=140, right=140)
-    set_cell_margins(eq_c2, top=100, bottom=100, left=140, right=140)
-    eq_c1.width = Inches(3.25)
-    eq_c2.width = Inches(3.25)
+    set_cell_margins(eq_c1, top=70, bottom=70, left=100, right=100)
+    set_cell_margins(eq_c2, top=70, bottom=70, left=100, right=100)
+    eq_c1.width = Inches(3.2)
+    eq_c2.width = Inches(3.2)
 
+    # Left Column Equations
+    eq_items_left = [
+        ("Eq. 1 Heat Influx to Vial Base:", "q = Av · Kv · (Tshelf - Tp)"),
+        ("Eq. 2 Sublimation Mass Transfer:", "dm/dt = [Ap · (Pice(Tp) - Pc)] / Rp(L)"),
+        ("Eq. 3 Clausius-Clapeyron Vapor Pressure:", "Pice(Tp) = exp(28.8926 - 6140.4 / Tp)  [Pa]"),
+    ]
     p_eq1 = eq_c1.paragraphs[0]
-    format_paragraph(p_eq1, space_before=0, space_after=0, line_spacing=1.15)
-    p_eq1.add_run(
-        "(Eq. 1) Heat Influx to Vial Base:\n"
-        "  q = Av · Kv · (Tshelf - Tp)\n"
-        "(Eq. 2) Sublimation Mass Transfer:\n"
-        "  dm/dt = [Ap · (Pice(Tp) - Pc)] / Rp(L)\n"
-        "(Eq. 3) Clausius-Clapeyron Vapor Pressure:\n"
-        "  Pice(Tp) = exp(28.8926 - 6140.4 / Tp)  [Pa]"
-    )
-    for r in p_eq1.runs:
-        r.font.bold = True
-        r.font.size = Pt(8.0)
-        r.font.color.rgb = C_DARK
+    format_paragraph(p_eq1, space_before=0, space_after=1, line_spacing=1.05)
+    r_l1 = p_eq1.add_run(f"({eq_items_left[0][0]})\n")
+    r_l1.font.bold = True
+    r_l1.font.size = Pt(7.6)
+    p_eq1.add_run(f"  {eq_items_left[0][1]}\n").font.size = Pt(7.6)
+    for title, formula in eq_items_left[1:]:
+        p_sub = eq_c1.add_paragraph()
+        format_paragraph(p_sub, space_before=2, space_after=1, line_spacing=1.05)
+        r_t = p_sub.add_run(f"({title})\n")
+        r_t.font.bold = True
+        r_t.font.size = Pt(7.6)
+        p_sub.add_run(f"  {formula}").font.size = Pt(7.6)
 
+    # Right Column Equations
+    eq_items_right = [
+        ("Eq. 4 Dynamic Cake Resistance:", "Rp(L) = R0 + A1 · L  [Pa·s·m²/kg]"),
+        ("Eq. 5 Interfacial Energy Conservation:", "Kv(Tshelf - Tp) = [ΔHsub · (Pice(Tp) - Pc)] / Rp(L)"),
+        ("Eq. 6 Sublimation Front Progression (ODE):", "dL/dt = (dm/dt) / [ρice · Ap · (1 - ε)]"),
+    ]
     p_eq2 = eq_c2.paragraphs[0]
-    format_paragraph(p_eq2, space_before=0, space_after=0, line_spacing=1.15)
-    p_eq2.add_run(
-        "(Eq. 4) Dynamic Cake Resistance:\n"
-        "  Rp(L) = R0 + A1 · L  [Pa·s·m²/kg]\n"
-        "(Eq. 5) Interfacial Energy Conservation:\n"
-        "  Kv(Tshelf - Tp) = [ΔHsub · (Pice(Tp) - Pc)] / Rp(L)\n"
-        "(Eq. 6) Sublimation Front Progression (ODE):\n"
-        "  dL/dt = (dm/dt) / [ρice · Ap · (1 - ε)]"
-    )
-    for r in p_eq2.runs:
-        r.font.bold = True
-        r.font.size = Pt(8.0)
-        r.font.color.rgb = C_DARK
+    format_paragraph(p_eq2, space_before=0, space_after=1, line_spacing=1.05)
+    r_r1 = p_eq2.add_run(f"({eq_items_right[0][0]})\n")
+    r_r1.font.bold = True
+    r_r1.font.size = Pt(7.6)
+    p_eq2.add_run(f"  {eq_items_right[0][1]}\n").font.size = Pt(7.6)
+    for title, formula in eq_items_right[1:]:
+        p_sub = eq_c2.add_paragraph()
+        format_paragraph(p_sub, space_before=2, space_after=1, line_spacing=1.05)
+        r_t = p_sub.add_run(f"({title})\n")
+        r_t.font.bold = True
+        r_t.font.size = Pt(7.6)
+        p_sub.add_run(f"  {formula}").font.size = Pt(7.6)
 
     p_eq_note = doc.add_paragraph()
-    format_paragraph(p_eq_note, space_before=2, space_after=4, line_spacing=1.05, align=WD_ALIGN_PARAGRAPH.JUSTIFY)
+    format_paragraph(p_eq_note, space_before=1.5, space_after=4.0, line_spacing=1.05, align=WD_ALIGN_PARAGRAPH.JUSTIFY)
     r_eqn = p_eq_note.add_run(
         "Equations 1 to 6 Note: Governing ODE system coupling Fourier conductive heat influx, interfacial latent "
         "phase transition, Knudsen-Darcy vapor transport, and moving-boundary kinematics."
     )
-    r_eqn.font.size = Pt(7.4)
+    r_eqn.font.size = Pt(7.3)
     r_eqn.font.color.rgb = C_MUTED
 
     # 2.2 Standalone Heading
     add_subheading("2.2 SI Parameter Registry & Thermophysical Validation")
     add_body(
         "Physical constants are calibrated from validated pharmaceutical literature for standard Schott 10R tubing vials "
-        "(outer diameter 24.0 mm, fill volume 3.0 mL, initial cake height Ltotal = 8.19 mm, 5% w/v solid matrix):"
+        "(outer diameter 24.0 mm, fill volume 3.0 mL, initial cake height Ltotal = 8.19 mm, 5% w/v solid matrix):",
+        keep_with_next=True
     )
 
-    # Table 3: Thermophysical Parameter Values & Heat/Mass Transfer Coefficients
+    # Table 3: Thermophysical Parameter Values (Safe Widths = 6.4 in)
     t3_headers = [
         "Parameter Description",
         "Symbol",
@@ -556,7 +591,7 @@ def build_docx():
         ["Resistance Slope Factor", "A1", "3.90 × 10^8 Pa·s·m/kg", "Tang & Pikal (2004) calibration"],
         ["Vial Heat / Sublimation Areas", "Av, Ap", "4.52 × 10^-4 m²", "Schott 10R tubing vial CAD drawing"],
     ]
-    t3_widths = [1.8, 1.0, 1.8, 1.9]
+    t3_widths = [1.8, 0.9, 1.7, 2.0]
     t3_note = (
         "Table 3 Note: Empirical thermophysical properties calibrated for standard Schott 10R tubing vials under "
         "pharmaceutical lyophilization conditions. Cake resistance parameters reflect 5% sucrose-glycine formulation matrix."
@@ -568,14 +603,15 @@ def build_docx():
     add_body(
         "The digital twin was integrated over time using an adaptive Runge-Kutta solver (RK45) across three distinct "
         "commercial recipes for Kalbe: (1) Conservative Baseline (-32°C, 8 Pa); (2) Moderate QbD Target (-28°C, 10 Pa); "
-        "and (3) Aggressive Recipe (-22°C, 12 Pa):"
+        "and (3) Aggressive Recipe (-22°C, 12 Pa):",
+        keep_with_next=True
     )
 
-    # Insert Figure 1
+    # Insert Figure 1 (Compact 4.8 in width)
     scen_fig = FIG_DIR / "scenario_comparison.png"
     add_figure_image(
         scen_fig,
-        width_in=5.8,
+        width_in=4.8,
         caption_text=(
             "Figure 1: Deterministic primary drying kinetic trajectories across three representative operating regimes: "
             "(Left) Dynamic product interface temperature Tp(t) benchmarked against the critical cake collapse threshold "
@@ -583,13 +619,13 @@ def build_docx():
         )
     )
 
-    # Table 4: Comparative Batch Performance Metrics across Scenarios
+    # Table 4: Comparative Batch Performance Metrics across Scenarios (Safe Widths = 6.4 in)
     t4_headers = [
         "Operating Recipe",
         "Setpoints (Ts, Pc)",
         "Cycle Duration",
         "Peak Tp (°C)",
-        "Safety Margin to Tc",
+        "Safety Margin",
         "Quality Outcome"
     ]
     t4_rows = [
@@ -597,7 +633,7 @@ def build_docx():
         ["Moderate (QbD Sweet Spot)", "-28°C, 10 Pa", "11.2 hours", "-28.8°C", "+1.8°C", "Target Quality (Optimized)"],
         ["Aggressive (Failure)", "-22°C, 12 Pa", "6.4 hours", "-23.5°C", "-3.5°C (BREACH)", "Collapsed (Gross Batch Failure)"],
     ]
-    t4_widths = [1.5, 1.0, 1.0, 1.0, 1.0, 1.0]
+    t4_widths = [1.4, 0.9, 0.9, 0.9, 1.0, 1.3]
     t4_note = (
         "Table 4 Note: Mechanistic performance metrics resolved via adaptive ODE integration. Peak interface temperature "
         "occurs during early drying before cake resistance accumulates."
@@ -620,10 +656,8 @@ def build_docx():
         "internal temperature gradients."
     )
 
-    doc.add_page_break()
-
     # =========================================================================
-    # BAB III: STOCHASTIC UNCERTAINTY QUANTIFICATION & ICH Q8 DESIGN SPACE
+    # BAB III: STOCHASTIC UNCERTAINTY QUANTIFICATION & ICH Q8 DESIGN SPACE (CONTINUOUS)
     # =========================================================================
     add_chapter_heading("BAB III", "STOCHASTIC UNCERTAINTY QUANTIFICATION & ICH Q8 DESIGN SPACE")
 
@@ -633,35 +667,39 @@ def build_docx():
         "Deterministic single-vial models fail to capture batch heterogeneity. To model real-world variability across "
         "commercial freeze-dryer shelves at KGM, a 1,000-iteration Monte Carlo simulation was executed at the Moderate recipe "
         "(-28°C, 10 Pa), sampling Kv ~ N(25.0, 3.5²) to capture edge radiation and Rp scale ~ N(1.0, 0.15²) to capture ice "
-        "nucleation pore tortuosity variance:"
+        "nucleation pore tortuosity variance:",
+        keep_with_next=True
     )
 
-    # Insert Figure 2 (two images side by side in table)
+    # Insert Figure 2 (Two images side-by-side in table, cantSplit)
     env_fig = FIG_DIR / "temperature_envelope.png"
     hist_fig = FIG_DIR / "collapse_histogram.png"
     if env_fig.exists() and hist_fig.exists():
         tbl_mc = doc.add_table(rows=1, cols=2)
         tbl_mc.alignment = WD_TABLE_ALIGNMENT.CENTER
+        make_row_cant_split(tbl_mc.rows[0])
         set_table_borders(tbl_mc, color="FFFFFF", sz="0", val="none")
         c_mc1 = tbl_mc.rows[0].cells[0]
         c_mc2 = tbl_mc.rows[0].cells[1]
-        c_mc1.width = Inches(3.25)
-        c_mc2.width = Inches(3.25)
+        c_mc1.width = Inches(3.2)
+        c_mc2.width = Inches(3.2)
+        set_cell_margins(c_mc1, top=20, bottom=20, left=40, right=40)
+        set_cell_margins(c_mc2, top=20, bottom=20, left=40, right=40)
         p_mc1 = c_mc1.paragraphs[0]
         format_paragraph(p_mc1, space_before=0, space_after=0, align=WD_ALIGN_PARAGRAPH.CENTER)
-        p_mc1.add_run().add_picture(str(env_fig), width=Inches(3.1))
+        p_mc1.add_run().add_picture(str(env_fig), width=Inches(2.95))
         p_mc2 = c_mc2.paragraphs[0]
         format_paragraph(p_mc2, space_before=0, space_after=0, align=WD_ALIGN_PARAGRAPH.CENTER)
-        p_mc2.add_run().add_picture(str(hist_fig), width=Inches(3.1))
+        p_mc2.add_run().add_picture(str(hist_fig), width=Inches(2.95))
 
         p_mcc = doc.add_paragraph()
-        format_paragraph(p_mcc, space_before=2, space_after=4, line_spacing=1.05, align=WD_ALIGN_PARAGRAPH.JUSTIFY)
+        format_paragraph(p_mcc, space_before=1.5, space_after=4.0, line_spacing=1.05, align=WD_ALIGN_PARAGRAPH.JUSTIFY)
         r_mcc = p_mcc.add_run(
             "Figure 2: Stochastic Monte Carlo Analysis (N = 1,000): (Left) 5th to 95th percentile dynamic interface "
             "temperature envelope across simulated vial population; (Right) Population distribution of peak product "
             "temperature Tp,max highlighting localized edge-vial vulnerability."
         )
-        r_mcc.font.size = Pt(7.6)
+        r_mcc.font.size = Pt(7.5)
         r_mcc.font.color.rgb = C_DARK
 
     # 3.2 Standalone Heading
@@ -672,16 +710,17 @@ def build_docx():
         "Crucially, the quantitative Risk of Collapse across unshielded vials is 0.60% (6 of 1,000 vials). "
         "A spatial physical audit confirms that collapse is not randomly distributed; it occurs exclusively in perimeter "
         "edge vials with extreme radiative heat flux (Kv > 31 W/(m²·K)), whereas 99.4% of the batch maintains pristine "
-        "porous cake structure."
+        "porous cake structure.",
+        keep_with_next=True
     )
 
-    # Table 5: Quantitative Monte Carlo Distribution Metrics
+    # Table 5: Quantitative Monte Carlo Distribution Metrics (Safe Widths = 6.4 in)
     t5_headers = [
         "Simulation Scenario",
         "Peak Tp,mean ± σ",
-        "95% CI Temperature Range",
-        "Drying Time tdry,mean",
-        "Collapse Risk P(Tp > Tc)",
+        "95% CI Range",
+        "Drying Time",
+        "Collapse Risk",
         "Mitigation Required"
     ]
     t5_rows = [
@@ -690,7 +729,7 @@ def build_docx():
         ["Moderate Shielded (Guard Ring)", "-28.9 ± 0.1°C", "[-29.1°C, -28.7°C]", "11.4 ± 1.2 h", "0.00% (Full Zero Risk)", "Standard Production Target"],
         ["Aggressive (-22°C, 12 Pa)", "-23.5 ± 0.4°C", "[-24.3°C, -22.7°C]", "6.4 ± 0.8 h", "100.0% (Gross Failure)", "Unacceptable Recipe"],
     ]
-    t5_widths = [1.4, 1.1, 1.2, 1.0, 1.0, 1.0]
+    t5_widths = [1.3, 1.1, 1.1, 1.0, 1.0, 0.9]
     t5_note = (
         "Table 5 Note: Summary statistics from 1,000 Latin-hypercube stochastic simulation runs. Shielded condition "
         "models edge-vial radiant suppression via physical stainless-steel guard ring retrofits."
@@ -703,14 +742,15 @@ def build_docx():
         "A 2D parameter sweep across Tshelf ∈ [-35°C, -20°C] and Pchamber ∈ [5 Pa, 20 Pa] (100 simulation grid points) "
         "was executed to construct the formal ICH Q8(R2) Design Space. The operational envelope is bounded by: "
         "(1) Thermal Collapse Boundary (Tp,max = -27.0°C), (2) Cycle Feasibility Boundary (tdry ≤ 24 h), and "
-        "(3) Equipment Choked-Flow Limit (Mickley limit of condenser duct vapor velocity):"
+        "(3) Equipment Choked-Flow Limit (Mickley limit of condenser duct vapor velocity):",
+        keep_with_next=True
     )
 
-    # Insert Figure 3
+    # Insert Figure 3 (Compact 4.8 in width)
     ds_fig = FIG_DIR / "design_space_heatmap.png"
     add_figure_image(
         ds_fig,
-        width_in=5.6,
+        width_in=4.8,
         caption_text=(
             "Figure 3: ICH Q8(R2) QbD Design Space: Multi-dimensional risk map showing primary drying duration contours, "
             "the critical collapse boundary (Tc = -27.0°C), condenser choked-flow constraint, and the robust Proven "
@@ -728,10 +768,8 @@ def build_docx():
         "vacuum ratios) via OPC-UA to continuously compute sublimation progress and update dynamic batch trajectories."
     )
 
-    doc.add_page_break()
-
     # =========================================================================
-    # BAB IV: ENGINEERING INSIGHTS, ECONOMIC ROI & STRATEGIC ROADMAP
+    # BAB IV: ENGINEERING INSIGHTS, ECONOMIC ROI & STRATEGIC ROADMAP (CONTINUOUS)
     # =========================================================================
     add_chapter_heading("BAB IV", "ENGINEERING INSIGHTS, ECONOMIC ROI & STRATEGIC ROADMAP")
 
@@ -739,10 +777,11 @@ def build_docx():
     add_subheading("4.1 Quantified Business Impact & Operational Value for Kalbe")
     add_body(
         "Implementing the Moderate QbD operating recipe (-28°C, 10 Pa) alongside passive radiation mitigation creates "
-        "immediate, quantifiable operational and financial returns for PT Kalbio Global Medika (KGM Cikarang):"
+        "immediate, quantifiable operational and financial returns for PT Kalbio Global Medika (KGM Cikarang):",
+        keep_with_next=True
     )
 
-    # Table 6: Annual Operational & Economic Synthesis Model
+    # Table 6: Annual Operational & Economic Synthesis Model (Safe Widths = 6.4 in)
     t6_headers = [
         "Operational / Financial Metric",
         "Baseline (Conservative)",
@@ -757,7 +796,7 @@ def build_docx():
         ["Batch Failure Risk (Collapse)", "0.60% (Edge Vials)", "0.00% (with Guard Rings)", "Zero Scrap (Saves ~IDR 1.2B/yr)"],
         ["Energy Consumption / Batch", "1,850 kWh", "1,310 kWh", "29% Electricity & Steam Savings"],
     ]
-    t6_widths = [1.8, 1.4, 1.4, 1.9]
+    t6_widths = [1.7, 1.3, 1.3, 2.1]
     t6_note = (
         "Table 6 Note: Techno-economic synthesis modeled for commercial manufacturing campaigns at KGM Cikarang "
         "(16.5 m² shelf area, 42,000 vials/batch, high-titer biosimilar mAb product)."
@@ -820,11 +859,11 @@ def build_docx():
         "with BPOM, securing operational flexibility within the approved PAR envelope."
     )
 
+    # =========================================================================
+    # DEDICATED SEPARATE PAGE: REFERENCES & DATA REPRODUCIBILITY
+    # =========================================================================
     doc.add_page_break()
 
-    # =========================================================================
-    # REFERENCES: PEER-REVIEWED LITERATURE & REGULATORY STANDARDS
-    # =========================================================================
     add_chapter_heading("REFERENCES", "PEER-REVIEWED LITERATURE & REGULATORY STANDARDS")
 
     # 8 Verified Authentic References with Standard Academic Hanging Indent
@@ -859,30 +898,28 @@ def build_docx():
 
     for ref_str in references:
         p_ref = doc.add_paragraph()
-        p_ref.paragraph_format.left_indent = Inches(0.4)
-        p_ref.paragraph_format.first_line_indent = Inches(-0.4)
-        format_paragraph(p_ref, space_before=0, space_after=8, line_spacing=1.15, align=WD_ALIGN_PARAGRAPH.JUSTIFY)
+        p_ref.paragraph_format.left_indent = Inches(0.35)
+        p_ref.paragraph_format.first_line_indent = Inches(-0.35)
+        format_paragraph(p_ref, space_before=0, space_after=6.0, line_spacing=1.1, align=WD_ALIGN_PARAGRAPH.JUSTIFY)
         r_rf = p_ref.add_run(ref_str)
-        r_rf.font.size = Pt(8.2)
+        r_rf.font.size = Pt(8.0)
         r_rf.font.color.rgb = C_DARK
 
-    # Companion Open-Source Code Repository Card
-    p_sp = doc.add_paragraph()
-    format_paragraph(p_sp, space_before=10, space_after=0)
-
+    # Companion Open-Source Code Repository Card (cantSplit, clean padding)
     tbl_code = doc.add_table(rows=1, cols=1)
     tbl_code.alignment = WD_TABLE_ALIGNMENT.CENTER
+    make_row_cant_split(tbl_code.rows[0])
     set_table_borders(tbl_code, color="008837", sz="8", val="single")
     c_code = tbl_code.rows[0].cells[0]
     set_cell_background(c_code, "F8FAFC")
-    set_cell_margins(c_code, top=120, bottom=120, left=180, right=180)
-    c_code.width = Inches(6.5)
+    set_cell_margins(c_code, top=90, bottom=90, left=140, right=140)
+    c_code.width = Inches(6.4)
 
     p_cd = c_code.paragraphs[0]
-    format_paragraph(p_cd, space_before=0, space_after=0, line_spacing=1.2)
+    format_paragraph(p_cd, space_before=0, space_after=0, line_spacing=1.15)
     rc1 = p_cd.add_run("Companion Open-Source Digital Twin & Computational Repository:\n")
     rc1.font.bold = True
-    rc1.font.size = Pt(8.5)
+    rc1.font.size = Pt(8.2)
     rc1.font.color.rgb = C_NAVY
 
     rc2 = p_cd.add_run(
@@ -891,26 +928,23 @@ def build_docx():
         "• Scientific Stack: Python 3.10+ (NumPy, SciPy ODE, Matplotlib, Streamlit, ReportLab, python-docx). "
         "Cleanroom process model calibrated for PT Kalbio Global Medika (KGM Cikarang)."
     )
-    rc2.font.size = Pt(8.0)
+    rc2.font.size = Pt(7.8)
     rc2.font.color.rgb = C_DARK
 
     # Bottom formal confidentiality notice
-    p_bot_sp = doc.add_paragraph()
-    format_paragraph(p_bot_sp, space_before=20, space_after=0)
-
     p_bot_notice = doc.add_paragraph()
-    format_paragraph(p_bot_notice, space_before=0, space_after=0, align=WD_ALIGN_PARAGRAPH.CENTER)
+    format_paragraph(p_bot_notice, space_before=24, space_after=0, align=WD_ALIGN_PARAGRAPH.CENTER)
     rbn1 = p_bot_notice.add_run("CONFIDENTIAL  |  Candidate: Ahmad Fathin Naufal (UGM)  |  PSE Internship Assessment\n")
-    rbn1.font.size = Pt(8.0)
+    rbn1.font.size = Pt(7.8)
     rbn1.font.color.rgb = C_MUTED
     rbn2 = p_bot_notice.add_run("PT Kalbe Farma Tbk  |  Advanced Engineering Center (AEC)  |  Corporate Digital Transformation")
     rbn2.font.italic = True
-    rbn2.font.size = Pt(7.5)
+    rbn2.font.size = Pt(7.3)
     rbn2.font.color.rgb = C_MUTED
 
     # Save document
     doc.save(str(DOCX_PATH))
-    print(f"Successfully generated Technical Report Word DOCX: {DOCX_PATH}")
+    print(f"Successfully generated Publication-Grade Technical Report DOCX: {DOCX_PATH}")
 
 
 if __name__ == "__main__":

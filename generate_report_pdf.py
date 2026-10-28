@@ -321,7 +321,7 @@ def build_pdf():
     ]))
     story.append(t_profile)
 
-    story.append(Spacer(1, 62))
+    story.append(Spacer(1, 95))
     # Bottom formal notice (clean, no long dashes)
     cover_notice = Paragraph(
         "CONFIDENTIAL &nbsp;|&nbsp; Candidate: Ahmad Fathin Naufal (UGM) &nbsp;|&nbsp; PSE Internship Assessment<br/>"
